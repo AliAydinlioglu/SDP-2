@@ -1,4 +1,4 @@
-﻿# 2025-react-gent13
+# 2025-react-gent13
 
 # _teamleden_
 
