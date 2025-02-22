@@ -1,7 +1,7 @@
 const settings = {
     env: "",
     log: {
-        level: "silly", // "error", "warn", "info", "verbose", "debug", "silly"
+        level: "error", // "error", "warn", "info", "verbose", "debug", "silly"
         disabled: false,
     },
     cors: {

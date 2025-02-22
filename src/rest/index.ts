@@ -1,14 +1,35 @@
-import type Application from 'koa';
+import Router from "@koa/router";
+import Application from "koa";
+import user from "./user";
+import health from "./health";
+import auth from "./auth";
+import endpoints from "../constants/endpoints";
 
-import Router from '@koa/router';
-import installHealthRouter from './health';
+// From this file we will further install other routers to various endpoints.
+// This is the main entry point for the REST API.
+const installRest = (app: Application) => {
+    // create a router for the /api endpoint
+    const router = new Router({
+        prefix: endpoints.apiPrefix,
+    });
 
-export default (app: Application) => {
-  const router = new Router({
-    prefix: '/api',
-  });
+    router.use(async (ctx, next) => {
+        await next();
+    });
 
-  installHealthRouter(router);
+    // add a route for the GET /api/ request
+    // .get() is a method that takes a path and a callback function. If the path matches, the callback function is called.
+    router.get("/", async (ctx) => {
+        ctx.body = "API";
+    });
 
-  app.use(router.routes()).use(router.allowedMethods());
+    // Create nested routers for various endpoints
+    health.installRouter(router); // install the health router
+    user.installRouter(router); // install the user router
+    auth.installRouter(router); // install the auth router
+
+    // add the router to the koa app
+    app.use(router.routes()).use(router.allowedMethods());
 };
+
+export default { installRest };
