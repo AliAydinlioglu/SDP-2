@@ -1,10 +1,16 @@
-import config from 'config';
-import packageJson from '../../package.json';
+// import package.json as a whole, the file is 2 folders up from this file.
+import packageJson from "../../package.json";
 
-export const ping = () => ({ pong: true });
+const ping = (): { pong: true } => {
+    return { pong: true };
+};
 
-export const getVersion = () => ({
-  env: config.get<string>('env'),
-  version: packageJson.version,
-  name: packageJson.name,
-});
+const getVersion = (): { name: string; version: string; env: string | undefined } => {
+    return {
+        name: packageJson.name,
+        version: packageJson.version,
+        env: process.env.NODE_ENV,
+    };
+};
+
+export default { ping, getVersion };

@@ -1,22 +1,29 @@
-import Router from '@koa/router';
-import * as healthService from '../service/health';
-import type { Context } from 'koa';
+import { Context } from "koa";
+import healthService from "../service/health";
+import Router from "@koa/router";
+import endpoints from "../constants/endpoints";
 
 const ping = async (ctx: Context) => {
-  ctx.status = 200;
-  ctx.body = healthService.ping();
+    ctx.status = 200;
+    ctx.body = healthService.ping();
 };
 
 const getVersion = async (ctx: Context) => {
-  ctx.status = 200;
-  ctx.body = healthService.getVersion();
+    ctx.status = 200;
+    ctx.body = healthService.getVersion();
 };
 
-export default (parent: Router) => {
-  const router = new Router({ prefix: '/health' });
+const installRouter = (parentRouter: Router) => {
+    // create a router for the /api/data endpoint
+    const router = new Router({
+        prefix: endpoints.health,
+    });
 
-  router.get('/ping', ping);
-  router.get('/version', getVersion);
+    router.get("/ping", ping); // GET .../api/health/ping
+    router.get("/version", getVersion); // GET .../api/health/version
 
-  parent.use(router.routes()).use(router.allowedMethods());
+    // add the router to the parent router
+    parentRouter.use(router.routes()).use(router.allowedMethods());
 };
+
+export default { installRouter };

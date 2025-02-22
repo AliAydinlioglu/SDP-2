@@ -1,53 +1,69 @@
-import config from 'config';
-import winston from 'winston';
+import winston from "winston";
+import { TransformableInfo } from "logform";
 const { combine, timestamp, colorize, printf } = winston.format;
 
-const NODE_ENV = config.get<string>('env');
-const LOG_LEVEL = config.get<string>('log.level');
-const LOG_DISABLED = config.get<boolean>('log.disabled');
+// ACT AS IF THIS FILE IS A CLASS!
 
-const loggerFormat = () => {
-  const formatMessage = ({
-    level,
-    message,
-    timestamp,
-    ...rest
-  }: winston.Logform.TransformableInfo) => {
-    return `${timestamp} | ${level} | ${message} | ${JSON.stringify(rest)}`;
-  };
+let rootLogger: winston.Logger;
 
-  const formatError = ({
-    error,
-    ...rest
-  }: winston.Logform.TransformableInfo) =>
-    `${formatMessage(rest)}\n\n${(error as Error).stack}\n`;
-
-  const format = (info: winston.Logform.TransformableInfo) => {
-    if (info?.['error'] instanceof Error) {
-      return formatError(info);
+/**
+ * Get the root logger.
+ */
+const getLogger = () => {
+    if (!rootLogger) {
+        throw new Error("You must first initialize the logger");
     }
 
-    return formatMessage(info); 
-  };
-
-  return combine(colorize(), timestamp(), printf(format));
+    return rootLogger;
 };
 
-const rootLogger: winston.Logger = winston.createLogger({
-  level: LOG_LEVEL,
-  format: loggerFormat(),
-  defaultMeta: { env: NODE_ENV },
-  transports:
-    NODE_ENV === 'testing'
-      ? [
-          new winston.transports.File({
-            filename: 'test.log',
-            silent: LOG_DISABLED,
-          }),
-        ]
-      : [new winston.transports.Console({ silent: LOG_DISABLED })],
-});
+/**
+ * Initialize the root logger.
+ *
+ * @param {object} options - The options.
+ * @param {string} options.level - The log level.
+ * @param {boolean} options.disabled - Disable all logging.
+ * @param {object} options.defaultMeta - Default metadata to show.
+ */
 
-export const getLogger = () => {
-  return rootLogger;
+// Entry point for logger setup.
+const initializeLogger = ({ level, disabled = false, defaultMeta = {} }: { level: string; disabled?: boolean; defaultMeta?: object }) => {
+    // BASICALLY A CONSTRUCTOR
+    rootLogger = winston.createLogger({
+        level,
+        format: loggerFormat(),
+        defaultMeta,
+        transports: [
+            new winston.transports.Console({
+                silent: disabled,
+            }),
+        ],
+    });
+};
+
+/**
+ * Define the logging format. We output a timestamp, context (name), level, message and the stacktrace in case of an error
+ */
+const loggerFormat = () => {
+    const formatMessage = ({ level, message, timestamp, name = "server", ...rest }: TransformableInfo & { name?: string }) => {
+        return `${timestamp} | ${name} | ${JSON.stringify(rest.NODE_ENV)} | ${level} | ${message}`;
+    };
+
+    const formatError = ({ error, ...rest }: TransformableInfo & { error: { stack: string } | undefined }) => {
+        return `${formatMessage({ ...rest, error })}\n\n${error?.stack}\n`;
+    };
+
+    const format = (info: TransformableInfo) => {
+        if (info.error instanceof Error) {
+            return formatError(info as TransformableInfo & { error: { stack: string } | undefined });
+        } else {
+            return formatMessage(info);
+        }
+    };
+    return combine(colorize(), timestamp(), printf(format));
+};
+
+export default {
+    getLogger,
+    initializeLogger,
 };
