@@ -13,8 +13,8 @@
 -   Schakel dev dependcies niet uit als u gemakkelijk met TypeScript wilt werken en testen wilt uitvoeren.
 
 ```sh
-git clone https://github.com/Web-IV/2324-webservices-OguzAydinlioglu.git
-cd  2324-webservices-OguzAydinlioglu
+git clone https://github.com/HoGentProjectenII/2025-nodejs-gent13.git
+cd  2025-nodejs-gent13
 yarn install
 ```
 
@@ -34,7 +34,7 @@ PORT=9000
 DATABASE_HOST=localhost
 # Verander dit in de poort die je opent voor MySQL, default is 3036.
 DATABASE_PORT=3306
-DATABASE_NAME=flashkards
+DATABASE_NAME=sdp2
 DATABASE_USERNAME=root
 # Het wachtwoord van je database.
 DATABASE_PASSWORD=
@@ -52,7 +52,7 @@ PORT=9000
 DATABASE_HOST=localhost
 # Verander dit in de poort die je opent voor MySQL, default is 3036.
 DATABASE_PORT=3306
-DATABASE_NAME=flashkards
+DATABASE_NAME=sdp2
 DATABASE_USERNAME=root
 # Het wachtwoord van je database.
 DATABASE_PASSWORD=
