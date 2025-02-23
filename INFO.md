@@ -27,37 +27,19 @@ Maak een MySQL-server aan met een wachtwoord en start de server.
 Maak in de _root map_ een bestand aan met de naam `.env`, met de volgende inhoud:
 
 ```sh
-# OF production. Als je dit verandert van "development", wordt `seeding` uitgeschakeld! Als je dit wijzigt naar "test", wordt de resetmodus ingeschakeld voor het huidige databaseschema.
-NODE_ENV=development
-# De poort die je opent om je API toegankelijk te maken voor de wereld.
-PORT=9000
-DATABASE_HOST=localhost
-# Verander dit in de poort die je opent voor MySQL, default is 3036.
-DATABASE_PORT=3306
-DATABASE_NAME=sdp2
-DATABASE_USERNAME=root
-# Het wachtwoord van je database.
-DATABASE_PASSWORD=
 # Genereer gewoon een lang en sterk wachtwoord aan.
 JWTSECRET=
+# Prisma
+DATABASE_URL=PINNED IN DISCORD #DEVELOPMENT
 ```
 
 Als je de testsuite ook wilt gebruiken, maak dan een ander bestand aan met de naam `.env.test`:
 
 ```sh
-# `Seeding` moet altijd worden uitgeschakeld voor testen. Dus niet veranderen naar "development".
-NODE_ENV=test
-# De poort die je opent om je API toegankelijk te maken voor de wereld.
-PORT=9000
-DATABASE_HOST=localhost
-# Verander dit in de poort die je opent voor MySQL, default is 3036.
-DATABASE_PORT=3306
-DATABASE_NAME=sdp2
-DATABASE_USERNAME=root
-# Het wachtwoord van je database.
-DATABASE_PASSWORD=
 # Genereer gewoon een lang en sterk wachtwoord aan.
 JWTSECRET=
+# Prisma
+DATABASE_URL=PINNED IN DISCORD #DEVELOPMENT
 ```
 
 ### Startup
