@@ -1,8 +1,10 @@
+import Test from './components/test';
+
 function App() {
 
   return (
     <div className='App'>
-      <h1>Welcome!</h1>
+      <Test />
     </div>
   );
 }
