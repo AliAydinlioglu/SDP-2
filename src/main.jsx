@@ -5,6 +5,8 @@ import NotFound from './pages/NotFound.jsx';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './pages/Layout.jsx';
+import DashBoard from './pages/DashBoard.jsx';
+import Site from './pages/Site.jsx';
 
 const router = createBrowserRouter([
   {
@@ -14,8 +16,21 @@ const router = createBrowserRouter([
         path: '/',
         element: <App />,
       },
+      {
+        path: 'dashboard',
+        element: <DashBoard/>,
+      },
       {path: '*',
         element: <NotFound/>,
+      },
+      {
+        path: 'site',
+        children: [
+          {
+            path: ':id',
+            element: <Site/>,
+          },
+        ],
       },
     ],
   },
