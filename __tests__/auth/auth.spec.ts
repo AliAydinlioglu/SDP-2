@@ -112,7 +112,6 @@ describe("/api/auth/login", () => {
             password: "54321",
         });
 
-        // Create a user first
         const jwtResponse = await request.post("/api/auth/login").send({
             email: "Valerie@example.com",
             password: "54321",
