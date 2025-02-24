@@ -20,4 +20,13 @@ const SITE_DATA = [
     },
 ];
 
-export default SITE_DATA;
+const MACHINE_DATA = [
+    {
+        id: 1,
+        site_id: 1,
+        status: 'running',
+        prod_status: 'gezond',
+    },
+];
+
+export { SITE_DATA, MACHINE_DATA };

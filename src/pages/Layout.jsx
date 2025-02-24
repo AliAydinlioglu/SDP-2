@@ -6,10 +6,9 @@ export default function Layout() {
   return (
     <div>
       <NavBar/>
-      <Footer/>
       <Outlet />
       <ScrollRestoration />
-
+      <Footer/>
     </div>
   );
 }
