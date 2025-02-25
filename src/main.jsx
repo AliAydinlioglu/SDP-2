@@ -5,7 +5,7 @@ import './index.css';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import Layout from './pages/Layout.jsx';
 import DashBoard from './pages/DashBoard.jsx';
-import Site from './pages/Site.jsx';
+import Site from './pages/sites/Site.jsx';
 
 const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
         element: <NotFound/>,
       },
       {
-        path: 'site',
+        path: 'sites',
         children: [
           {
             path: ':id',

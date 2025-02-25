@@ -1,7 +1,7 @@
 import { useParams } from 'react-router';
-import {SITE_DATA, MACHINE_DATA }from '../api/mock_data';
-import SiteDetail from '../components/Site/SiteDetail';
-import MachineTabel from '../components/Machine/MachineTabel';
+import {SITE_DATA, MACHINE_DATA }from '../../api/mock_data';
+import SiteDetail from '../../components/sites/SiteDetail';
+import MachineTabel from '../../components/machines/MachineTabel';
 
 export default function Site(){
   const { id } = useParams();
