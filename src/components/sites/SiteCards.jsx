@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
-import { SITE_DATA } from '../../api/mock_data';
 
-export default function SiteCards() {
-  const sites = SITE_DATA;
+export default function SiteCards({sites}) {
   console.log(sites);
   
   return (
