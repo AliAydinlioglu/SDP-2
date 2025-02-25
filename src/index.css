@@ -56,6 +56,22 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.card {
+  margin: 10px;
+  border: 1px solid rgb(187, 186, 186);
+  transition: border-color 0.25s;
+}
+
+.card:hover {
+  border: 1px solid #050505;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

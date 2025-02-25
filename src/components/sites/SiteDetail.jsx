@@ -4,7 +4,7 @@ export default function SiteDetail({site}){
       <h1>Site Detail</h1>
       <p>Name: {site.name}</p>
       <p>Manager: {site.manager}</p>
-      <p>Machine Count: {site.machineCount}</p>
+      <p>Address: {site.address}</p>
     </div>
   );
 }
