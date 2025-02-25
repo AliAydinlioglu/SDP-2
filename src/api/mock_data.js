@@ -27,6 +27,60 @@ const MACHINE_DATA = [
         status: 'running',
         prod_status: 'gezond',
     },
+    {
+        id: 2,
+        site_id: 1,
+        status: 'stopped',
+        prod_status: 'onderhoud',
+    },
+    {
+        id: 3,
+        site_id: 2,
+        status: 'running',
+        prod_status: 'gezond',
+    },
+    {
+        id: 4,
+        site_id: 2,
+        status: 'stopped',
+        prod_status: 'defect',
+    },
+    {
+        id: 5,
+        site_id: 3,
+        status: 'running',
+        prod_status: 'gezond',
+    },
+    {
+        id: 6,
+        site_id: 3,
+        status: 'stopped',
+        prod_status: 'onderhoud',
+    },
+    {
+        id: 7,
+        site_id: 1,
+        status: 'running',
+        prod_status: 'gezond',
+    },
+    {
+        id: 8,
+        site_id: 2,
+        status: 'stopped',
+        prod_status: 'defect',
+    },
+    {
+        id: 9,
+        site_id: 3,
+        status: 'running',
+        prod_status: 'gezond',
+    },
+    {
+        id: 10,
+        site_id: 1,
+        status: 'stopped',
+        prod_status: 'onderhoud',
+    },
 ];
 
 export { SITE_DATA, MACHINE_DATA };
