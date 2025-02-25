@@ -9,7 +9,7 @@ export default function SiteCards() {
     <div className="container">
       <div className="row">
         {sites.map((s) => (
-          <Link to={`/site/${s.id}`} key={s.id} >
+          <Link to={`/sites/${s.id}`} key={s.id} >
             <div className="col-md-6 mb-2" key={s.id}>
               <div className="card m-2 h-100 w-100  mt-2 mb-2">
                 <div className="card-body">
