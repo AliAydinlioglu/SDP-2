@@ -7,14 +7,13 @@ import Layout from './pages/Layout.jsx';
 import DashBoard from './pages/DashBoard.jsx';
 import Site from './pages/sites/Site.jsx';
 import SitesList from './pages/sites/SitesList.jsx';
-<<<<<<< HEAD
+
 import { AuthProvider } from './context/Auth.context.jsx';
 import Login from './pages/Login.jsx';
 import Logout from './pages/Logout.jsx';
-=======
+
 import MachineTabel from './components/machines/MachineTabel.jsx';
 import MachineDetail from './components/machines/MachineDetail.jsx';
->>>>>>> 9d9bc0f (machine details toegevoegd aan site pagina)
 
 const router = createBrowserRouter([
   {
