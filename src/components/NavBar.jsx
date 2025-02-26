@@ -15,6 +15,11 @@ export default function NavBar() {
               <a className="nav-link" href="/sites">Sites</a>
             </li>
           </ul>
+          <ul className="navbar-nav ms-auto me-3">
+            <li className="nav-item">
+              <a className="nav-link" href="/login">Login</a>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>

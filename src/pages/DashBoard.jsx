@@ -1,4 +1,5 @@
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar, PieChart, Pie, Cell, ScatterChart, Scatter } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip,
+  BarChart, Bar, PieChart, Pie, Cell, ScatterChart, Scatter } from 'recharts';
 
 export default function DashBoard() {
   const data = [

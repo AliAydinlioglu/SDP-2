@@ -105,6 +105,32 @@ button:focus-visible {
 }
 
 
+.form-wrapper {
+  width: 100%;
+  max-width: 400px;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.btn {
+  border: none;
+  padding: 10px 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #d56363;
+  /* Light reddish color */
+  transition: background-color 0.25s;
+}
+
+.btn:hover {
+  background-color: #ef2c2c;
+  /* Darker reddish color */
+}
+
+
 
 @media (prefers-color-scheme: light) {
   :root {

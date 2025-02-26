@@ -7,6 +7,9 @@ import Layout from './pages/Layout.jsx';
 import DashBoard from './pages/DashBoard.jsx';
 import Site from './pages/sites/Site.jsx';
 import SitesList from './pages/sites/SitesList.jsx';
+import { AuthProvider } from './context/Auth.context.jsx';
+import Login from './pages/Login.jsx';
+import Logout from './pages/Logout.jsx';
 
 const router = createBrowserRouter([
   {
@@ -32,12 +35,16 @@ const router = createBrowserRouter([
         path: '*',
         element: <NotFound />,
       },
+      {path: 'login', element: <Login/>},
+      {path: 'logout', element: <Logout/> },
     ],
   },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router}/>
+    </AuthProvider>
   </StrictMode>,
 );
