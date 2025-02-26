@@ -1,22 +1,28 @@
 import Router from "@koa/router";
-import user from "../service/user";
+import userService from "../service/user";
 import { Context } from "koa";
 import Joi from "joi";
 import validation from "../core/validation";
+import endpoints from "../constants/endpoints";
 
 const createUser = {
     execute: async (ctx: Context) => {
-        const { name, email, password } = ctx.request.body as { name: string; email: string; password: string };
-
-        let token = await user.create({ name, email, password });
+        const { voornaam, achternaam, email, password, adres, gsm, actief }
+         = ctx.request.body as { voornaam: string; achternaam: string; adres: string; gsm?: string; actief?: boolean; email: string; password: string };
+ 
+        let token = await userService.create({ voornaam, achternaam, email, password, adres, gsm, actief });
         ctx.set("Authorization", `Bearer ${token}`);
-        ctx.status = 200;
+        ctx.status = 201;
     },
     schema: {
         body: Joi.object({
-            name: Joi.string().required(),
+            voornaam: Joi.string().required(),
+            achternaam: Joi.string().required(),
             email: Joi.string().email().required(),
-            password: Joi.string().required(),
+            password: Joi.string().min(8).required(),
+            adres: Joi.string().required(),
+            gsm: Joi.string().optional(),
+            actief: Joi.boolean().optional(),
         }),
     },
 };
@@ -25,7 +31,7 @@ const loginUser = {
     execute: async (ctx: Context) => {
         const { email, password } = ctx.request.body as { email: string; password: string };
 
-        const token = await user.login({ email, password });
+        const token = await userService.login({ email, password });
         ctx.set("Authorization", `Bearer ${token}`);
         ctx.status = 200;
     },
@@ -33,7 +39,7 @@ const loginUser = {
         body: Joi.object({
             email: Joi.string().email().required(),
             password: Joi.string().required(),
-        }),
+        }).required(),
     },
 };
 

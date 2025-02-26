@@ -11,9 +11,13 @@ const createItems = async (users: User[]): Promise<number[]> => {
                 (
                     await data.prisma.user.create({
                         data: {
-                            name: u.name,
+                            voornaam: u.voornaam,
+                            achternaam: u.achternaam,
                             email: u.email.toLowerCase(),
                             hashed_password: await crypto.hashPassword(u.password),
+                            adres: u.adres,                
+                            gsm: u.gsm,                    
+                            actief: u.actief ?? true,
                         },
                     })
                 ).id
@@ -42,18 +46,42 @@ const FindAll = async () => {
 };
 
 // Update
-const updateItem = async (id: number, { name, email, password }: { name?: string; email?: string; password?: string }): Promise<1 | null> => {
+const updateItem = async (
+    id: number,
+    { 
+      voornaam,      
+      achternaam, 
+      email, 
+      password, 
+      adres, 
+      gsm, 
+      actief 
+    }: { 
+      voornaam?: string; 
+      achternaam?: string; 
+      email?: string; 
+      password?: string;
+      adres?: string;
+      gsm?: string;
+      actief?: boolean;
+    }
+  ): Promise<1 | null> => {
     const update: Record<string, any> = {};
-    if (name) update.name = name;
+    if (voornaam) update.voornaam = voornaam;
+    if (achternaam) update.achternaam = achternaam;
     if (email) update.email = email.toLowerCase();
     if (password) update.hashed_password = await crypto.hashPassword(password);
+    if (adres) update.adres = adres;
+    if (gsm) update.gsm = gsm;
+    if (actief !== undefined) update.actief = actief;
+    
     try {
-        await data.prisma.user.update({ where: { id }, data: update });
-        return 1;
+      await data.prisma.user.update({ where: { id }, data: update });
+      return 1;
     } catch {
-        return null;
+      return null;
     }
-};
+  };
 
 // Delete
 // IT IS CALLED deleteItem(S) because it deletes a single item OR EVERYTHING!
