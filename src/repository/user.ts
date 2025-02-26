@@ -1,67 +1,74 @@
 import crypto from "../core/argonPassword";
-import data from "../data/index";
 import { DBUser, User } from "../types/types";
+import data from "../data/index";
 
 // Create
 // .insert() will return the newly created id (autoincrement is enabled).
-const createItems = async (users: User[]): Promise<number[] | null> => {
-    const ids = []; // MySql will return only the last id, so we need to store all the ids and return them.
-
-    for (const user of users) {
-        const hashedUser = {
-            name: user.name,
-            email: user.email.toLowerCase(),
-            hashed_password: await crypto.hashPassword(user.password),
-        };
-
-        let [id] = await data.getKnex()(data.tables.user).insert(hashedUser);
-
-        ids.push(id);
-    }
-    return ids;
+const createItems = async (users: User[]): Promise<number[]> => {
+    return Promise.all(
+        users.map(
+            async (u) =>
+                (
+                    await data.prisma.user.create({
+                        data: {
+                            name: u.name,
+                            email: u.email.toLowerCase(),
+                            hashed_password: await crypto.hashPassword(u.password),
+                        },
+                    })
+                ).id
+        )
+    );
 };
 
 // Read
-const find = async (attributeName: string, attributeValue: string | number): Promise<null | DBUser[]> => {
-    const result = await data.getKnex()(data.tables.user).select().where(attributeName, attributeValue);
-
-    if (result.length === 0) {
-        return null;
+const find = async (attribute: string, value: string | number): Promise<DBUser[] | null> => {
+    let user;
+    if (attribute === "id") {
+        value = Number(value);
+        user = await data.prisma.user.findUnique({ where: { id: value as number } });
+    } else if (attribute === "email") {
+        user = await data.prisma.user.findUnique({ where: { email: (value as string).toLowerCase() } });
     } else {
-        return result;
+        const users = await data.prisma.user.findMany({ where: { [attribute]: value } });
+        return users.length ? users : null;
     }
+    return user ? [user] : null;
 };
 
 // .select() will return array of objects where the objects are the rows from the database.
-const devFindAll = async () => {
-    return await data.getKnex()(data.tables.user).select();
+const FindAll = async () => {
+    return data.prisma.user.findMany();
 };
 
 // Update
-const updateItem = async (id: number, { name, email, password }: { name?: string; email?: string; password?: string }): Promise<null | 1> => {
-    const updatedUser: { name?: string; email?: string; hashed_password?: string } = {};
-
-    if (name) {
-        updatedUser.name = name;
+const updateItem = async (id: number, { name, email, password }: { name?: string; email?: string; password?: string }): Promise<1 | null> => {
+    const update: Record<string, any> = {};
+    if (name) update.name = name;
+    if (email) update.email = email.toLowerCase();
+    if (password) update.hashed_password = await crypto.hashPassword(password);
+    try {
+        await data.prisma.user.update({ where: { id }, data: update });
+        return 1;
+    } catch {
+        return null;
     }
-    if (email) {
-        updatedUser.email = email.toLowerCase();
-    }
-    if (password) {
-        updatedUser.hashed_password = await crypto.hashPassword(password);
-    }
-
-    return await data.getKnex()(data.tables.user).where("id", id).update(updatedUser);
 };
 
 // Delete
 // IT IS CALLED deleteItem(S) because it deletes a single item OR EVERYTHING!
-const deleteItems = async (attributeName?: string, attributeValue?: number | string): Promise<number> => {
-    if (attributeName && attributeValue) {
-        return await data.getKnex()(data.tables.user).where(attributeName, attributeValue).delete(); // will delete by matching the attribute name and value.
-    } else {
-        return await data.getKnex()(data.tables.user).delete(); // delete all
+const deleteItems = async (attribute?: string, value?: number | string): Promise<number> => {
+    try {
+        if (attribute && value) {
+            if (attribute === "id") await data.prisma.user.delete({ where: { id: value as number } });
+            else if (attribute === "email") await data.prisma.user.delete({ where: { email: (value as string).toLowerCase() } });
+            return 1;
+        }
+    } catch {
+        return 0;
     }
+
+    return (await data.prisma.user.deleteMany()).count;
 };
 
-export default { createItems, devFindAll, find, updateItem, deleteItems };
+export default { createItems, FindAll, find, updateItem, deleteItems };

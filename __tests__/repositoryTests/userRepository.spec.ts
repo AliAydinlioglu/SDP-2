@@ -36,7 +36,7 @@ afterAll(async () => {
 it("Shoul delete everything in the database (deleting user will delete folders and cards)", async () => {
     await userRepository.deleteItems();
 
-    const result = await userRepository.devFindAll();
+    const result = await userRepository.FindAll();
 
     expect(result.length).toBe(0);
 });

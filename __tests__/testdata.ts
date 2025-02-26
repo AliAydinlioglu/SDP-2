@@ -1,6 +1,7 @@
 import jwtUse from "../src/core/jwtUse";
 import userService from "../src/service/user";
 import userRepository from "../src/repository/user";
+import resetDatabase from "../src/data/resetDatabase";
 
 // TEST DATA
 
@@ -27,6 +28,7 @@ const testData = async () => {
     };
 
     const deleteTestData = async () => {
+        await resetDatabase();
         // deleting users will delete everything else due to foreign key constraints.
         for (let jwt of jwts) {
             let id = jwtUse.getUserID(jwt);

@@ -197,7 +197,7 @@ describe("/users", () => {
     });
     describe("DELETE", () => {
         it("DELETE - Should delete Solomon Reed' entry.", async () => {
-            let initialAmountOfUsers = (await userRepository.devFindAll())!;
+            let initialAmountOfUsers = (await userRepository.FindAll())!;
             let user_id = jwtUse.getUserID(jwts[0]);
             let name = (await userService.find(user_id))!.name;
 
@@ -213,7 +213,7 @@ describe("/users", () => {
                 Authorization: `Bearer ${jwts[0]}`,
             });
 
-            let finalAmountOfUsers = await userRepository.devFindAll();
+            let finalAmountOfUsers = await userRepository.FindAll();
 
             expect(initialAmountOfUsers.length - finalAmountOfUsers.length).toBe(1);
 
