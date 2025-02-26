@@ -14,18 +14,23 @@ const getUser = async (ctx: Context) => {
 
 const updateUser = {
     execute: async (ctx: Context) => {
-        const { name, email, password } = ctx.request.body as { name?: string; email?: string; password?: string };
+        const {voornaam, achternaam, email, password, adres, gsm, actief}
+         = ctx.request.body as { voornaam?: string; achternaam?: string; adres?: string; gsm?: string; actief?: boolean; email?: string; password?: string };
 
-        await userService.updateUser(ctx.user_id, { name, email, password });
+        await userService.updateUser(ctx.user_id, { voornaam, achternaam, email, password, adres, gsm, actief  });
 
         ctx.status = 200;
     },
     schema: {
         body: Joi.object({
-            name: Joi.string().optional(),
-            email: Joi.string().email().optional(),
-            password: Joi.string().optional(),
-        }).or("name", "email", "password"),
+          voornaam: Joi.string().optional(),
+          achternaam: Joi.string().optional(),
+          email: Joi.string().email().optional(),
+          password: Joi.string().optional(),
+          adres: Joi.string().optional(),
+          gsm: Joi.string().optional(),
+          actief: Joi.boolean().optional(),
+        }).or("voornaam", "achternaam", "email", "password", "adres", "gsm", "actief"),
     },
 };
 

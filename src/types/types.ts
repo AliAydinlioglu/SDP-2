@@ -1,12 +1,12 @@
 type User = {
-    id: number;
+    id?: number;
     voornaam: string;     
     achternaam: string;
     email: string;
     password: string;
     adres: string;
     gsm?: string;
-    actief: boolean;
+    actief?: boolean;
      };
 type PasswordlessUser = {
     id: number;

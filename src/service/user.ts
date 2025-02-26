@@ -9,14 +9,28 @@ import { ServiceError } from "../core/errorHandler";
 
 // Register
 // only 1 user can be created at a time.
-const create = async ({ name, email, password }: { name: string; email: string; password: string }, expiresInSeconds?: number): Promise<string> => {
+const create = async ({ voornaam, achternaam, email, password, adres, gsm, actief  }: { voornaam: string; 
+    achternaam: string; 
+    email: string; 
+    password: string;
+    adres: string;
+    gsm?: string;
+    actief?: boolean;
+    }, expiresInSeconds?: number): Promise<string> => {
     if (password.length < 8) {
         throw new ServiceError(textCodes.SHORTPASSWORD, 400);
     }
 
     let result;
     try {
-        result = await userRepository.createItems([{ name, email, password }]);
+        result = await userRepository.createItems([{
+            voornaam, 
+            achternaam, 
+            email, 
+            password, 
+            adres, 
+            gsm,
+            actief  }]);
     } catch (e) {
         throw new ServiceError(textCodes.DUPLICATE, 400);
     }
@@ -44,9 +58,30 @@ const login = async ({ email, password }: { email: string; password: string }): 
     }
 };
 
-const updateUser = async (user_id: number, { name, email, password }: { name?: string; email?: string; password?: string }): Promise<1 | null> => {
+const updateUser = async (user_id: number, {
+        voornaam, 
+        achternaam, 
+        email, 
+        password, 
+        adres, 
+        gsm, 
+        actief  
+    }:
+     { voornaam?: string; 
+        achternaam?: string; 
+        email?: string; 
+        password?: string;
+        adres?: string;
+        gsm?: string;
+        actief?: boolean; }): Promise<1 | null> => {
     try {
-        let result = await userRepository.updateItem(user_id, { name, email, password });
+        let result = await userRepository.updateItem(user_id, { voornaam, 
+            achternaam, 
+            email, 
+            password, 
+            adres, 
+            gsm, 
+            actief  });
 
         if (result === null) {
             throw new ServiceError(textCodes.INVALIDDATA, 404);
@@ -60,19 +95,19 @@ const updateUser = async (user_id: number, { name, email, password }: { name?: s
 
 const find = async (user_id: number): Promise<PasswordlessUser | null> => {
     const result = await userRepository.find("id", user_id);
-
-    if (result === null) {
-        return null;
-    }
-
-    let passwordlessUser = {
-        id: result[0].id,
-        name: result[0].name,
-        email: result[0].email,
+  
+    if (!result || result.length === 0) return null;
+  
+    return {
+      id: result[0].id,
+      voornaam: result[0].voornaam,  
+      achternaam: result[0].achternaam,
+      email: result[0].email,
+      adres: result[0].adres,
+      gsm: result[0].gsm || undefined, 
+      actief: result[0].actief,
     };
-
-    return passwordlessUser;
-};
+  };
 
 const deleteUser = async (user_id: number): Promise<number> => {
     let amountOfUsers = await userRepository.deleteItems("id", user_id);
