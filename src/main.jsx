@@ -7,9 +7,14 @@ import Layout from './pages/Layout.jsx';
 import DashBoard from './pages/DashBoard.jsx';
 import Site from './pages/sites/Site.jsx';
 import SitesList from './pages/sites/SitesList.jsx';
+<<<<<<< HEAD
 import { AuthProvider } from './context/Auth.context.jsx';
 import Login from './pages/Login.jsx';
 import Logout from './pages/Logout.jsx';
+=======
+import MachineTabel from './components/machines/MachineTabel.jsx';
+import MachineDetail from './components/machines/MachineDetail.jsx';
+>>>>>>> 9d9bc0f (machine details toegevoegd aan site pagina)
 
 const router = createBrowserRouter([
   {
@@ -20,16 +25,40 @@ const router = createBrowserRouter([
         element: <Navigate replace to='/dashboard' />,
       },
       {
-        path: 'dashboard',
+        path: '/dashboard',
         element: <DashBoard />,
       },
       {
-        path: 'sites',
-        element: <SitesList />,
+        path: '/sites',
+        children: [
+          {
+            index: true,
+            element: <SitesList />,
+          },
+          {
+            path: ':id',
+            element: <Site />,
+            children: [
+              {
+                path: 'machines/:machineId',
+                element: <MachineDetail />,
+              },
+            ],
+          },
+        ],
       },
       {
-        path: 'sites/:id',
-        element: <Site />,
+        path: '/machines',
+        children: [
+          {
+            index: true,
+            element: <MachineTabel />,
+          },
+          {
+            path: ':id',
+            element: <MachineDetail />,
+          },
+        ],
       },
       {
         path: '*',
