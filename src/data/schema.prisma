@@ -8,8 +8,14 @@ datasource db {
 }
 
 model User {
-    id              Int     @id @default(autoincrement())
+    id              Int     @id @default(autoincrement()) @db.UnsignedInt
     email           String  @unique
-    name            String
-    hashed_password String
+    voornaam        String      @db.VarChar(255)
+    achternaam      String      @db.VarChar(255)
+    hashed_password String      @db.VarChar(255)
+    adres           String      @db.VarChar(255)
+    gsm             String?     @db.VarChar(20)
+    actief          Boolean     @default(true)
+
+    @@map("users")
 }
