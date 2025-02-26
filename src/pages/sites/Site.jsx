@@ -13,9 +13,9 @@ export default function Site(){
   console.log(machines);
   
   return (
-    <div className="container">
-      <SiteDetail site={site} />
-      <MachineTabel machines={machines} />
+    <div className="site-container">
+      <div className="site-details"><SiteDetail site={site} /></div>
+      <div className="machine-list"><MachineTabel machines={machines} /></div>
     </div>
   );
 }

@@ -63,6 +63,7 @@ button:focus-visible {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  
 }
 
 .card {
@@ -118,4 +119,22 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Site Grid Layout */
+.site-container {
+  display: block grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+  "side-details machine-details"
+  "machine-list machine-details";
+}
+
+.site-details {
+  grid-area: side-details;
+}
+
+.machine-list {
+  grid-area: machine-list;
 }
