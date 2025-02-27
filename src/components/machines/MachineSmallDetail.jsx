@@ -1,6 +1,6 @@
 import { useParams, useOutletContext } from 'react-router-dom';
 
-const MachineDetail = () => {
+const MachineSmallDetail = () => {
   const { machineId } = useParams();
   const { machines } = useOutletContext();
   const machine = machines.find((m) => m.id === Number(machineId));
@@ -22,4 +22,4 @@ const MachineDetail = () => {
   );
 };
 
-export default MachineDetail;
+export default MachineSmallDetail;

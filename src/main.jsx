@@ -13,7 +13,8 @@ import Login from './pages/Login.jsx';
 import Logout from './pages/Logout.jsx';
 
 import MachineTabelSmall from './components/machines/MachineTabelSmall.jsx';
-import MachineDetail from './components/machines/MachineDetail.jsx';
+import MachineSmallDetail from './components/machines/MachineSmallDetail.jsx';
+import MachinesList from './pages/machines/MachinesList.jsx';
 
 const router = createBrowserRouter([
   {
@@ -40,7 +41,7 @@ const router = createBrowserRouter([
             children: [
               {
                 path: 'machines/:machineId',
-                element: <MachineDetail />,
+                element: <MachineSmallDetail />,
               },
             ],
           },
@@ -51,12 +52,12 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <MachineTabelSmall />,
+            element: <MachinesList />,
           },
-          {
-            path: ':id',
-            element: <MachineDetail />,
-          },
+          // {
+          //   path: ':id',
+          //   element: <MachineDetail />,
+          // },
         ],
       },
       {

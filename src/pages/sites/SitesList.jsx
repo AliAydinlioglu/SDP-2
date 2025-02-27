@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { SITE_DATA } from '../../api/mock_data';
 import SiteCards from '../../components/sites/SiteCards';
 
 const SitesList = () => {
-  const sites = SITE_DATA;
+  const [sites, setSites] = useState(SITE_DATA);
   return (
     <div className='grid mt-3'>
       <SiteCards sites={sites} />

@@ -14,6 +14,9 @@ export default function NavBar() {
             <li className="nav-item">
               <a className="nav-link" href="/sites">Sites</a>
             </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/machines">Machines</a>
+            </li>
           </ul>
           <ul className="navbar-nav ms-auto me-3">
             <li className="nav-item">
