@@ -171,3 +171,17 @@ button:focus-visible {
   grid-area: machine-details;
 
 }
+
+/* Small Table Machines */
+.small-table-machines-container {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.small-table-machines thead{
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}

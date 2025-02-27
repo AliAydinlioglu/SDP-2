@@ -1,7 +1,7 @@
 import { useParams, Outlet } from 'react-router-dom';
 import { SITE_DATA, MACHINE_DATA } from '../../api/mock_data';
 import SiteDetail from '../../components/sites/SiteDetail';
-import MachineTabel from '../../components/machines/MachineTabel';
+import MachineTabelSmall from '../../components/machines/MachineTabelSmall';
 
 export default function Site() {
   const { id } = useParams();
@@ -13,7 +13,7 @@ export default function Site() {
   return (
     <div className="site-container">
       <div className="site-details"><SiteDetail site={site} /></div>
-      <div className="machine-list"><MachineTabel machines={machines} /></div>
+      <div className="machine-list"><MachineTabelSmall machines={machines} /></div>
       <div className='machine-details'><Outlet context={{ machines }} /></div>
     </div>
   );

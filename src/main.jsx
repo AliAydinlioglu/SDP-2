@@ -12,7 +12,7 @@ import { AuthProvider } from './context/Auth.context.jsx';
 import Login from './pages/Login.jsx';
 import Logout from './pages/Logout.jsx';
 
-import MachineTabel from './components/machines/MachineTabel.jsx';
+import MachineTabelSmall from './components/machines/MachineTabelSmall.jsx';
 import MachineDetail from './components/machines/MachineDetail.jsx';
 
 const router = createBrowserRouter([
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <MachineTabel />,
+            element: <MachineTabelSmall />,
           },
           {
             path: ':id',
