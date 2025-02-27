@@ -1,4 +1,14 @@
+import { redirect } from "react-router";
+
 export default function MachineTabel({ machines }) {
+  // const handleRowClick = (id, siteId) => {
+  //   return <Redirect
+  //     to={{
+  //       pathname: `/sites/${siteId}/machines/${id}`,       
+  //     }}
+  //   />;
+  // };
+
   return (
     <div>
       <h2>Machines</h2>
@@ -13,11 +23,19 @@ export default function MachineTabel({ machines }) {
         </thead>
         <tbody>
           {machines.map((machine) => (
-            <tr key={machine.id}>
-              <td>{machine.id}</td>
-              <td>{machine.site_id}</td>
-              <td>{machine.status}</td>
-              <td>{machine.prod_status}</td>
+            <tr key={machine.id} /* onClick={handleRowClick(machine.id, machine.site_id)} */>
+              <td>
+                {machine.id}
+              </td>
+              <td>
+                {machine.site_id}
+              </td>
+              <td>
+                {machine.status}
+              </td>
+              <td>
+                {machine.prod_status}
+              </td>
             </tr>
           ))}
         </tbody>
