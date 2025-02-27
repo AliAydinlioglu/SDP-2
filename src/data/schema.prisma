@@ -19,24 +19,48 @@ model User {
     land          String       @db.VarChar(127)
     password_hash String       @db.VarChar(255)
     rol           Json
-    actief          Boolean     @default(true)
+    actief        Boolean      @default(true)
 
     @@map("users")
 }
 
 model Machine{
-    code    Int     @id @default(autoincrement()) @db.UnsignedInt
-    site
+    id    Int     @id @default(autoincrement()) @db.UnsignedInt
+    site_id Int     @db.UnsignedInt
+    site    Site     @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_site")
     locatie String  @db.VarChar(127)
     info    String  @db.VarChar(200)
     status  String  @db.VarChar(127)
     prod_status String @db.VarChar(127)
     uptime  Int     @db.UnsignedInt
-    user_id Int     @db.UnsignedInt
-    technieker User @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_user")
+    technieker_id Int     @db.UnsignedInt
+    technieker User @relation(fields: [technieker_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_user")
     laatsteOnderhoud_id @db.UnsignedInt
     laatsteOnderhoud Onderhoud @relation(fields: [laatsteOnderhoud_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_laatsteOnderhoud")
     dagenSindsOnderhoud Int @db.UnsignedInt
     volgendOnderhoud_id Int @db.UnsignedInt
     volgendeOnderhoud Onderhoud @relation(fields: [volgendOnderhoud_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_volgendOnderhoud")
+}
+
+model Onderhoud{
+    id          Int         @id @default(autoincrement()) @db.UnsignedInt
+    datum       DateTime    @db.Date 
+    startTijd   DateTime    @db.Time
+    eindTijd    DateTime    @db.Time
+    technieker_id     Int         @db.UnsignedInt
+    technieker  User        @relation(fields: [technieker_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_onderhoud_user")
+    reden       String      @db.VarChar(127)
+    rapport     Json
+    opmerkingen String      @db.VarChar(127)
+    status      String      @db.VarChar(20)
+
+}
+
+model Site{
+    id          Int         @id @default(autoincrement()) @db.UnsignedInt
+    naam        String      @db.VarChar(127)
+    verantw_id  Int         @db.UnsignedInt
+    verantw     User        @relation(fields: [verantw_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_site_user")
+    machines    Machine[]   
+
 }
