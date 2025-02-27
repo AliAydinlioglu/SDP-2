@@ -127,3 +127,7 @@ dist
 
 # Custom files
 PERSONAL/
+
+
+# migrations
+migrations/

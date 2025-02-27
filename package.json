@@ -19,6 +19,7 @@
         "@koa/cors": "^5.0.0",
         "@koa/router": "^12.0.1",
         "@prisma/client": "^6.4.1",
+        "@types/node": "^22.13.5",
         "argon2": "^0.31.2",
         "config": "^3.3.9",
         "joi": "^17.11.0",
