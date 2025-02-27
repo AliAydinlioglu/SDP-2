@@ -1,13 +1,11 @@
-import { redirect } from "react-router";
+import { useNavigate } from 'react-router-dom';
 
 export default function MachineTabel({ machines }) {
-  // const handleRowClick = (id, siteId) => {
-  //   return <Redirect
-  //     to={{
-  //       pathname: `/sites/${siteId}/machines/${id}`,       
-  //     }}
-  //   />;
-  // };
+  const navigate = useNavigate();
+
+  const handleRowClick = (id, siteId) => {
+    navigate(`/sites/${siteId}/machines/${id}`);
+  };
 
   return (
     <div>
@@ -23,7 +21,8 @@ export default function MachineTabel({ machines }) {
         </thead>
         <tbody>
           {machines.map((machine) => (
-            <tr key={machine.id} /* onClick={handleRowClick(machine.id, machine.site_id)} */>
+            <tr key={machine.id} onClick={
+              () => handleRowClick(machine.id, machine.site_id)} style={{ cursor: 'pointer' }}>
               <td>
                 {machine.id}
               </td>

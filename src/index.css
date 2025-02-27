@@ -155,6 +155,8 @@ button:focus-visible {
   grid-template-areas:
   "side-details machine-details"
   "machine-list machine-details";
+  justify-items: center;
+  align-items: center;
 }
 
 .site-details {
@@ -163,4 +165,9 @@ button:focus-visible {
 
 .machine-list {
   grid-area: machine-list;
+}
+
+.machine-details {
+  grid-area: machine-details;
+
 }
