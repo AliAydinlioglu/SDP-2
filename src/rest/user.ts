@@ -1,11 +1,10 @@
 import { Context } from "koa";
 import userService from "../service/user";
 import Router from "@koa/router";
-import textCodes from "../constants/textCodes";
 import Joi from "joi";
 import validation from "../core/validation";
-import parameters from "../core/parameters";
 import endpoints from "../constants/endpoints";
+import Rol from "../constants/rol";
 
 const getUser = async (ctx: Context) => {
     ctx.body = await userService.find(ctx.user_id);
@@ -14,23 +13,54 @@ const getUser = async (ctx: Context) => {
 
 const updateUser = {
     execute: async (ctx: Context) => {
-        const {voornaam, achternaam, email, password, adres, gsm, actief}
-         = ctx.request.body as { voornaam?: string; achternaam?: string; adres?: string; gsm?: string; actief?: boolean; email?: string; password?: string };
+        const { voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } =
+            ctx.request.body as {
+                voornaam?: string;
+                achternaam?: string;
+                straat?: string;
+                huis_nr?: string;
+                postcode?: string;
+                stad?: string;
+                land?: string;
+                gsm_nr?: string;
+                actief?: boolean;
+                email?: string;
+                password?: string;
+                rol?: Rol;
+            };
 
-        await userService.updateUser(ctx.user_id, { voornaam, achternaam, email, password, adres, gsm, actief  });
+        await userService.updateUser(ctx.user_id, {
+            voornaam,
+            achternaam,
+            email,
+            password,
+            straat,
+            huis_nr,
+            postcode,
+            stad,
+            land,
+            gsm_nr,
+            actief,
+            rol
+        });
 
         ctx.status = 200;
     },
     schema: {
         body: Joi.object({
-          voornaam: Joi.string().optional(),
-          achternaam: Joi.string().optional(),
-          email: Joi.string().email().optional(),
-          password: Joi.string().optional(),
-          adres: Joi.string().optional(),
-          gsm: Joi.string().optional(),
-          actief: Joi.boolean().optional(),
-        }).or("voornaam", "achternaam", "email", "password", "adres", "gsm", "actief"),
+            voornaam: Joi.string().optional(),
+            achternaam: Joi.string().optional(),
+            email: Joi.string().email().optional(),
+            password: Joi.string().optional(),
+            straat: Joi.string().optional(),
+            huis_nr: Joi.string().optional(),
+            postcode: Joi.string().pattern(/^\d{4,5}$/).optional(),
+            stad: Joi.string().optional(),
+            land: Joi.string().optional(),
+            gsm_nr: Joi.string().optional(),
+            actief: Joi.boolean().optional(),
+            rol: Joi.object().optional(),
+        }).or("voornaam", "achternaam", "email", "password", "straat", "huis_nr", "postcode", "stad", "land", "gsm_nr", "actief", "rol"),
     },
 };
 
