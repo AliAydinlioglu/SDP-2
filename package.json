@@ -13,6 +13,7 @@
     "test": "cypress open"
   },
   "dependencies": {
+    "@typescript-eslint/utils": "^8.25.0",
     "axios": "^1.8.1",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",

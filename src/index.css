@@ -63,7 +63,7 @@ button:focus-visible {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
-  
+
 }
 
 .card {
@@ -153,8 +153,8 @@ button:focus-visible {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
-  "side-details machine-details"
-  "machine-list machine-details";
+    "side-details machine-details"
+    "machine-list machine-details";
   justify-items: center;
   align-items: center;
 }
@@ -180,8 +180,16 @@ button:focus-visible {
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.small-table-machines thead{
+.small-table-machines thead {
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+
+/* Meldingen */
+
+.bell-icon {
+  font-size: 1.5rem;
+  margin-right: 10px;
 }

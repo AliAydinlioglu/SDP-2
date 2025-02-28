@@ -143,4 +143,32 @@ const MACHINE_DATA = [
     },
 ];
 
-export { SITE_DATA, MACHINE_DATA };
+const MELDING_DATA = [
+    {
+        id: 1,
+        beschrijving: 'Machine 1 is defect',
+
+    },
+    {
+        id: 2,
+        beschrijving: 'Je bent verplaatstt naar een andere site',
+
+    },
+    {
+        id: 3,
+        beschrijving: 'Machine 4 is terug opgestart',
+
+    },
+    {
+        id: 4,
+        beschrijving: 'Een KPI is overschreden',
+
+    },
+    {
+        id: 5,
+        beschrijving: 'Machine 5 is defect',
+
+    },
+];
+
+export { SITE_DATA, MACHINE_DATA, MELDING_DATA };
