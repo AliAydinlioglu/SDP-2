@@ -23,6 +23,7 @@ model User {
   machines      Machine[]
   onderhoud     Onderhoud[]
   sites         Site[]
+  meldingen     Melding[]
 
   @@map("users")
 }
@@ -70,4 +71,13 @@ model Site {
   machines   Machine[]
 
   @@map("sites")
+}
+
+model Melding {
+  id           Int    @id @default(autoincrement()) @db.UnsignedInt
+  beschrijving String @db.VarChar(200)
+  user_id      Int    @db.UnsignedInt
+  user         User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_melding_user")
+
+  @@map("meldingen")
 }
