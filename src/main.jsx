@@ -8,6 +8,14 @@ import DashBoard from './pages/DashBoard.jsx';
 import Site from './pages/sites/Site.jsx';
 import SitesList from './pages/sites/SitesList.jsx';
 
+import { AuthProvider } from './context/Auth.context.jsx';
+import Login from './pages/Login.jsx';
+import Logout from './pages/Logout.jsx';
+
+import MachineTabelSmall from './components/machines/MachineTabelSmall.jsx';
+import MachineSmallDetail from './components/machines/MachineSmallDetail.jsx';
+import MachinesList from './pages/machines/MachinesList.jsx';
+
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -17,27 +25,55 @@ const router = createBrowserRouter([
         element: <Navigate replace to='/dashboard' />,
       },
       {
-        path: 'dashboard',
+        path: '/dashboard',
         element: <DashBoard />,
       },
       {
-        path: 'sites',
-        element: <SitesList />,
+        path: '/sites',
+        children: [
+          {
+            index: true,
+            element: <SitesList />,
+          },
+          {
+            path: ':id',
+            element: <Site />,
+            children: [
+              {
+                path: 'machines/:machineId',
+                element: <MachineSmallDetail />,
+              },
+            ],
+          },
+        ],
       },
       {
-        path: 'sites/:id',
-        element: <Site />,
+        path: '/machines',
+        children: [
+          {
+            index: true,
+            element: <MachinesList />,
+          },
+          // {
+          //   path: ':id',
+          //   element: <MachineDetail />,
+          // },
+        ],
       },
       {
         path: '*',
         element: <NotFound />,
       },
+      {path: 'login', element: <Login/>},
+      {path: 'logout', element: <Logout/> },
     ],
   },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router}/>
+    </AuthProvider>
   </StrictMode>,
 );
