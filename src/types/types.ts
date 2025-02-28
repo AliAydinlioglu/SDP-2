@@ -1,21 +1,34 @@
+import Rol from "../constants/rol";
+
 type User = {
     id?: number;
-    voornaam: string;     
+    voornaam: string;
     achternaam: string;
     email: string;
     password: string;
-    adres: string;
-    gsm?: string;
+    straat: string;
+    huis_nr: string;
+    postcode: string;
+    stad: string;
+    land: string;
+    gsm_nr?: string;
     actief?: boolean;
-     };
+    rol: Rol;
+};
+
 type PasswordlessUser = {
     id: number;
-    voornaam: string;     
+    voornaam: string;
     achternaam: string;
     email: string;
-    adres: string;
-    gsm?: string;
+    straat: string;
+    huis_nr: string;
+    postcode: string;
+    stad: string;
+    land: string;
+    gsm_nr?: string;
     actief: boolean;
+    rol: Rol;
 };
 
 type DBUser = {
@@ -24,9 +37,14 @@ type DBUser = {
     achternaam: string;
     email: string;
     hashed_password: string;
-    adres: string;
-    gsm?: string | null;
+    straat: string;
+    huis_nr: string;
+    postcode: string;
+    stad: string;
+    land: string;
+    gsm_nr?: string | null;
     actief: boolean;
-     };
+    rol: Rol;
+};
 
-export { User, PasswordlessUser, DBUser };
+export { User, PasswordlessUser, DBUser};

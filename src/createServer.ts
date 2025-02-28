@@ -5,6 +5,7 @@ import config from "config";
 import data from "./data/index";
 import installMiddleware from "./core/installMiddlewares";
 import { installErrorHandler } from "./core/errorHandler";
+import Router from "@koa/router";
 
 const createServer = async () => {
     // LOGGING
@@ -27,7 +28,13 @@ const createServer = async () => {
 
     // KOA
     const koa = new Koa(); // create a new koa app
+    const router = new Router();
     // KOA
+
+    router.get('/', (ctx) => {
+        ctx.status = 200;
+        ctx.body = { message: 'Welkom bij de API!' };
+    });
 
     // CORS
     installMiddleware(koa);
@@ -36,6 +43,9 @@ const createServer = async () => {
     // ERROR HANDLING
     installErrorHandler(koa);
     // ERROR HANDLING
+
+    //Route steken in kao
+    koa.use(router.routes()).use(router.allowedMethods());
 
     // REST
     rest.installRest(koa); // add routes to the koa app

@@ -1,55 +1,86 @@
-import Router from "@koa/router";
-import userService from "../service/user";
 import { Context } from "koa";
+import userService from "../service/user";
+import Router from "@koa/router";
 import Joi from "joi";
 import validation from "../core/validation";
 import endpoints from "../constants/endpoints";
+import Rol from "../constants/rol";
 
-const createUser = {
-    execute: async (ctx: Context) => {
-        const { voornaam, achternaam, email, password, adres, gsm, actief }
-         = ctx.request.body as { voornaam: string; achternaam: string; adres: string; gsm?: string; actief?: boolean; email: string; password: string };
- 
-        let token = await userService.create({ voornaam, achternaam, email, password, adres, gsm, actief });
-        ctx.set("Authorization", `Bearer ${token}`);
-        ctx.status = 201;
-    },
-    schema: {
-        body: Joi.object({
-            voornaam: Joi.string().required(),
-            achternaam: Joi.string().required(),
-            email: Joi.string().email().required(),
-            password: Joi.string().min(8).required(),
-            adres: Joi.string().required(),
-            gsm: Joi.string().optional(),
-            actief: Joi.boolean().optional(),
-        }),
-    },
+const getUser = async (ctx: Context) => {
+    ctx.body = await userService.find(ctx.user_id);
+    ctx.status = 200;
 };
 
-const loginUser = {
+const updateUser = {
     execute: async (ctx: Context) => {
-        const { email, password } = ctx.request.body as { email: string; password: string };
+        const { voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } =
+            ctx.request.body as {
+                voornaam?: string;
+                achternaam?: string;
+                straat?: string;
+                huis_nr?: string;
+                postcode?: string;
+                stad?: string;
+                land?: string;
+                gsm_nr?: string;
+                actief?: boolean;
+                email?: string;
+                password?: string;
+                rol?: Rol;
+            };
 
-        const token = await userService.login({ email, password });
-        ctx.set("Authorization", `Bearer ${token}`);
+        await userService.updateUser(ctx.user_id, {
+            voornaam,
+            achternaam,
+            email,
+            password,
+            straat,
+            huis_nr,
+            postcode,
+            stad,
+            land,
+            gsm_nr,
+            actief,
+            rol
+        });
+
         ctx.status = 200;
     },
     schema: {
         body: Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string().required(),
-        }).required(),
+            voornaam: Joi.string().optional(),
+            achternaam: Joi.string().optional(),
+            email: Joi.string().email().optional(),
+            password: Joi.string().optional(),
+            straat: Joi.string().optional(),
+            huis_nr: Joi.string().optional(),
+            postcode: Joi.string().pattern(/^\d{4,5}$/).optional(),
+            stad: Joi.string().optional(),
+            land: Joi.string().optional(),
+            gsm_nr: Joi.string().optional(),
+            actief: Joi.boolean().optional(),
+            rol: Joi.object().optional(),
+        }).or("voornaam", "achternaam", "email", "password", "straat", "huis_nr", "postcode", "stad", "land", "gsm_nr", "actief", "rol"),
     },
+};
+
+const deleteUser = async (ctx: Context) => {
+    let result = await userService.deleteUser(ctx.user_id);
+
+    ctx.status = 200;
+    ctx.body = { message: "User deleted" };
 };
 
 const installRouter = (parentRouter: Router) => {
     const router = new Router({
-        prefix: "/auth",
+        prefix: endpoints.userPrefix,
     });
 
-    router.post("/register", validation.validateSchema(createUser.schema), createUser.execute); // POST .../api/data/
-    router.post("/login", validation.validateSchema(loginUser.schema), loginUser.execute); // POST .../api/data/
+    router.use(validation.validateSchema(validation.headerAuthorizationSchema));
+
+    router.get(endpoints.userUserEndpoint, getUser);
+    router.put(endpoints.userUserEndpoint, validation.validateSchema(updateUser.schema), updateUser.execute);
+    router.delete(endpoints.userUserEndpoint, deleteUser);
 
     parentRouter.use(router.routes()).use(router.allowedMethods());
 };

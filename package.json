@@ -1,7 +1,7 @@
 {
     "name": "2025-nodejs-gent13",
     "version": "1.0.0",
-    "description": "Application for the course Web Services.",
+    "description": "Backend for the course SDP2.",
     "main": "./out/src/index.js",
     "scripts": {
         "start": "env-cmd ts-node ./src/index.ts --custom-string",
@@ -12,7 +12,7 @@
         "serverJS": "node ./out/src/index.js",
         "serverJSReset": "node ./out/src/index.js --custom-string"
     },
-    "author": "OGUZ AYDINLIOGLU oguz.aydinlioglu@student.hogent.be",
+    "author": "OGUZ AYDINLIOGLU oguz.aydinlioglu@student.hogent.be, ALI AYDINLIOGLU ali.aydinlioglu@student.hogent.be",
     "license": "MIT",
     "private": true,
     "dependencies": {
