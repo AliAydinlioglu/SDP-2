@@ -193,3 +193,23 @@ button:focus-visible {
   font-size: 1.5rem;
   margin-right: 10px;
 }
+
+.dropdown-menu {
+  width: 300px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+
+}
+
+.dropdown-item {
+  padding: 10px;
+
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.dropdown-list {
+  margin: 5px;
+}

@@ -147,27 +147,62 @@ const MELDING_DATA = [
     {
         id: 1,
         beschrijving: 'Machine 1 is defect',
-
+        datum: '2023-10-01',
+        state: 'ongelezen',
     },
     {
         id: 2,
         beschrijving: 'Je bent verplaatstt naar een andere site',
-
+        datum: '2023-10-02',
+        state: 'gelezen',
     },
     {
         id: 3,
         beschrijving: 'Machine 4 is terug opgestart',
-
+        datum: '2023-10-03',
+        state: 'nieuw',
     },
     {
         id: 4,
         beschrijving: 'Een KPI is overschreden',
-
+        datum: '2023-10-04',
+        state: 'ongelezen',
     },
     {
         id: 5,
         beschrijving: 'Machine 5 is defect',
-
+        datum: '2023-10-05',
+        state: 'gelezen',
+    },
+    {
+        id: 6,
+        beschrijving: 'Machine 1 is defect',
+        datum: '2023-10-06',
+        state: 'nieuw',
+    },
+    {
+        id: 7,
+        beschrijving: 'Je bent verplaatstt naar een andere site',
+        datum: '2023-10-07',
+        state: 'ongelezen',
+    },
+    {
+        id: 8,
+        beschrijving: 'Machine 4 is terug opgestart',
+        datum: '2023-10-08',
+        state: 'gelezen',
+    },
+    {
+        id: 9,
+        beschrijving: 'Een KPI is overschreden',
+        datum: '2023-10-09',
+        state: 'nieuw',
+    },
+    {
+        id: 10,
+        beschrijving: 'Machine 5 is defect',
+        datum: '2023-10-10',
+        state: 'ongelezen',
     },
 ];
 
