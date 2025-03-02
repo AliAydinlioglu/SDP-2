@@ -8,8 +8,8 @@ function MachineTabelBig({ machines }) {
   }
 
   return (
-    <div>
-      <table className='table '>
+    <div className="machine-tabel-big-container">
+      <table className='machine-tabel-big'>
         <thead>
           <tr>
             <th>Machine ID</th>
