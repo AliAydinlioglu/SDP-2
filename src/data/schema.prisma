@@ -12,6 +12,7 @@ model User {
   voornaam        String      @db.VarChar(127)
   achternaam      String      @db.VarChar(127)
   email           String      @unique(map: "idx_klant_email_unique") @db.VarChar(255)
+  geboorteDatum   DateTime    @db.Date
   gsm_nr          String?     @db.VarChar(127)
   huis_nr         String      @db.VarChar(10)
   straat          String      @db.VarChar(255)
@@ -30,27 +31,27 @@ model User {
 }
 
 enum Rol {
-    VERANTWOORDELIJKE
-    TECHNIEKER
-    ADMINISTRATOR
-    GEBRUIKER
-    MANAGER
+  VERANTWOORDELIJKE
+  TECHNIEKER
+  ADMINISTRATOR
+  GEBRUIKER
+  MANAGER
 }
 
 model Machine {
-  id                  Int        @id @default(autoincrement()) @db.UnsignedInt
-  site_id             Int        @db.UnsignedInt
-  site                Site       @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_site")
-  locatie             String     @db.VarChar(127)
-  info                String     @db.VarChar(200)
-  status              String     @db.VarChar(127)
-  prod_status         String     @db.VarChar(127)
-  uptime              Int        @db.UnsignedInt
-  technieker_id       Int        @db.UnsignedInt
-  technieker          User       @relation(fields: [technieker_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_user")
-  laatsteOnderhoud    Onderhoud?
-  dagenSindsOnderhoud Int        @db.UnsignedInt
-  volgendOnderhoud    DateTime   @db.Date
+  id                  Int         @id @default(autoincrement()) @db.UnsignedInt
+  site_id             Int         @db.UnsignedInt
+  site                Site        @relation(fields: [site_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_site")
+  locatie             String      @db.VarChar(127)
+  info                String      @db.VarChar(200)
+  status              String      @db.VarChar(127)
+  prod_status         String      @db.VarChar(127)
+  uptime              Int         @db.UnsignedInt
+  technieker_id       Int         @db.UnsignedInt
+  technieker          User        @relation(fields: [technieker_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_machine_user")
+  onderhouden         Onderhoud[]
+  dagenSindsOnderhoud Int         @db.UnsignedInt
+  volgendOnderhoud    DateTime    @db.Date
 
   @@map("machines")
 }
@@ -66,7 +67,7 @@ model Onderhoud {
   rapport       Json
   opmerkingen   String   @db.VarChar(127)
   status        String   @db.VarChar(20)
-  machine_id    Int      @unique @db.UnsignedInt
+  machine_id    Int      @db.UnsignedInt
   Machine       Machine  @relation(fields: [machine_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_onderhoud_machine")
 
   @@map("onderhouden")
@@ -83,10 +84,13 @@ model Site {
 }
 
 model Melding {
-  id           Int    @id @default(autoincrement()) @db.UnsignedInt
-  beschrijving String @db.VarChar(200)
-  user_id      Int    @db.UnsignedInt
-  user         User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_melding_user")
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  beschrijving String   @db.VarChar(200)
+  user_id      Int      @db.UnsignedInt
+  user         User     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_melding_user")
+  status       String   @db.VarChar(30)
+  type         String   @db.VarChar(50)
+  datum        DateTime @db.DateTime
 
   @@map("meldingen")
 }
