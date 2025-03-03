@@ -143,4 +143,112 @@ const MACHINE_DATA = [
     },
 ];
 
-export { SITE_DATA, MACHINE_DATA };
+const MELDING_DATA = [
+    {
+        id: 1,
+        beschrijving: 'Machine 1 is defect',
+        type: 'machine',
+        datum: '2023-10-01',
+        state: 'ongelezen',
+    },
+    {
+        id: 2,
+        beschrijving: 'Je bent verplaatstt naar een andere site',
+        type: 'site',
+        datum: '2023-10-02',
+        state: 'gelezen',
+    },
+    {
+        id: 3,
+        beschrijving: 'Machine 4 is terug opgestart',
+        type: 'machine',
+        datum: '2023-10-03',
+        state: 'nieuw',
+    },
+    {
+        id: 4,
+        beschrijving: 'Een KPI is overschreden',
+        type: 'kpi',
+        datum: '2023-10-04',
+        state: 'ongelezen',
+    },
+    {
+        id: 5,
+        beschrijving: 'Machine 5 is defect',
+        type: 'machine',
+        datum: '2023-10-05',
+        state: 'gelezen',
+    },
+    {
+        id: 6,
+        beschrijving: 'Machine 1 is defect',
+        type: 'machine',
+        datum: '2023-10-06',
+        state: 'nieuw',
+    },
+    {
+        id: 7,
+        beschrijving: 'Je bent verplaatstt naar een andere site',
+        type: 'site',
+        datum: '2023-10-07',
+        state: 'ongelezen',
+    },
+    {
+        id: 8,
+        beschrijving: 'Machine 4 is terug opgestart',
+        type: 'machine',
+        datum: '2023-10-08',
+        state: 'gelezen',
+    },
+    {
+        id: 9,
+        beschrijving: 'Een KPI is overschreden',
+        type: 'kpi',
+        datum: '2023-10-09',
+        state: 'nieuw',
+    },
+    {
+        id: 10,
+        beschrijving: 'Machine 5 is defect',
+        type: 'machine',
+        datum: '2023-10-10',
+        state: 'ongelezen',
+    },
+    {
+        id: 11,
+        beschrijving: 'Machine 1 is defect',
+        type: 'machine',
+        datum: '2023-10-11',
+        state: 'gelezen',
+    },
+    {
+        id: 12,
+        beschrijving: 'Nieuwe software update beschikbaar voor machine 1 die bestaat uit nieuwe onderdelen',
+        type: 'software',
+        datum: '2023-10-12',
+        state: 'nieuw',
+    },
+    {
+        id: 13,
+        beschrijving: 'Machine 2 is terug opgestart',
+        type: 'machine',
+        datum: '2023-10-13',
+        state: 'ongelezen',
+    },
+    {
+        id: 14,
+        beschrijving: 'Onderhoud gepland voor Machine 3',
+        type: 'onderhoud',
+        datum: '2023-10-14',
+        state: 'gelezen',
+    },
+    {
+        id: 15,
+        beschrijving: 'Nieuwe veiligheidsrichtlijnen',
+        type: 'veiligheid',
+        datum: '2023-10-15',
+        state: 'nieuw',
+    },
+];
+
+export { SITE_DATA, MACHINE_DATA, MELDING_DATA };

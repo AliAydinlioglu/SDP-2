@@ -8,7 +8,7 @@ export default function Layout() {
       <NavBar/>
       <Outlet />
       <ScrollRestoration />
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   );
 }
