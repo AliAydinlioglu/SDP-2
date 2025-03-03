@@ -186,7 +186,6 @@ button:focus-visible {
   z-index: 1;
 }
 
-
 /* Meldingen */
 
 .bell-icon {
@@ -266,4 +265,26 @@ button:focus-visible {
 
 .meldingen-table tbody tr:last-of-type {
   border-bottom: 2px solid #d56363;
+}
+/* Big Table Machines */
+.machine-tabel-big-container {
+  margin: 60px 0px;
+  width: 100%;
+}
+
+.machine-tabel-big {
+  width: 100%;
+}
+
+.machine-tabel-big th, .machine-tabel-big td {
+  padding: 10px 100px; /* Adjust padding as needed */
+  text-align: center;
+  border: 1px solid #ddd; /* Add border to table cells */
+}
+
+.machine-tabel-big th {
+  position: sticky;
+  top: 0;
+  background-color: #fff; /* Ensure the background color matches the table */
+  z-index: 1; /* Ensure the header stays on top */
 }
