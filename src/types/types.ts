@@ -1,4 +1,4 @@
-import Rol from "../constants/rol";
+import Rol from "./rol";
 
 type User = {
     id?: number;
@@ -47,4 +47,4 @@ type DBUser = {
     rol: Rol;
 };
 
-export { User, PasswordlessUser, DBUser};
+export { User, PasswordlessUser, DBUser };

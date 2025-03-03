@@ -4,14 +4,12 @@ import jwt from "jsonwebtoken";
 const JWTSECRET: string = config.get("auth.jwt.secret");
 
 const generateJWT = (user_id: number, expiresInSeconds?: number) => {
-    let options = {
-        expiresIn: "",
+    let options: jwt.SignOptions = {
+        expiresIn: "1h"
     };
 
     if (expiresInSeconds !== undefined) {
-        options.expiresIn = `${expiresInSeconds}s`;
-    } else {
-        options.expiresIn = `1h`; // default expiration time is 1 hour.
+        options.expiresIn = expiresInSeconds;
     }
 
     const payload = {

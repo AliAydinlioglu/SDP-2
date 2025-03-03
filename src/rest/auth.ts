@@ -1,86 +1,86 @@
-import { Context } from "koa";
-import userService from "../service/user";
 import Router from "@koa/router";
+import user from "../service/user";
+import { Context } from "koa";
 import Joi from "joi";
 import validation from "../core/validation";
-import endpoints from "../constants/endpoints";
-import Rol from "../constants/rol";
+import Rol from "../types/rol";
 
-const getUser = async (ctx: Context) => {
-    ctx.body = await userService.find(ctx.user_id);
-    ctx.status = 200;
-};
-
-const updateUser = {
+const createUser = {
     execute: async (ctx: Context) => {
-        const { voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } =
-            ctx.request.body as {
-                voornaam?: string;
-                achternaam?: string;
-                straat?: string;
-                huis_nr?: string;
-                postcode?: string;
-                stad?: string;
-                land?: string;
-                gsm_nr?: string;
-                actief?: boolean;
-                email?: string;
-                password?: string;
-                rol?: Rol;
-            };
+        const { voornaam, achternaam, email, password, gsm_nr, huis_nr, straat, stad, postcode, land, rol, actief } = ctx.request.body as {
+            voornaam: string;
+            achternaam: string;
+            email: string;
+            password: string;
+            gsm_nr?: string;
+            huis_nr: string;
+            straat: string;
+            stad: string;
+            postcode: string;
+            land: string;
+            rol?: string;
+            actief?: boolean;
+        };
 
-        await userService.updateUser(ctx.user_id, {
+        let token = await user.create({
             voornaam,
             achternaam,
             email,
             password,
-            straat,
-            huis_nr,
-            postcode,
-            stad,
-            land,
             gsm_nr,
+            huis_nr,
+            straat,
+            stad,
+            postcode,
+            land,
+            rol: rol as Rol,
             actief,
-            rol
         });
 
+        ctx.set("Authorization", `Bearer ${token}`);
         ctx.status = 200;
     },
     schema: {
         body: Joi.object({
-            voornaam: Joi.string().optional(),
-            achternaam: Joi.string().optional(),
-            email: Joi.string().email().optional(),
-            password: Joi.string().optional(),
-            straat: Joi.string().optional(),
-            huis_nr: Joi.string().optional(),
-            postcode: Joi.string().pattern(/^\d{4,5}$/).optional(),
-            stad: Joi.string().optional(),
-            land: Joi.string().optional(),
-            gsm_nr: Joi.string().optional(),
-            actief: Joi.boolean().optional(),
-            rol: Joi.object().optional(),
-        }).or("voornaam", "achternaam", "email", "password", "straat", "huis_nr", "postcode", "stad", "land", "gsm_nr", "actief", "rol"),
+            voornaam: Joi.string().max(127).required(),
+            achternaam: Joi.string().max(127).required(),
+            email: Joi.string().email().max(255).required(),
+            password: Joi.string().min(8).required(),
+            gsm_nr: Joi.string().max(127).optional(),
+            huis_nr: Joi.string().max(10).required(),
+            straat: Joi.string().max(255).required(),
+            stad: Joi.string().max(255).required(),
+            postcode: Joi.string().max(127).required(),
+            land: Joi.string().max(127).required(),
+            rol: Joi.string().valid("ADMIN", "GEBRUIKER", "TECHNIEKER").optional(),
+            actief: Joi.boolean().optional().default(true),
+        }),
     },
 };
 
-const deleteUser = async (ctx: Context) => {
-    let result = await userService.deleteUser(ctx.user_id);
+const loginUser = {
+    execute: async (ctx: Context) => {
+        const { email, password } = ctx.request.body as { email: string; password: string };
 
-    ctx.status = 200;
-    ctx.body = { message: "User deleted" };
+        const token = await user.login({ email, password });
+        ctx.set("Authorization", `Bearer ${token}`);
+        ctx.status = 200;
+    },
+    schema: {
+        body: Joi.object({
+            email: Joi.string().email().required(),
+            password: Joi.string().required(),
+        }).required(),
+    },
 };
 
 const installRouter = (parentRouter: Router) => {
     const router = new Router({
-        prefix: endpoints.userPrefix,
+        prefix: "/auth",
     });
 
-    router.use(validation.validateSchema(validation.headerAuthorizationSchema));
-
-    router.get(endpoints.userUserEndpoint, getUser);
-    router.put(endpoints.userUserEndpoint, validation.validateSchema(updateUser.schema), updateUser.execute);
-    router.delete(endpoints.userUserEndpoint, deleteUser);
+    router.post("/register", validation.validateSchema(createUser.schema), createUser.execute);
+    router.post("/login", validation.validateSchema(loginUser.schema), loginUser.execute);
 
     parentRouter.use(router.routes()).use(router.allowedMethods());
 };
