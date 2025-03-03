@@ -4,7 +4,7 @@ import Router from "@koa/router";
 import Joi from "joi";
 import validation from "../core/validation";
 import endpoints from "../constants/endpoints";
-import Rol from "../constants/rol";
+import Rol from "../types/rol";
 
 const getUser = async (ctx: Context) => {
     ctx.body = await userService.find(ctx.user_id);
@@ -13,21 +13,20 @@ const getUser = async (ctx: Context) => {
 
 const updateUser = {
     execute: async (ctx: Context) => {
-        const { voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } =
-            ctx.request.body as {
-                voornaam?: string;
-                achternaam?: string;
-                straat?: string;
-                huis_nr?: string;
-                postcode?: string;
-                stad?: string;
-                land?: string;
-                gsm_nr?: string;
-                actief?: boolean;
-                email?: string;
-                password?: string;
-                rol?: Rol;
-            };
+        const { voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } = ctx.request.body as {
+            voornaam?: string;
+            achternaam?: string;
+            straat?: string;
+            huis_nr?: string;
+            postcode?: string;
+            stad?: string;
+            land?: string;
+            gsm_nr?: string;
+            actief?: boolean;
+            email?: string;
+            password?: string;
+            rol?: Rol;
+        };
 
         await userService.updateUser(ctx.user_id, {
             voornaam,
@@ -41,7 +40,7 @@ const updateUser = {
             land,
             gsm_nr,
             actief,
-            rol
+            rol,
         });
 
         ctx.status = 200;
@@ -54,7 +53,9 @@ const updateUser = {
             password: Joi.string().optional(),
             straat: Joi.string().optional(),
             huis_nr: Joi.string().optional(),
-            postcode: Joi.string().pattern(/^\d{4,5}$/).optional(),
+            postcode: Joi.string()
+                .pattern(/^\d{4,5}$/)
+                .optional(),
             stad: Joi.string().optional(),
             land: Joi.string().optional(),
             gsm_nr: Joi.string().optional(),

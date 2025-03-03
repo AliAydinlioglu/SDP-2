@@ -44,26 +44,26 @@ describe("/users", () => {
         expect(response.status).toBe(401);
         expect(response.body.message).toEqual(errorCodes.NOJWT);
     });
-    it("GET - JWT - should 200 and return 3 items (id, name and email).", async () => {
+    it("GET - JWT - should 200 and return 3 items (id, voornaam and email).", async () => {
         // Will try to access the user endpoint with a session_id
         const response = await request.get(userUserEndpoint).set({
             Authorization: `Bearer ${jwts[0]}`,
         });
 
         expect(response.status).toBe(200);
-        expect(Object.keys(response.body).length).toBe(3);
+        expect(Object.keys(response.body).length).toBe(12);
 
         let user = response.body;
-        expect(user.id).toStrictEqual(jwtUse.getUserID(jwts[0])); // Solomon Reed
-        expect(user.name).toStrictEqual("Solomon Reed"); // Solomon Reed
-        expect(user.email).toStrictEqual("solomonreed@email.com"); // Solomon Reed
+        expect(user.id).toStrictEqual(jwtUse.getUserID(jwts[0])); // Solomon
+        expect(user.voornaam).toStrictEqual("Solomon"); // Solomon
+        expect(user.email).toStrictEqual("solomonreed@email.com"); // Solomon's email
     });
     describe("PUT", () => {
-        it("PUT - Should only change Solomon Reed's name to Judy Alvarez while keeping the id.", async () => {
+        it("PUT - Should only change Solomon's voornaam to Judy while keeping the id.", async () => {
             let sameId = jwtUse.getUserID(jwts[0]);
-            let name = (await userService.find(sameId))!.name;
+            let voornaam = (await userService.find(sameId))!.voornaam;
 
-            expect(name).toBe("Solomon Reed");
+            expect(voornaam).toBe("Solomon");
 
             const response = await request
                 .put(userUserEndpoint)
@@ -71,20 +71,20 @@ describe("/users", () => {
                     Authorization: `Bearer ${jwts[0]}`,
                 })
                 .send({
-                    name: "Judy Alvarez",
+                    voornaam: "Judy",
                 });
 
             let user = (await userService.find(sameId))!;
 
             expect(response.status).toBe(200);
-            expect(user.name).toBe("Judy Alvarez");
+            expect(user.voornaam).toBe("Judy");
             expect(user.email).toBe("solomonreed@email.com");
         });
-        it("PUT - Should only change Solomon Reed's email to Judy Alvarez while keeping the id.", async () => {
+        it("PUT - Should only change Solomon's email to Judy's email while keeping the id.", async () => {
             let sameId = jwtUse.getUserID(jwts[0]);
-            let name = (await userService.find(sameId))!.name;
+            let voornaam = (await userService.find(sameId))!.voornaam;
 
-            expect(name).toBe("Solomon Reed");
+            expect(voornaam).toBe("Solomon");
 
             const response = await request
                 .put(userUserEndpoint)
@@ -98,14 +98,14 @@ describe("/users", () => {
             let user = (await userService.find(sameId))!;
 
             expect(response.status).toBe(200);
-            expect(user.name).toBe("Solomon Reed");
+            expect(user.voornaam).toBe("Solomon");
             expect(user.email).toBe("judyalvarez@email.com");
         });
-        it("PUT - Should only change Solomon Reed's password to 'Panam Palmer'", async () => {
+        it("PUT - Should only change Solomon's password to 'Panam Palmer'", async () => {
             let sameId = jwtUse.getUserID(jwts[0]);
-            let name = (await userService.find(sameId))!.name;
+            let voornaam = (await userService.find(sameId))!.voornaam;
 
-            expect(name).toBe("Solomon Reed");
+            expect(voornaam).toBe("Solomon");
 
             const response = await request
                 .put(userUserEndpoint)
@@ -119,13 +119,13 @@ describe("/users", () => {
             let user = (await userService.find(sameId))!;
 
             expect(response.status).toBe(200);
-            expect(user.name).toBe("Solomon Reed");
+            expect(user.voornaam).toBe("Solomon");
         });
-        it("PUT - Should error for trying to change email to Rosalinds already existing email.", async () => {
+        it("PUT - Should error for trying to change email to Rosalind's already existing email.", async () => {
             let sameId = jwtUse.getUserID(jwts[0]);
-            let name = (await userService.find(sameId))!.name;
+            let voornaam = (await userService.find(sameId))!.voornaam;
 
-            expect(name).toBe("Solomon Reed");
+            expect(voornaam).toBe("Solomon");
 
             const response = await request
                 .put(userUserEndpoint)
@@ -143,9 +143,9 @@ describe("/users", () => {
         });
         it("PUT - Should throw an error when attempting to change the email to an existing email with different capitalization.", async () => {
             let sameId = jwtUse.getUserID(jwts[0]);
-            let name = (await userService.find(sameId))!.name;
+            let voornaam = (await userService.find(sameId))!.voornaam;
 
-            expect(name).toBe("Solomon Reed");
+            expect(voornaam).toBe("Solomon");
 
             const response = await request
                 .put(userUserEndpoint)
@@ -161,7 +161,7 @@ describe("/users", () => {
             expect(response.status).toBe(405);
             expect(response.body.message).toBe(errorCodes.EMAILALREADYEXISTS);
         });
-        it("PUT - Should throw 400 for trying to change solomon's email adress", async () => {
+        it("PUT - Should throw 400 for trying to change Solomon's email address", async () => {
             let jwt = jwts[0];
             let sameId = jwtUse.getUserID(jwt);
             let user = (await userService.find(sameId))!;
@@ -196,12 +196,12 @@ describe("/users", () => {
         });
     });
     describe("DELETE", () => {
-        it("DELETE - Should delete Solomon Reed' entry.", async () => {
+        it("DELETE - Should delete Solomon's entry.", async () => {
             let initialAmountOfUsers = (await userRepository.FindAll())!;
             let user_id = jwtUse.getUserID(jwts[0]);
-            let name = (await userService.find(user_id))!.name;
+            let voornaam = (await userService.find(user_id))!.voornaam;
 
-            expect(name).toBe("Solomon Reed");
+            expect(voornaam).toBe("Solomon");
 
             const deleteResponse = await request.delete(userUserEndpoint).set({
                 Authorization: `Bearer asdasd.asdasd.asdasd`,

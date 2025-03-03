@@ -40,12 +40,21 @@ afterEach(async () => {
 });
 
 describe("/api/auth/register", () => {
-    it("GET - Register twice - should 200 and create a user in the DB.", async () => {
+    it("GET - Register - should 200 and create a user in the DB.", async () => {
         // Will try to access the user endpoint with a session_id
         const response = await request.post("/api/auth/register").send({
-            name: "Vincent",
+            voornaam: "Vincent",
+            achternaam: "Legend",
             email: "vincent@example.com",
             password: "12345678",
+            straat: "Watson Avenue",
+            huis_nr: "221",
+            stad: "Night City",
+            postcode: "77704",
+            land: "NUSA",
+            gsm_nr: "555-7766",
+            actief: true,
+            rol: "GEBRUIKER",
         });
 
         id = IDFromResponse(response);
@@ -55,9 +64,18 @@ describe("/api/auth/register", () => {
     it("GET - Don't register due to the password being too short", async () => {
         // Will try to access the user endpoint with a session_id
         const response = await request.post("/api/auth/register").send({
-            name: "Vincent",
+            voornaam: "Vincent",
+            achternaam: "Deraad",
             email: "vincent@example.com",
             password: "1234567",
+            straat: "Kabuki Street",
+            huis_nr: "42",
+            stad: "Night City",
+            postcode: "77705",
+            land: "NUSA",
+            gsm_nr: "555-1234",
+            actief: true,
+            rol: "GEBRUIKER",
         });
 
         expect(response.status).toBe(400);
@@ -65,18 +83,36 @@ describe("/api/auth/register", () => {
     });
     it("GET - Register twice -  Attempt to register twice with the same email", async () => {
         let response = await request.post("/api/auth/register").send({
-            name: "Vincent 1",
+            voornaam: "Vincent",
+            achternaam: "First",
             email: "vincent@example.com",
             password: "12345678",
+            straat: "Jig-Jig Street",
+            huis_nr: "101",
+            stad: "Night City",
+            postcode: "77709",
+            land: "NUSA",
+            gsm_nr: "555-8001",
+            actief: true,
+            rol: "GEBRUIKER",
         });
 
         let id1 = IDFromResponse(response);
         ids.push(id1);
 
         let errorResponse = await request.post("/api/auth/register").send({
-            name: "Vincent 2",
+            voornaam: "Vincent",
+            achternaam: "Second",
             email: "vincent@example.com",
             password: "12345678",
+            straat: "Pacifica Boulevard",
+            huis_nr: "202",
+            stad: "Night City",
+            postcode: "77709",
+            land: "NUSA",
+            gsm_nr: "555-8002",
+            actief: true,
+            rol: "GEBRUIKER",
         });
 
         expect(errorResponse.status).toBe(400);
@@ -85,18 +121,36 @@ describe("/api/auth/register", () => {
 
     it("GET - Attempt to register twice with the same email but different character capitalization", async () => {
         let response = await request.post("/api/auth/register").send({
-            name: "Vincent 1",
+            voornaam: "Vincent",
+            achternaam: "Lower",
             email: "vincent@example.com",
             password: "12345678",
+            straat: "Heywood Plaza",
+            huis_nr: "303",
+            stad: "Night City",
+            postcode: "77708",
+            land: "NUSA",
+            gsm_nr: "555-9001",
+            actief: true,
+            rol: "GEBRUIKER",
         });
 
         let id1 = IDFromResponse(response);
         ids.push(id1);
 
         let errorResponse = await request.post("/api/auth/register").send({
-            name: "Vincent 2",
+            voornaam: "Vincent",
+            achternaam: "Upper",
             email: "VINCENT@example.com",
             password: "12345678",
+            straat: "Westbrook Heights",
+            huis_nr: "404",
+            stad: "Night City",
+            postcode: "77707",
+            land: "NUSA",
+            gsm_nr: "555-9002",
+            actief: true,
+            rol: "GEBRUIKER",
         });
 
         expect(errorResponse.status).toBe(400);
@@ -107,9 +161,18 @@ describe("/api/auth/register", () => {
 describe("/api/auth/login", () => {
     it("GET - Should 200 and login to a user in the DB.", async () => {
         await request.post("/api/auth/register").send({
-            name: "Valerie",
+            voornaam: "Valerie",
+            achternaam: "Chrome",
             email: "Valerie@example.com",
             password: "54321",
+            straat: "Arasaka Tower",
+            huis_nr: "777",
+            stad: "Night City",
+            postcode: "77701",
+            land: "NUSA",
+            gsm_nr: "555-3030",
+            actief: true,
+            rol: "ADMIN",
         });
 
         const jwtResponse = await request.post("/api/auth/login").send({

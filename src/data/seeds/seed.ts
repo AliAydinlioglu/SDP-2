@@ -1,5 +1,6 @@
 // src/data/seed.ts
 import { PrismaClient } from "@prisma/client";
+import Rol from "../../types/rol";
 
 const prisma = new PrismaClient();
 
@@ -9,7 +10,7 @@ async function main() {
             {
                 id: 1,
                 email: "geralt@gmail.com",
-                voornaam: "Geralt",       
+                voornaam: "Geralt",
                 achternaam: "van Rivia",
                 hashed_password: "1234",
                 straat: "Kaer Morhen Path",
@@ -19,7 +20,7 @@ async function main() {
                 land: "Kaedwen",
                 gsm_nr: "0123456787",
                 actief: true,
-                rol: { type: "Witcher" } as any,
+                rol: Rol.ADMINISTRATOR,
             },
             {
                 id: 2,
@@ -34,7 +35,7 @@ async function main() {
                 land: "Aedirn",
                 gsm_nr: "0123456789",
                 actief: true,
-                rol: { type: "Sorceress" } as any,
+                rol: Rol.GEBRUIKER,
             },
             {
                 id: 3,
@@ -49,7 +50,7 @@ async function main() {
                 land: "Redania",
                 gsm_nr: "0123456722",
                 actief: true,
-                rol: { type: "Mage" } as any, 
+                rol: Rol.TECHNIEKER,
             },
         ],
     });

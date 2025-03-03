@@ -2,65 +2,41 @@ import argonPassword from "../core/argonPassword";
 import textCodes from "../constants/textCodes";
 import jwtUse from "../core/jwtUse";
 import userRepository from "../repository/user";
-import { PasswordlessUser } from "../types/types";
+import { PasswordlessUser, User } from "../types/types";
 import { ServiceError } from "../core/errorHandler";
-import Rol from "../constants/rol";
 
 // USER
 
 // Register
-const create = async ({
-    voornaam,
-    achternaam,
-    email,
-    password,
-    straat,
-    huis_nr,
-    postcode,
-    stad,
-    land,
-    gsm_nr,
-    actief,
-    rol
-}: {
-    voornaam: string;
-    achternaam: string;
-    email: string;
-    password: string;
-    straat: string;
-    huis_nr: string;
-    postcode: string;
-    stad: string;
-    land: string;
-    gsm_nr?: string;
-    actief?: boolean;
-    rol: Rol;
-}, expiresInSeconds?: number): Promise<string> => {
+// only 1 user can be created at a time.
+const create = async ({ voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol }: User, expiresInSeconds?: number): Promise<string> => {
     if (password.length < 8) {
         throw new ServiceError(textCodes.SHORTPASSWORD, 400);
     }
 
     let result;
     try {
-        result = await userRepository.createItems([{
-            voornaam,
-            achternaam,
-            email,
-            password,
-            straat,
-            huis_nr,
-            postcode,
-            stad,
-            land,
-            gsm_nr,
-            actief,
-            rol
-        }]);
+        result = await userRepository.createItems([
+            {
+                voornaam,
+                achternaam,
+                email,
+                password,
+                straat,
+                huis_nr,
+                postcode,
+                stad,
+                land,
+                gsm_nr,
+                actief,
+                rol,
+            },
+        ]);
     } catch (e) {
         throw new ServiceError(textCodes.DUPLICATE, 400);
     }
 
-    if (!result) {
+    if (result === null || result == undefined) {
         throw new ServiceError(textCodes.INVALIDDATA, 400);
     }
 
@@ -73,42 +49,17 @@ const create = async ({
 const login = async ({ email, password }: { email: string; password: string }): Promise<string> => {
     let result = await userRepository.find("email", email);
 
-    if (!result) {
+    if (result === null) {
+        // user not found
         return textCodes.NOUSERFOUND;
     } else if (await argonPassword.verifyPassword(password, result[0].hashed_password)) {
-        return jwtUse.generateJWT(result[0].id);
+        return jwtUse.generateJWT(result[0].id); // user found and password is correct, return a token.
     } else {
-        return textCodes.WRONGPASSWORD;
+        return textCodes.WRONGPASSWORD; // user found but password is incorrect.
     }
 };
 
-const updateUser = async (user_id: number, {
-    voornaam,
-    achternaam,
-    email,
-    password,
-    straat,
-    huis_nr,
-    postcode,
-    stad,
-    land,
-    gsm_nr,
-    actief,
-    rol
-}: {
-    voornaam?: string;
-    achternaam?: string;
-    email?: string;
-    password?: string;
-    straat?: string;
-    huis_nr?: string;
-    postcode?: string;
-    stad?: string;
-    land?: string;
-    gsm_nr?: string;
-    actief?: boolean;
-    rol?: Rol;
-}): Promise<1 | null> => {
+const updateUser = async (user_id: number, { voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol }: Partial<User>): Promise<1 | null> => {
     try {
         let result = await userRepository.updateItem(user_id, {
             voornaam,
@@ -122,10 +73,10 @@ const updateUser = async (user_id: number, {
             land,
             gsm_nr,
             actief,
-            rol
+            rol,
         });
 
-        if (!result) {
+        if (result === null) {
             throw new ServiceError(textCodes.INVALIDDATA, 404);
         }
 
@@ -138,9 +89,11 @@ const updateUser = async (user_id: number, {
 const find = async (user_id: number): Promise<PasswordlessUser | null> => {
     const result = await userRepository.find("id", user_id);
 
-    if (!result || result.length === 0) return null;
+    if (result === null) {
+        return null;
+    }
 
-    return {
+    let passwordlessUser = {
         id: result[0].id,
         voornaam: result[0].voornaam,
         achternaam: result[0].achternaam,
@@ -150,10 +103,12 @@ const find = async (user_id: number): Promise<PasswordlessUser | null> => {
         postcode: result[0].postcode,
         stad: result[0].stad,
         land: result[0].land,
-        gsm_nr: result[0].gsm_nr || undefined,
+        gsm_nr: result[0].gsm_nr ?? undefined,
         actief: result[0].actief,
-        rol: result[0].rol
+        rol: result[0].rol,
     };
+
+    return passwordlessUser;
 };
 
 const deleteUser = async (user_id: number): Promise<number> => {
@@ -165,7 +120,6 @@ const deleteUser = async (user_id: number): Promise<number> => {
 
     return amountOfUsers;
 };
-
 export default {
     create,
     login,
