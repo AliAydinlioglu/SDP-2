@@ -1,7 +1,13 @@
 import { FaBell } from 'react-icons/fa';
 import { MELDING_DATA } from '../api/mock_data';
+import { useNavigate } from 'react-router';
 
 export default function Meldingen() {
+
+  const navigate = useNavigate();
+  const handleOnClick = () => {
+    navigate('/meldingen');
+  };
 
   const meldingen = MELDING_DATA.slice(-5);
 
@@ -12,11 +18,14 @@ export default function Meldingen() {
       <ul className="dropdown-menu dropdown-menu-end ">
         {meldingen.map((m)=> (
           <li className='dropdown-list' key={m.id}>
-            <a className="dropdown-item text-wrap" href="#">{m.beschrijving}</a>
+            <a className="dropdown-item text-wrap d-flex align-items-center justify-content-between" href="#">
+              {m.beschrijving}
+              {m.state === 'nieuw' && <span className="red-dot"></span>}
+            </a>
           </li>
         ))}
         <li><hr className="dropdown-divider" /></li>
-        <li className="text-center"><button >Alle meldingen</button></li>
+        <li className="text-center"><button onClick={handleOnClick} >Alle meldingen</button></li>
       </ul>
     </div>
   );

@@ -213,3 +213,57 @@ button:focus-visible {
 .dropdown-list {
   margin: 5px;
 }
+
+.red-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  margin-left: 5px;
+}
+
+/* Meldingen Table */
+.meldingen-container {
+  padding: 70px;
+}
+
+.meldingen-container h1 {
+  text-align: left;
+  border-bottom: 2px solid #1f1c1c;
+}
+
+.meldingen-table {
+  width: 1200px;
+  border-collapse: collapse;
+  margin: 20px auto;
+  font-size: 1.2em;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  table-layout: fixed;
+}
+
+.meldingen-table thead tr {
+  background-color: #d56363;
+  color: #ffffff;
+  text-align: center;
+}
+
+.meldingen-table th,
+.meldingen-table td {
+  padding: 12px 15px;
+  border: 1px solid #dddddd;
+  white-space: normal;
+}
+
+.meldingen-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.meldingen-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.meldingen-table tbody tr:last-of-type {
+  border-bottom: 2px solid #d56363;
+}

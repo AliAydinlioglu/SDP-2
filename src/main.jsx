@@ -16,6 +16,8 @@ import MachineTabelSmall from './components/machines/MachineTabelSmall.jsx';
 import MachineSmallDetail from './components/machines/MachineSmallDetail.jsx';
 import MachinesList from './pages/machines/MachinesList.jsx';
 
+import Meldingen from './pages/Meldingen.jsx';
+
 const router = createBrowserRouter([
   {
     element: <Layout />,
@@ -66,6 +68,7 @@ const router = createBrowserRouter([
       },
       {path: 'login', element: <Login/>},
       {path: 'logout', element: <Logout/> },
+      {path: 'meldingen', element: <Meldingen/>}, // moet nog verandert worden naar meldingen van een user
     ],
   },
 ]);
