@@ -1,7 +1,7 @@
 import jwtUse from "../src/core/jwtUse";
 import userService from "../src/service/user";
 import resetDatabase from "../src/data/resetDatabase";
-import Rol from "../src/types/rol";
+import { Rol } from "@prisma/client";
 import data from "../src/data";
 
 // TEST DATA

@@ -4,7 +4,7 @@ import Router from "@koa/router";
 import Joi from "joi";
 import validation from "../core/validation";
 import endpoints from "../constants/endpoints";
-import Rol from "../types/rol";
+import { Rol } from "@prisma/client";
 
 const getUser = async (ctx: Context) => {
     ctx.body = await userService.find(ctx.user_id);

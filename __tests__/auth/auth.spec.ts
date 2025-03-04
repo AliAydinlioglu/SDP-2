@@ -51,7 +51,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-7766",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.ADMINISTRATOR,
         });
 
         id = IDFromResponse(response);
@@ -72,7 +72,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-1234",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.TECHNIEKER,
         });
 
         expect(response.status).toBe(400);
@@ -91,7 +91,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-8001",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.TECHNIEKER,
         });
 
         let id1 = IDFromResponse(response);
@@ -109,7 +109,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-8002",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.TECHNIEKER,
         });
 
         expect(errorResponse.status).toBe(400);
@@ -129,7 +129,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-9001",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.GEBRUIKER,
         });
 
         let id1 = IDFromResponse(response);
@@ -147,7 +147,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-9002",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.GEBRUIKER,
         });
 
         expect(errorResponse.status).toBe(400);
