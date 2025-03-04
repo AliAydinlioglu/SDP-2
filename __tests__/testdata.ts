@@ -1,8 +1,8 @@
 import jwtUse from "../src/core/jwtUse";
 import userService from "../src/service/user";
-import userRepository from "../src/repository/user";
 import resetDatabase from "../src/data/resetDatabase";
-import Rol from "../src/types/rol";
+import { Rol } from "@prisma/client";
+import data from "../src/data";
 
 // TEST DATA
 
@@ -69,10 +69,7 @@ const testData = async () => {
     const deleteTestData = async () => {
         await resetDatabase();
         // deleting users will delete everything else due to foreign key constraints.
-        for (let jwt of jwts) {
-            let id = jwtUse.getUserID(jwt);
-            await userRepository.deleteItems("id", id);
-        }
+        data.prisma.user.deleteMany();
     };
 
     return { createTestData, deleteTestData, getJWTs };

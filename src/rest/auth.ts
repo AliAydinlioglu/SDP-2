@@ -3,7 +3,7 @@ import user from "../service/user";
 import { Context } from "koa";
 import Joi from "joi";
 import validation from "../core/validation";
-import Rol from "../types/rol";
+import {Rol} from "@prisma/client";
 
 const createUser = {
     execute: async (ctx: Context) => {
@@ -52,7 +52,7 @@ const createUser = {
             stad: Joi.string().max(255).required(),
             postcode: Joi.string().max(127).required(),
             land: Joi.string().max(127).required(),
-            rol: Joi.string().valid("ADMIN", "GEBRUIKER", "TECHNIEKER").optional(),
+            rol: Joi.string().valid(...Object.values(Rol)).optional(),
             actief: Joi.boolean().optional().default(true),
         }),
     },

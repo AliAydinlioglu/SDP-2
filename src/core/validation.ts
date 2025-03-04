@@ -1,10 +1,10 @@
 import Joi from "joi";
 import { Context, Next } from "koa";
-import userRepository from "../repository/user";
 import jwtUse from "./jwtUse";
 import textCodes from "../constants/textCodes";
 import parameters from "./parameters";
 import { ServiceError } from "./errorHandler";
+import data from "../data";
 
 interface Schema {
     headers?: Joi.StringSchema<string>;
@@ -32,9 +32,9 @@ const validateSchema = (...schemas: Schema[]) => {
 
                     let user_id = jwtUse.getUserID(token);
 
-                    if (!user_id) {
+                    if (user_id == false) {
                         throw new ServiceError(textCodes.INVALIDJWT, 401);
-                    } else if (!(await userRepository.find("id", user_id))) {
+                    } else if (!(await data.prisma.user.findUnique({ where: { id: user_id } }))) {
                         throw new ServiceError(textCodes.USERMISSING, 401);
                     } else {
                         ctx.user_id = user_id;

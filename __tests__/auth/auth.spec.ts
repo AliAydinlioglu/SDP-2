@@ -2,11 +2,12 @@ import supertest from "supertest";
 import createServer from "../../src/createServer";
 import Koa from "koa";
 import jwtUse from "../../src/core/jwtUse";
-import userRepository from "../../src/repository/user";
 import userService from "../../src/service/user";
 import textCodes from "../../src/constants/textCodes";
+import { Rol } from "@prisma/client";
+import data from "../../src/data";
 
-const IDFromResponse = (response: supertest.Response) => {
+const IDFromResponse = (response: supertest.Response): number => {
     return jwtUse.getUserID(response.headers.authorization.split(" ")[1]);
 };
 
@@ -32,11 +33,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-    await userRepository.deleteItems("id", id);
-
-    for (let id of ids) {
-        await userRepository.deleteItems("id", id);
-    }
+    await data.prisma.user.deleteMany();
 });
 
 describe("/api/auth/register", () => {
@@ -54,7 +51,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-7766",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.ADMINISTRATOR,
         });
 
         id = IDFromResponse(response);
@@ -75,7 +72,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-1234",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.TECHNIEKER,
         });
 
         expect(response.status).toBe(400);
@@ -94,7 +91,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-8001",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.TECHNIEKER,
         });
 
         let id1 = IDFromResponse(response);
@@ -112,7 +109,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-8002",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.TECHNIEKER,
         });
 
         expect(errorResponse.status).toBe(400);
@@ -132,7 +129,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-9001",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.GEBRUIKER,
         });
 
         let id1 = IDFromResponse(response);
@@ -150,7 +147,7 @@ describe("/api/auth/register", () => {
             land: "NUSA",
             gsm_nr: "555-9002",
             actief: true,
-            rol: "GEBRUIKER",
+            rol: Rol.GEBRUIKER,
         });
 
         expect(errorResponse.status).toBe(400);
@@ -160,11 +157,12 @@ describe("/api/auth/register", () => {
 
 describe("/api/auth/login", () => {
     it("GET - Should 200 and login to a user in the DB.", async () => {
-        await request.post("/api/auth/register").send({
+        // Will try to access the user endpoint with a session_id
+        const response = await request.post("/api/auth/register").send({
             voornaam: "Valerie",
             achternaam: "Chrome",
             email: "Valerie@example.com",
-            password: "54321",
+            password: "12345678910",
             straat: "Arasaka Tower",
             huis_nr: "777",
             stad: "Night City",
@@ -172,12 +170,16 @@ describe("/api/auth/login", () => {
             land: "NUSA",
             gsm_nr: "555-3030",
             actief: true,
-            rol: "ADMIN",
+            rol: Rol.TECHNIEKER,
         });
+
+        id = IDFromResponse(response);
+        expect(response.status).toBe(200);
+        expect(userService.find(id)).not.toBeNull();
 
         const jwtResponse = await request.post("/api/auth/login").send({
             email: "Valerie@example.com",
-            password: "54321",
+            password: "12345678910",
         });
 
         expect(jwtResponse.status).toBe(200);

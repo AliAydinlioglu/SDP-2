@@ -1,4 +1,4 @@
-import Rol from "./rol";
+import { Rol } from "@prisma/client";
 
 type User = {
     id?: number;
