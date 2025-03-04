@@ -1,11 +1,13 @@
 import config from "config";
 import jwt from "jsonwebtoken";
+import { ServiceError } from "./errorHandler";
+import textCodes from "../constants/textCodes";
 
 const JWTSECRET: string = config.get("auth.jwt.secret");
 
 const generateJWT = (user_id: number, expiresInSeconds?: number) => {
     let options: jwt.SignOptions = {
-        expiresIn: "1h"
+        expiresIn: "1h",
     };
 
     if (expiresInSeconds !== undefined) {
@@ -38,7 +40,7 @@ const getUserID = (jwtToken: string) => {
     const decoded = decodeVerifyJWT(jwtToken); // decoding = verifying
 
     if (typeof decoded === "string" || decoded === false) {
-        return false;
+        throw new ServiceError(textCodes.INVALIDJWT, 401);
     } else {
         return decoded.user_id;
     }

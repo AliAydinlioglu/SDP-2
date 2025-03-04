@@ -1,11 +1,8 @@
 import supertest from "supertest";
 import createServer from "../../src/createServer";
 import Koa from "koa";
-import userService from "../../src/service/user";
-import jwtUse from "../../src/core/jwtUse";
-import userRepository from "../../src/repository/user";
-import errorCodes from "../../src/constants/textCodes";
 import testData from "../testdata";
+import data from "../../src/data/index";
 // TEST DATA
 
 // TESTS
@@ -34,9 +31,9 @@ afterAll(async () => {
 });
 
 it("Shoul delete everything in the database (deleting user will delete folders and cards)", async () => {
-    await userRepository.deleteItems();
+    await data.prisma.user.deleteMany();
 
-    const result = await userRepository.FindAll();
+    const result = await data.prisma.user.findMany();
 
     expect(result.length).toBe(0);
 });

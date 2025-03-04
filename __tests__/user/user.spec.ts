@@ -3,10 +3,10 @@ import createServer from "../../src/createServer";
 import Koa from "koa";
 import userService from "../../src/service/user";
 import jwtUse from "../../src/core/jwtUse";
-import userRepository from "../../src/repository/user";
 import errorCodes from "../../src/constants/textCodes";
 import testData from "../testdata";
 import endpoints from "../../src/constants/endpoints";
+import data from "../../src/data/index";
 // TEST DATA
 
 // TESTS
@@ -197,7 +197,7 @@ describe("/users", () => {
     });
     describe("DELETE", () => {
         it("DELETE - Should delete Solomon's entry.", async () => {
-            let initialAmountOfUsers = (await userRepository.FindAll())!;
+            let initialAmountOfUsers = (await data.prisma.user.findMany())!;
             let user_id = jwtUse.getUserID(jwts[0]);
             let voornaam = (await userService.find(user_id))!.voornaam;
 
@@ -213,7 +213,7 @@ describe("/users", () => {
                 Authorization: `Bearer ${jwts[0]}`,
             });
 
-            let finalAmountOfUsers = await userRepository.FindAll();
+            let finalAmountOfUsers = await data.prisma.user.findMany();
 
             expect(initialAmountOfUsers.length - finalAmountOfUsers.length).toBe(1);
 
