@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const MachineRow = ({ id, site_id, status, prod_status }) => {
   const navigate = useNavigate();

@@ -12,9 +12,9 @@ import { AuthProvider } from './context/Auth.context.jsx';
 import Login from './pages/Login.jsx';
 import Logout from './pages/Logout.jsx';
 
-import MachineTabelSmall from './components/machines/MachineTabelSmall.jsx';
 import MachineSmallDetail from './components/machines/MachineSmallDetail.jsx';
 import MachinesList from './pages/machines/MachinesList.jsx';
+import MachineDetailBig from './pages/machines/MachineDetailBig.jsx';
 
 import Meldingen from './pages/Meldingen.jsx';
 
@@ -56,10 +56,10 @@ const router = createBrowserRouter([
             index: true,
             element: <MachinesList />,
           },
-          // {
-          //   path: ':id',
-          //   element: <MachineDetail />,
-          // },
+          {
+            path: ':id',
+            element: <MachineDetailBig />,
+          },
         ],
       },
       {
