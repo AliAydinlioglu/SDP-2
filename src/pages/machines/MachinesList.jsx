@@ -7,6 +7,8 @@ const MachinesList = () => {
   const [sortOrderId, setSortOrderId] = useState('desc');
   const [sortOrderSiteId, setSortOrderSiteId] = useState('asc');
   const [text, setText] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
+  const [productionStateFilter, setProductionStateFilter] = useState('');
 
   const sortMachinesByProp = (prop) => {
     let sortOrder, setSortOrder;
@@ -31,10 +33,16 @@ const MachinesList = () => {
 
   useEffect(() => {
     const filteredMachines = MACHINE_DATA.filter((m) => {
-      return m.id.toString().includes(text.toLowerCase());
+      console.log(m.status);
+      
+      return (
+        m.id.toString().includes(text.toLowerCase()) &&
+        (stateFilter === '' || m.state === stateFilter) &&
+        (productionStateFilter === '' || m.prod_state === productionStateFilter)
+      );
     });
     setMachines(filteredMachines);
-  }, [text]);
+  }, [text, stateFilter, productionStateFilter]);
 
   return (
     <div className='machine-tabel-big-container'>
@@ -42,11 +50,30 @@ const MachinesList = () => {
         <input
           type='search'
           id='search'
-          className='form-control rounded'
+          className='search-bar'
           placeholder='Search'
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
+        <select
+          value={stateFilter}
+          onChange={(e) => setStateFilter(e.target.value)}
+          className='states'
+        >
+          <option value=''>All States</option>
+          <option value='active'>Active</option>
+          <option value='inactive'>Inactive</option>
+        </select>
+        <select
+          value={productionStateFilter}
+          onChange={(e) => setProductionStateFilter(e.target.value)}
+          className='production-states'
+        >
+          <option value=''>All Production States</option>
+          <option value='running'>Running</option>
+          <option value='idle'>Idle</option>
+          <option value='maintenance'>Maintenance</option>
+        </select>
       </div>
       <MachineTabelBig machines={machines} sortMachines={sortMachinesByProp} />
     </div>
