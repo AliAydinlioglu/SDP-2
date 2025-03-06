@@ -1,6 +1,8 @@
-import MachineRow from "./MachineRow";
+import MachineRow from './MachineRow';
+import { FaSort } from 'react-icons/fa';
 
-function MachineTabelBig({ machines }) {
+function MachineTabelBig({ machines, sortMachines }) {
+  
   if (machines.length === 0) {
     return (
       <div className="alert alert-info">There are no machines available.</div>
@@ -12,8 +14,8 @@ function MachineTabelBig({ machines }) {
       <table className='machine-tabel-big'>
         <thead>
           <tr>
-            <th>Machine ID</th>
-            <th>Site ID</th>
+            <th onClick={() => sortMachines('id')} style={{ cursor: 'pointer' }}>Machine ID <FaSort /></th>
+            <th onClick={() => sortMachines('site_id')} style={{ cursor: 'pointer' }}>Site ID <FaSort /></th>
             <th>State</th>
             <th>Production State</th>
           </tr>

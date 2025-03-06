@@ -11,7 +11,7 @@ export default function SiteCards({ sites }) {
   }
 
   return (
-    <div className="flex-container">
+    <div className="site-cards-container">
       {sites.map((site) => {
         const machineCount = MACHINE_DATA.filter((machine) => machine.site_id === site.id).length;
         return (

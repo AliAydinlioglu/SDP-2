@@ -5,7 +5,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,12 +23,7 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  margin: 10px;
   text-align: center;
 }
 
@@ -145,6 +139,20 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+/* Sites List */
+.site-search-bar {
+  width: 50%;
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.site-cards-container {
+  display: flex;
+  justify-content: center;
 }
 
 /* Site Grid Layout */
@@ -267,24 +275,39 @@ button:focus-visible {
   border-bottom: 2px solid #d56363;
 }
 /* Big Table Machines */
-.machine-tabel-big-container {
-  margin: 60px 0px;
-  width: 100%;
-}
-
 .machine-tabel-big {
-  width: 100%;
+  align-self: center;
+  margin: auto;
 }
 
 .machine-tabel-big th, .machine-tabel-big td {
-  padding: 10px 100px; /* Adjust padding as needed */
+  padding: 10px 100px;
   text-align: center;
-  border: 1px solid #ddd; /* Add border to table cells */
+  border: 1px solid #ddd;
 }
 
-.machine-tabel-big th {
-  position: sticky;
-  top: 0;
-  background-color: #fff; /* Ensure the background color matches the table */
-  z-index: 1; /* Ensure the header stays on top */
+/* Search And Filter */
+.input-group {
+  margin: 70px auto 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.search-bar {
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 200px;
+  background-color: #fff;
+}
+
+.states, .production-states {
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
 }
