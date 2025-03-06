@@ -5,7 +5,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,12 +23,7 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  margin: 10px;
   text-align: center;
 }
 
@@ -145,6 +139,20 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+/* Sites List */
+.site-search-bar {
+  width: 50%;
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.site-cards-container {
+  display: flex;
+  justify-content: center;
 }
 
 /* Site Grid Layout */
@@ -267,8 +275,9 @@ button:focus-visible {
   border-bottom: 2px solid #d56363;
 }
 /* Big Table Machines */
-.machine-tabel-big-container {
-  margin: 10px 0px;
+.machine-tabel-big {
+  align-self: center;
+  margin: auto;
 }
 
 .machine-tabel-big th, .machine-tabel-big td {
@@ -277,12 +286,11 @@ button:focus-visible {
   border: 1px solid #ddd;
 }
 
-/* Sites List */
+/* Search And Filter */
 .input-group {
-  margin-top: 70px;
-  margin-bottom: 20px;
+  margin: 70px auto 20px;
   display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 10px;
 }
 

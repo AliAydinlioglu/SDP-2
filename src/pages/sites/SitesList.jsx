@@ -19,7 +19,7 @@ const SitesList = () => {
         <input
           type='search'
           id='search'
-          className='form-control rounded'
+          className='site-search-bar'
           placeholder='Search'
           value={text}
           onChange={(e) => setText(e.target.value)}
