@@ -268,50 +268,17 @@ button:focus-visible {
 }
 /* Big Table Machines */
 .machine-tabel-big-container {
-  margin: 70px 0px;
-  width: 100%;
-}
-
-.machine-tabel-big {
-  width: 100%;
+  margin: 10px 0px;
 }
 
 .machine-tabel-big th, .machine-tabel-big td {
-  padding: 10px 100px; /* Adjust padding as needed */
+  padding: 10px 100px;
   text-align: center;
-  border: 1px solid #ddd; /* Add border to table cells */
+  border: 1px solid #ddd;
 }
 
-.machine-tabel-big th {
-  position: sticky;
-  top: 0;
-  background-color: #fff; /* Ensure the background color matches the table */
-  z-index: 1; /* Ensure the header stays on top */
-}
-
-.sites-list-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 20px;
-}
-
+/* Sites List */
 .input-group {
+  margin-top: 70px;
   margin-bottom: 20px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.sites-cards-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }

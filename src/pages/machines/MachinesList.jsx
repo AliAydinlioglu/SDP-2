@@ -4,7 +4,30 @@ import MachineTabelBig from '../../components/machines/MachineTabelBig';
 
 const MachinesList = () => {
   const [machines, setMachines] = useState(MACHINE_DATA);
+  const [sortOrderId, setSortOrderId] = useState('desc');
+  const [sortOrderSiteId, setSortOrderSiteId] = useState('asc');
   const [text, setText] = useState('');
+
+  const sortMachinesByProp = (prop) => {
+    let sortOrder, setSortOrder;
+    if (prop === 'id') {
+      sortOrder = sortOrderId;
+      setSortOrder = setSortOrderId;
+    } else if (prop === 'site_id') {
+      sortOrder = sortOrderSiteId;
+      setSortOrder = setSortOrderSiteId;
+    }
+
+    const sortedMachines = [...machines].sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a[prop] - b[prop];
+      } else {
+        return b[prop] - a[prop];
+      }
+    });
+    setMachines(sortedMachines);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
 
   useEffect(() => {
     const filteredMachines = MACHINE_DATA.filter((m) => {
@@ -25,7 +48,7 @@ const MachinesList = () => {
           onChange={(e) => setText(e.target.value)}
         />
       </div>
-      <MachineTabelBig machines={machines}/>
+      <MachineTabelBig machines={machines} sortMachines={sortMachinesByProp} />
     </div>
   );
 };
