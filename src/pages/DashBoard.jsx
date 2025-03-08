@@ -3,44 +3,104 @@ import { useState, useEffect } from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import Chart from '../components/KPI/Chart';
-import { BsPencilSquare } from 'react-icons/bs';
+import { BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { KPI_DATA } from '../api/mock_data';
 
 export default function DashBoard() {
+  const [isEditable, setIsEditable] = useState(false);
+  const [selectedKpi, setSelectedKpi] = useState('');
 
-  const [isEditable, setIsEditable] = useState(true);
-
-  const [layout, setLayout] = useState(
-    JSON.parse(localStorage.getItem('dashboardLayout')) || [
-      { i: '1', x: 0, y: 0, w: 2, h: 2,  static: true },
-      { i: '2', x: 2, y: 0, w: 2, h: 2, static: true },
-    ],
+  // Keep track of KPIs on the dashboard
+  const [kpiList, setKpiList] = useState(
+    JSON.parse(localStorage.getItem('kpiList')) || KPI_DATA,
   );
 
+  // Keep track of the layout
+  const [layout, setLayout] = useState(
+    JSON.parse(localStorage.getItem('dashboardLayout')) ||
+      KPI_DATA.filter((kpi) => kpi.onDashboard).map((kpi, index) => ({
+        i: kpi.id.toString(),
+        x: (index % 6) * 2,
+        y: Math.floor(index / 6) * 2,
+        w: 2,
+        h: 2,
+        static: false,
+      })),
+  );
+
+  // Save changes to localStorage
   useEffect(() => {
     localStorage.setItem('dashboardLayout', JSON.stringify(layout));
-  }, [layout]);
+    localStorage.setItem('kpiList', JSON.stringify(kpiList));
+  }, [layout, kpiList]);
 
-  const onLayoutChange = (newLayout) => {
-    setLayout(newLayout);
+  // Handle KPI selection
+  const handleKpiSelect = (e) => {
+    const kpiId = e.target.value;
+    if (!kpiId) return;
+
+    setKpiList((prevKpis) =>
+      prevKpis.map((kpi) =>
+        kpi.id.toString() === kpiId ? { ...kpi, onDashboard: true } : kpi,
+      ),
+    );
+
+    const newKpi = KPI_DATA.find((kpi) => kpi.id.toString() === kpiId);
+
+    // Find the first empty spot
+    const occupiedPositions = layout.map((item) => ({ x: item.x, y: item.y }));
+    let x = 0, y = 0;
+    while (occupiedPositions.some((pos) => pos.x === x && pos.y === y)) {
+      x += 2;
+      if (x >= 6) {
+        x = 0;
+        y += 2;
+      }
+    }
+
+    const newLayoutItem = {
+      i: newKpi.id.toString(),
+      x: x,
+      y: y,
+      w: 2,
+      h: 2,
+      static: false,
+    };
+
+    setLayout([...layout, newLayoutItem]);
+    setSelectedKpi('');
   };
 
-  const data = [
-    { name: 'Jan', uv: 400, pv: 2400, amt: 2400 },
-    { name: 'Feb', uv: 300, pv: 1398, amt: 2210 },
-    { name: 'Mar', uv: 200, pv: 9800, amt: 2290 },
-    { name: 'Apr', uv: 278, pv: 3908, amt: 2000 },
-    { name: 'May', uv: 189, pv: 4800, amt: 2181 },
-    { name: 'Jun', uv: 239, pv: 3800, amt: 2500 },
-    { name: 'Jul', uv: 349, pv: 4300, amt: 2100 },
-  ];
+  // Handle KPI removal
+  const handleRemoveKpi = (kpiId) => {
+    setKpiList((prevKpis) =>
+      prevKpis.map((kpi) =>
+        kpi.id.toString() === kpiId ? { ...kpi, onDashboard: false } : kpi,
+      ),
+    );
+
+    setLayout((prevLayout) =>
+      prevLayout.filter((item) => item.i !== kpiId.toString()), // Ensure comparison is correct
+    );
+  };
 
   return (
     <div className="dashboard">
-      <div className='dashboard-header'>
+      <div className="dashboard-header">
         <h1>Dashboard</h1>
         <button className="edit-button" onClick={() => setIsEditable(!isEditable)}>
-          <BsPencilSquare className="edit-icon"/>
+          <BsPencilSquare className="edit-icon" />
         </button>
+        {isEditable && (
+          <select className="form-select" value={selectedKpi} onChange={handleKpiSelect}>
+            <option value="">Select KPI</option>
+            {kpiList.filter((kpi) => !kpi.onDashboard).map((kpi) => (
+              <option key={kpi.id} value={kpi.id}>
+                {kpi.title}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
       <div className="border-container">
         <GridLayout
@@ -51,20 +111,27 @@ export default function DashBoard() {
           width={1370}
           margin={[10, 10]}
           isResizable={false}
+          isDraggable={isEditable}
           draggableHandle=".handle"
-          onLayoutChange={onLayoutChange}
+          onLayoutChange={(newLayout) => setLayout(newLayout)}
         >
-          <div key="1" className="widget handle">
-            <Chart data={data} title={'Fake Graph'} type={'line'}/>
-          </div>
-          <div key="2" className="widget handle">
-            <Chart data={data} title={'Fake Marph'} type={'bar'}/>
-
-          </div>
-          <div key="3" className="widget">
-            <div className="handle">Drag Me</div>
-            Widget 3
-          </div>
+          {kpiList
+            .filter((kpi) => kpi.onDashboard)
+            .map((kpi) => (
+              <div key={kpi.id} className="widget">
+                {isEditable && (
+                  <button
+                    className="remove-button"
+                    onClick={() => handleRemoveKpi(kpi.id.toString())}
+                  >
+                    <BsTrash className="remove-icon" />
+                  </button>
+                )}
+                <div className="handle">
+                  <Chart data={kpi.data} title={kpi.title} type={kpi.type} />
+                </div>
+              </div>
+            ))}
         </GridLayout>
       </div>
     </div>

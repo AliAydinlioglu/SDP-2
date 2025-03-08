@@ -1,4 +1,4 @@
-import { LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer,
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 
 export default function Chart({data=[], type, title}) {
@@ -14,13 +14,18 @@ export default function Chart({data=[], type, title}) {
             <YAxis />
             <Tooltip />
           </LineChart>
-        ) : (
+        ) : type === 'bar' ? (
           <BarChart data={data}>
             <Bar dataKey="uv" fill="#8884d8" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
           </BarChart>
+        ) : (
+          <PieChart>
+            <Pie data={data} dataKey="uv" nameKey="name" fill="#8884d8" label />
+            <Tooltip />
+          </PieChart>
         )}
       </ResponsiveContainer>
     </>
