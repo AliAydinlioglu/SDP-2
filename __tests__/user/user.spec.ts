@@ -51,7 +51,7 @@ describe("/users", () => {
         });
 
         expect(response.status).toBe(200);
-        expect(Object.keys(response.body).length).toBe(12);
+        expect(Object.keys(response.body).length).toBe(13);
 
         let user = response.body;
         expect(user.id).toStrictEqual(jwtUse.getUserID(jwts[0])); // Solomon

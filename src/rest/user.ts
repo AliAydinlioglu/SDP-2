@@ -13,11 +13,12 @@ const getUser = async (ctx: Context) => {
 
 const updateUser = {
     execute: async (ctx: Context) => {
-        const { voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } = ctx.request.body as {
+        const { voornaam, achternaam, email, password, geboorteDatum, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } = ctx.request.body as {
             voornaam?: string;
             achternaam?: string;
             straat?: string;
             huis_nr?: string;
+            geboorteDatum?: Date;
             postcode?: string;
             stad?: string;
             land?: string;
@@ -35,6 +36,7 @@ const updateUser = {
             password,
             straat,
             huis_nr,
+            geboorteDatum,
             postcode,
             stad,
             land,
@@ -53,6 +55,7 @@ const updateUser = {
             password: Joi.string().optional(),
             straat: Joi.string().optional(),
             huis_nr: Joi.string().optional(),
+            geboorteDatum: Joi.date().optional(),
             postcode: Joi.string()
                 .pattern(/^\d{4,5}$/)
                 .optional(),

@@ -8,6 +8,7 @@ type User = {
     password: string;
     straat: string;
     huis_nr: string;
+    geboorteDatum: Date;
     postcode: string;
     stad: string;
     land: string;
@@ -23,6 +24,7 @@ type PasswordlessUser = {
     email: string;
     straat: string;
     huis_nr: string;
+    geboorteDatum: Date;
     postcode: string;
     stad: string;
     land: string;
@@ -39,6 +41,7 @@ type DBUser = {
     hashed_password: string;
     straat: string;
     huis_nr: string;
+    geboorteDatum: Date;
     postcode: string;
     stad: string;
     land: string;

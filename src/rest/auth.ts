@@ -3,16 +3,17 @@ import user from "../service/user";
 import { Context } from "koa";
 import Joi from "joi";
 import validation from "../core/validation";
-import {Rol} from "@prisma/client";
+import { Rol } from "@prisma/client";
 
 const createUser = {
     execute: async (ctx: Context) => {
-        const { voornaam, achternaam, email, password, gsm_nr, huis_nr, straat, stad, postcode, land, rol, actief } = ctx.request.body as {
+        const { voornaam, achternaam, email, password, geboorteDatum, gsm_nr, huis_nr, straat, stad, postcode, land, rol, actief } = ctx.request.body as {
             voornaam: string;
             achternaam: string;
             email: string;
             password: string;
             gsm_nr?: string;
+            geboorteDatum: Date;
             huis_nr: string;
             straat: string;
             stad: string;
@@ -29,6 +30,7 @@ const createUser = {
             password,
             gsm_nr,
             huis_nr,
+            geboorteDatum,
             straat,
             stad,
             postcode,
@@ -48,6 +50,7 @@ const createUser = {
             password: Joi.string().min(8).required(),
             gsm_nr: Joi.string().max(127).optional(),
             huis_nr: Joi.string().max(10).required(),
+            geboorteDatum: Joi.date().required(),
             straat: Joi.string().max(255).required(),
             stad: Joi.string().max(255).required(),
             postcode: Joi.string().max(127).required(),
