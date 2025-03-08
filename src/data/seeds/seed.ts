@@ -1,13 +1,13 @@
 // src/data/seed.ts
 import { PrismaClient } from "@prisma/client";
 import { Rol } from "@prisma/client";
-import { hashPassword } from "../../core/argonPassword";
+import argonPassword from "../../core/argonPassword";
 
 const prisma = new PrismaClient();
 
 async function main() {
 
-    const password = await hashPassword('12345678');
+    const password = await argonPassword.hashPassword('12345678');
 
     await prisma.user.createMany({
         data: [

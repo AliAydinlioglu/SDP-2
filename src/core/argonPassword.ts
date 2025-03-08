@@ -7,7 +7,7 @@ const ARGON_HASH_LENGTH: number = config.get("auth.argon.hashLength");
 const ARGON_TIME_COST: number = config.get("auth.argon.timeCost");
 const ARGON_MEMORY_COST: number = config.get("auth.argon.memoryCost");
 
-export const hashPassword = async (password: string) => {
+const hashPassword = async (password: string) => {
     const passwordHash = await argon2.hash(password, {
         type: argon2.argon2id,
         saltLength: ARGON_SALT_LENGTH,
@@ -19,7 +19,7 @@ export const hashPassword = async (password: string) => {
     return passwordHash;
 };
 
-export const verifyPassword = async (password: string, passwordHash: string) => {
+const verifyPassword = async (password: string, passwordHash: string) => {
     try {
         const check = await argon2.verify(passwordHash, password, {
             type: argon2.argon2id,
@@ -34,4 +34,9 @@ export const verifyPassword = async (password: string, passwordHash: string) => 
         logging.getLogger().error(err);
         return false;
     }
+};
+
+export default {
+    hashPassword,
+    verifyPassword,
 };

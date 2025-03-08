@@ -9,7 +9,7 @@ import data from "../data/index";
 
 // Register
 // only 1 user can be created at a time.
-const create = async ({ voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol }: User, expiresInSeconds?: number): Promise<string> => {
+const create = async ({ voornaam, achternaam, email, password, geboorteDatum, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol }: User, expiresInSeconds?: number): Promise<string> => {
     if (password.length < 8) {
         throw new ServiceError(textCodes.SHORTPASSWORD, 400);
     }
@@ -25,6 +25,7 @@ const create = async ({ voornaam, achternaam, email, password, straat, huis_nr, 
                     hashed_password: await argonPassword.hashPassword(password),
                     straat: straat,
                     huis_nr: huis_nr,
+                    geboorteDatum: geboorteDatum,
                     postcode: postcode,
                     stad: stad,
                     land: land,
@@ -60,7 +61,7 @@ const login = async ({ email, password }: { email: string; password: string }): 
     }
 };
 
-const updateUser = async (user_id: number, { voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol }: Partial<User>): Promise<1 | null> => {
+const updateUser = async (user_id: number, { voornaam, achternaam, email, password, straat, huis_nr, geboorteDatum, postcode, stad, land, gsm_nr, actief, rol }: Partial<User>): Promise<1 | null> => {
     try {
         await data.prisma.user.update({
             where: { id: user_id },
@@ -69,6 +70,7 @@ const updateUser = async (user_id: number, { voornaam, achternaam, email, passwo
                 achternaam,
                 email,
                 hashed_password: password ? await argonPassword.hashPassword(password) : undefined,
+                geboorteDatum,
                 straat,
                 huis_nr,
                 postcode,
@@ -103,6 +105,7 @@ const find = async (user_id: number): Promise<PasswordlessUser | null> => {
         email: result.email,
         straat: result.straat,
         huis_nr: result.huis_nr,
+        geboorteDatum: result.geboorteDatum,
         postcode: result.postcode,
         stad: result.stad,
         land: result.land,
