@@ -1,5 +1,5 @@
 import type { Entity, ListResponse } from './common';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, Rol } from '@prisma/client';
 
 export interface User extends Entity {
     voornaam: string;
@@ -14,7 +14,7 @@ export interface User extends Entity {
     land: string;
     hashed_password: string;
     actief: boolean;
-    roles: Prisma.JsonValue;
+    rol: Rol;
 }
 
 export interface UserCreateInput {
@@ -30,7 +30,7 @@ export interface UserCreateInput {
     land: string;
     password: string;
     actief: boolean;
-    roles: Prisma.JsonValue;
+    roles: Rol;
 }
 
 export interface LoginRequest {
@@ -50,7 +50,7 @@ export interface UserUpdateInput extends
     Omit<UserCreateInput, 'password'> { }
 
 export interface PublicUser extends
-    Pick<User, 'id' | 'voornaam' | 'achternaam' | 'email' | 'gsm_nr' | 'straat' | 'stad' | 'postcode' | 'land' | 'roles'> { }
+    Pick<User, 'id' | 'voornaam' | 'achternaam' | 'email' | 'gsm_nr' | 'straat' | 'stad' | 'postcode' | 'land' | 'rol'> { }
 
 export interface CreateUserRequest extends UserCreateInput { }
 export interface UpdateUserRequest extends UserUpdateInput { }

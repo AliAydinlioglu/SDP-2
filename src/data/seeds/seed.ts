@@ -1,10 +1,14 @@
 // src/data/seed.ts
 import { PrismaClient } from "@prisma/client";
-import Rol from "../../types/rol";
+import { Rol } from "@prisma/client";
+import { hashPassword } from "../../core/argonPassword";
 
 const prisma = new PrismaClient();
 
 async function main() {
+
+    const password = await hashPassword('12345678');
+
     await prisma.user.createMany({
         data: [
             {
@@ -12,7 +16,8 @@ async function main() {
                 email: "geralt@gmail.com",
                 voornaam: "Geralt",
                 achternaam: "van Rivia",
-                hashed_password: "1234",
+                hashed_password: password,
+                geboorteDatum: new Date("1990-01-01"),
                 straat: "Kaer Morhen Path",
                 huis_nr: "1",
                 stad: "Kaer Morhen",
@@ -27,7 +32,8 @@ async function main() {
                 email: "yennefer@gmail.com",
                 voornaam: "Yennefer",
                 achternaam: "van Vengerberg",
-                hashed_password: "1234567",
+                hashed_password: password,
+                geboorteDatum: new Date("1990-01-01"),
                 straat: "Sorceress Tower",
                 huis_nr: "7",
                 stad: "Vengerberg",
@@ -42,7 +48,8 @@ async function main() {
                 email: "triss@gmail.com",
                 voornaam: "Triss",
                 achternaam: "Merigold",
-                hashed_password: "123456789",
+                hashed_password: password,
+                geboorteDatum: new Date("1990-01-01"),
                 straat: "Mage’s Quarter",
                 huis_nr: "12",
                 stad: "Maribor",
