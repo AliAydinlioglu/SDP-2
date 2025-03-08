@@ -1,7 +1,29 @@
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip,
-  BarChart, Bar, PieChart, Pie, Cell, ScatterChart, Scatter } from 'recharts';
+import GridLayout from 'react-grid-layout';
+import { useState, useEffect } from 'react';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import Chart from '../components/KPI/Chart';
+import { BsPencilSquare } from 'react-icons/bs';
 
 export default function DashBoard() {
+
+  const [isEditable, setIsEditable] = useState(true);
+
+  const [layout, setLayout] = useState(
+    JSON.parse(localStorage.getItem('dashboardLayout')) || [
+      { i: '1', x: 0, y: 0, w: 2, h: 2,  static: true },
+      { i: '2', x: 2, y: 0, w: 2, h: 2, static: true },
+    ],
+  );
+
+  useEffect(() => {
+    localStorage.setItem('dashboardLayout', JSON.stringify(layout));
+  }, [layout]);
+
+  const onLayoutChange = (newLayout) => {
+    setLayout(newLayout);
+  };
+
   const data = [
     { name: 'Jan', uv: 400, pv: 2400, amt: 2400 },
     { name: 'Feb', uv: 300, pv: 1398, amt: 2210 },
@@ -12,88 +34,38 @@ export default function DashBoard() {
     { name: 'Jul', uv: 349, pv: 4300, amt: 2100 },
   ];
 
-  const pieData = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
-  ];
-
-  const scatterData = [
-    { x: 100, y: 200 },
-    { x: 120, y: 100 },
-    { x: 170, y: 300 },
-    { x: 140, y: 250 },
-    { x: 150, y: 400 },
-    { x: 110, y: 280 },
-  ];
-
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
   return (
     <div className="dashboard">
-      <h1 className="">Dashboard</h1>
+      <div className='dashboard-header'>
+        <h1>Dashboard</h1>
+        <button className="edit-button" onClick={() => setIsEditable(!isEditable)}>
+          <BsPencilSquare className="edit-icon"/>
+        </button>
+      </div>
       <div className="border-container">
-        <div className='graph'>
-          <h3>Fake Graph</h3>
-          <LineChart width={300} height={200} data={data}>
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-          </LineChart>
-        </div>
-        <div className='graph'>
-          <h3>Fake Graph</h3>
-          <LineChart width={300} height={200} data={data}>
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-          </LineChart>
-        </div>
-        <div className='graph'>
-          <h3>Fake Pie Chart</h3>
-          <PieChart width={300} height={200}>
-            <Pie
-              data={pieData}
-              cx={150}
-              cy={100}
-              innerRadius={60}
-              outerRadius={80}
-              fill="#8884d8"
-              paddingAngle={5}
-              dataKey="value"
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </div>
-        <div className='graph'>
-          <h3>Fake Bar Chart</h3>
-          <BarChart width={300} height={200} data={data}>
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="pv" fill="#8884d8" />
-          </BarChart>
-        </div>
-        <div className='graph'>
-          <h3>Fake Scatter Chart</h3>
-          <ScatterChart width={300} height={200}>
-            <CartesianGrid />
-            <XAxis type="number" dataKey="x" name="stature" unit="cm" />
-            <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-            <Scatter name="A school" data={scatterData} fill="#8884d8" />
-          </ScatterChart>
-        </div>
+        <GridLayout
+          className="layout"
+          layout={layout}
+          cols={6}
+          rowHeight={150}
+          width={1370}
+          margin={[10, 10]}
+          isResizable={false}
+          draggableHandle=".handle"
+          onLayoutChange={onLayoutChange}
+        >
+          <div key="1" className="widget handle">
+            <Chart data={data} title={'Fake Graph'} type={'line'}/>
+          </div>
+          <div key="2" className="widget handle">
+            <Chart data={data} title={'Fake Marph'} type={'bar'}/>
+
+          </div>
+          <div key="3" className="widget">
+            <div className="handle">Drag Me</div>
+            Widget 3
+          </div>
+        </GridLayout>
       </div>
     </div>
   );
