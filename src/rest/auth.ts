@@ -19,8 +19,8 @@ const createUser = {
             stad: string;
             postcode: string;
             land: string;
-            rol?: string;
-            actief?: boolean;
+            rol: string;
+            actief: boolean;
         };
 
         let token = await user.create({
@@ -55,8 +55,8 @@ const createUser = {
             stad: Joi.string().max(255).required(),
             postcode: Joi.string().max(127).required(),
             land: Joi.string().max(127).required(),
-            rol: Joi.string().valid(...Object.values(Rol)).optional(),
-            actief: Joi.boolean().optional().default(true),
+            rol: Joi.string().valid(...Object.values(Rol)),
+            actief: Joi.boolean().default(true),
         }),
     },
 };

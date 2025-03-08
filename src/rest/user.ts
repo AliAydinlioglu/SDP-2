@@ -14,19 +14,19 @@ const getUser = async (ctx: Context) => {
 const updateUser = {
     execute: async (ctx: Context) => {
         const { voornaam, achternaam, email, password, geboorteDatum, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } = ctx.request.body as {
-            voornaam?: string;
-            achternaam?: string;
-            straat?: string;
-            huis_nr?: string;
-            geboorteDatum?: Date;
-            postcode?: string;
-            stad?: string;
-            land?: string;
+            voornaam: string;
+            achternaam: string;
+            email: string;
             gsm_nr?: string;
-            actief?: boolean;
-            email?: string;
-            password?: string;
-            rol?: Rol;
+            geboorteDatum: Date;
+            straat: string;
+            huis_nr: string;
+            stad: string;
+            postcode: string;
+            land: string;
+            password: string;
+            actief: boolean;
+            rol: Rol;
         };
 
         await userService.updateUser(ctx.user_id, {
@@ -49,22 +49,20 @@ const updateUser = {
     },
     schema: {
         body: Joi.object({
-            voornaam: Joi.string().optional(),
-            achternaam: Joi.string().optional(),
-            email: Joi.string().email().optional(),
-            password: Joi.string().optional(),
-            straat: Joi.string().optional(),
-            huis_nr: Joi.string().optional(),
-            geboorteDatum: Joi.date().optional(),
-            postcode: Joi.string()
-                .pattern(/^\d{4,5}$/)
-                .optional(),
-            stad: Joi.string().optional(),
-            land: Joi.string().optional(),
+            voornaam: Joi.string(),
+            achternaam: Joi.string(),
+            email: Joi.string().email(),
+            password: Joi.string(),
+            straat: Joi.string(),
+            huis_nr: Joi.string(),
+            geboorteDatum: Joi.date(),
+            postcode: Joi.string().pattern(/^\d{4,5}$/),
+            stad: Joi.string(),
+            land: Joi.string(),
             gsm_nr: Joi.string().optional(),
-            actief: Joi.boolean().optional(),
-            rol: Joi.object().optional(),
-        }).or("voornaam", "achternaam", "email", "password", "straat", "huis_nr", "postcode", "stad", "land", "gsm_nr", "actief", "rol"),
+            actief: Joi.boolean(),
+            rol: Joi.object(),
+        }).or("voornaam", "achternaam", "email", "password", "straat", "huis_nr", "geboorteDatum", "postcode", "stad", "land", "gsm_nr", "actief", "rol"),
     },
 };
 

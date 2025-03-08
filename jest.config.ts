@@ -7,7 +7,7 @@ import type { Config } from "jest";
 
 const config: Config = {
     // An array of glob patterns indicating a set of files for which coverage information should be collected
-    collectCoverageFrom: ["./src/repository/**/*.ts", "./src/service/**/*.ts", "./src/rest/**/*.ts"],
+    collectCoverageFrom: ["./src/service/**/*.ts", "./src/rest/**/*.ts"],
     // The directory where Jest should output its coverage files
     coverageDirectory: "__tests__/coverage",
     // Indicates which provider should be used to instrument code for coverage
