@@ -30,7 +30,7 @@ afterAll(async () => {
     await server.stop();
 });
 
-it("Shoul delete everything in the database (deleting user will delete folders and cards)", async () => {
+it("Should delete everything in the database (deleting user will delete folders and cards)", async () => {
     await data.prisma.user.deleteMany();
 
     const result = await data.prisma.user.findMany();
