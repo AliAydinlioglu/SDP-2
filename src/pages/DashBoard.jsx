@@ -1,99 +1,138 @@
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip,
-  BarChart, Bar, PieChart, Pie, Cell, ScatterChart, Scatter } from 'recharts';
+import GridLayout from 'react-grid-layout';
+import { useState, useEffect } from 'react';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import Chart from '../components/KPI/Chart';
+import { BsPencilSquare, BsTrash } from 'react-icons/bs';
+import { KPI_DATA } from '../api/mock_data';
 
 export default function DashBoard() {
-  const data = [
-    { name: 'Jan', uv: 400, pv: 2400, amt: 2400 },
-    { name: 'Feb', uv: 300, pv: 1398, amt: 2210 },
-    { name: 'Mar', uv: 200, pv: 9800, amt: 2290 },
-    { name: 'Apr', uv: 278, pv: 3908, amt: 2000 },
-    { name: 'May', uv: 189, pv: 4800, amt: 2181 },
-    { name: 'Jun', uv: 239, pv: 3800, amt: 2500 },
-    { name: 'Jul', uv: 349, pv: 4300, amt: 2100 },
-  ];
+  const [isEditable, setIsEditable] = useState(false);
+  const [selectedKpi, setSelectedKpi] = useState('');
 
-  const pieData = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
-  ];
+  // Keep track of KPIs on the dashboard
+  const [kpiList, setKpiList] = useState(
+    JSON.parse(localStorage.getItem('kpiList')) || KPI_DATA,
+  );
 
-  const scatterData = [
-    { x: 100, y: 200 },
-    { x: 120, y: 100 },
-    { x: 170, y: 300 },
-    { x: 140, y: 250 },
-    { x: 150, y: 400 },
-    { x: 110, y: 280 },
-  ];
+  // Keep track of the layout
+  const [layout, setLayout] = useState(
+    JSON.parse(localStorage.getItem('dashboardLayout')) ||
+      KPI_DATA.filter((kpi) => kpi.onDashboard).map((kpi, index) => ({
+        i: kpi.id.toString(),
+        x: (index % 6) * 2,
+        y: Math.floor(index / 6) * 2,
+        w: 2,
+        h: 2,
+        static: false,
+      })),
+  );
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  // Save changes to localStorage
+  useEffect(() => {
+    localStorage.setItem('dashboardLayout', JSON.stringify(layout));
+    localStorage.setItem('kpiList', JSON.stringify(kpiList));
+  }, [layout, kpiList]);
+
+  // Handle KPI selection
+  const handleKpiSelect = (e) => {
+    const kpiId = e.target.value;
+    if (!kpiId) return;
+
+    setKpiList((prevKpis) =>
+      prevKpis.map((kpi) =>
+        kpi.id.toString() === kpiId ? { ...kpi, onDashboard: true } : kpi,
+      ),
+    );
+
+    const newKpi = KPI_DATA.find((kpi) => kpi.id.toString() === kpiId);
+
+    // Find the first empty spot
+    const occupiedPositions = layout.map((item) => ({ x: item.x, y: item.y }));
+    let x = 0, y = 0;
+    while (occupiedPositions.some((pos) => pos.x === x && pos.y === y)) {
+      x += 2;
+      if (x >= 6) {
+        x = 0;
+        y += 2;
+      }
+    }
+
+    const newLayoutItem = {
+      i: newKpi.id.toString(),
+      x: x,
+      y: y,
+      w: 2,
+      h: 2,
+      static: false,
+    };
+
+    setLayout([...layout, newLayoutItem]);
+    setSelectedKpi('');
+  };
+
+  // Handle KPI removal
+  const handleRemoveKpi = (kpiId) => {
+    setKpiList((prevKpis) =>
+      prevKpis.map((kpi) =>
+        kpi.id.toString() === kpiId ? { ...kpi, onDashboard: false } : kpi,
+      ),
+    );
+
+    setLayout((prevLayout) =>
+      prevLayout.filter((item) => item.i !== kpiId.toString()), // Ensure comparison is correct
+    );
+  };
 
   return (
     <div className="dashboard">
-      <h1 className="">Dashboard</h1>
+      <div className="dashboard-header">
+        <h1>Dashboard</h1>
+        <button className="edit-button" onClick={() => setIsEditable(!isEditable)}>
+          <BsPencilSquare className="edit-icon" />
+        </button>
+        {isEditable && (
+          <select className="form-select" value={selectedKpi} onChange={handleKpiSelect}>
+            <option value="">Select KPI</option>
+            {kpiList.filter((kpi) => !kpi.onDashboard).map((kpi) => (
+              <option key={kpi.id} value={kpi.id}>
+                {kpi.title}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
       <div className="border-container">
-        <div className='graph'>
-          <h3>Fake Graph</h3>
-          <LineChart width={300} height={200} data={data}>
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-          </LineChart>
-        </div>
-        <div className='graph'>
-          <h3>Fake Graph</h3>
-          <LineChart width={300} height={200} data={data}>
-            <Line type="monotone" dataKey="uv" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-          </LineChart>
-        </div>
-        <div className='graph'>
-          <h3>Fake Pie Chart</h3>
-          <PieChart width={300} height={200}>
-            <Pie
-              data={pieData}
-              cx={150}
-              cy={100}
-              innerRadius={60}
-              outerRadius={80}
-              fill="#8884d8"
-              paddingAngle={5}
-              dataKey="value"
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </div>
-        <div className='graph'>
-          <h3>Fake Bar Chart</h3>
-          <BarChart width={300} height={200} data={data}>
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="pv" fill="#8884d8" />
-          </BarChart>
-        </div>
-        <div className='graph'>
-          <h3>Fake Scatter Chart</h3>
-          <ScatterChart width={300} height={200}>
-            <CartesianGrid />
-            <XAxis type="number" dataKey="x" name="stature" unit="cm" />
-            <YAxis type="number" dataKey="y" name="weight" unit="kg" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-            <Scatter name="A school" data={scatterData} fill="#8884d8" />
-          </ScatterChart>
-        </div>
+        <GridLayout
+          className="layout"
+          layout={layout}
+          cols={6}
+          rowHeight={150}
+          width={1370}
+          margin={[10, 10]}
+          isResizable={false}
+          isDraggable={isEditable}
+          draggableHandle=".handle"
+          onLayoutChange={(newLayout) => setLayout(newLayout)}
+        >
+          {kpiList
+            .filter((kpi) => kpi.onDashboard)
+            .map((kpi) => (
+              <div key={kpi.id} className="widget">
+                {isEditable && (
+                  <button
+                    className="remove-button"
+                    onClick={() => handleRemoveKpi(kpi.id.toString())}
+                  >
+                    <BsTrash className="remove-icon" />
+                  </button>
+                )}
+                <div className="handle">
+                  <Chart data={kpi.data} title={kpi.title} type={kpi.type} />
+                </div>
+              </div>
+            ))}
+        </GridLayout>
       </div>
     </div>
   );
