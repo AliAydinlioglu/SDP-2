@@ -1,0 +1,51 @@
+name: Run Tests
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Tea break message
+              run: |
+                  echo "
+                   ______________________________________
+                  |                                      |
+                  |  Tests take ~3 minutes to complete   |
+                  |       Time for a cup of tea!         |
+                  |                                      |
+                  |         ( (                          |
+                  |          ) )                         |
+                  |       .........                      |
+                  |       |       |]                     |
+                  |       \       /                      |
+                  |        '-----'                       |
+                  |______________________________________|
+                  "
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20.6.0
+                  cache: "yarn"
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Create .env.test file
+              run: |
+                  cat > .env.test << EOF
+                  JWTSECRET=${{ secrets.JWTSECRET }}
+                  PORT=${{ secrets.PORT }}
+                  DATABASE_URL=${{ secrets.DATABASE_URL }}
+                  EOF
+
+            - name: Run tests
+              run: yarn test:reset
