@@ -19,6 +19,23 @@ jobs:
                   node-version: 20.6.0
                   cache: "yarn"
 
+            - name: Tea break message
+              run: |
+                  echo "
+                   ______________________________________
+                  |                                      |
+                  |  Tests take ~3 minutes to complete   |
+                  |       Time for a cup of tea!         |
+                  |                                      |
+                  |         ( (                          |
+                  |          ) )                         |
+                  |       .........                      |
+                  |       |       |]                     |
+                  |       \       /                      |
+                  |        '-----'                       |
+                  |______________________________________|
+                  "
+
             - name: Install dependencies
               run: yarn install --frozen-lockfile
 
