@@ -18,6 +18,7 @@ jobs:
               with:
                   node-version: 20.6.0
                   cache: "yarn"
+                  post-job-cleanup: false
 
             - name: Install dependencies
               run: yarn install --frozen-lockfile
