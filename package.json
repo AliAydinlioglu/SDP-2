@@ -8,9 +8,13 @@
         "startDemon": "env-cmd nodemon ./src/index.ts",
         "test": "env-cmd -f .env.test jest --runInBand",
         "test:coverage": "env-cmd -f .env.test jest --env jsdom --runInBand --coverage",
+        "test:reset": "env-cmd -f .env.test prisma migrate reset --force && env-cmd -f .env.test jest --runInBand",
         "startJS": "env-cmd node ./out/src/index.js --custom-string",
         "serverJS": "node ./out/src/index.js",
-        "serverJSReset": "node ./out/src/index.js --custom-string"
+        "serverJSReset": "node ./out/src/index.js --custom-string",
+        "reset": "prisma migrate reset --force",
+        "generate": "prisma generate",
+        "migrate": "prisma migrate resolve"
     },
     "author": "OGUZ AYDINLIOGLU oguz.aydinlioglu@student.hogent.be, ALI AYDINLIOGLU ali.aydinlioglu@student.hogent.be",
     "license": "MIT",
