@@ -53,7 +53,7 @@ const updateUser = {
 };
 
 const deleteUser = async (ctx: Context) => {
-    let result = await userService.deleteUser(ctx.user_id);
+    await userService.deleteUser(ctx.user_id);
 
     ctx.status = 200;
     ctx.body = { message: "User deleted" };
