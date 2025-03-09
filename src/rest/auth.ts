@@ -1,5 +1,5 @@
 import Router from "@koa/router";
-import user from "../service/user";
+import userService from "../service/user";
 import { Context } from "koa";
 import Joi from "joi";
 import validation from "../core/validation";
@@ -7,7 +7,7 @@ import { Rol } from "@prisma/client";
 
 const createUser = {
     execute: async (ctx: Context) => {
-        const { voornaam, achternaam, email, password, geboorteDatum, gsm_nr, huis_nr, straat, stad, postcode, land, rol, actief } = ctx.request.body as {
+        const user = ctx.request.body as {
             voornaam: string;
             achternaam: string;
             email: string;
@@ -19,25 +19,11 @@ const createUser = {
             stad: string;
             postcode: string;
             land: string;
-            rol: string;
+            rol: Rol;
             actief: boolean;
         };
 
-        let token = await user.create({
-            voornaam,
-            achternaam,
-            email,
-            password,
-            gsm_nr,
-            huis_nr,
-            geboorteDatum,
-            straat,
-            stad,
-            postcode,
-            land,
-            rol: rol as Rol,
-            actief,
-        });
+        let token = await userService.create(user);
 
         ctx.set("Authorization", `Bearer ${token}`);
         ctx.status = 200;
@@ -65,7 +51,7 @@ const loginUser = {
     execute: async (ctx: Context) => {
         const { email, password } = ctx.request.body as { email: string; password: string };
 
-        const token = await user.login({ email, password });
+        const token = await userService.login({ email, password });
         ctx.set("Authorization", `Bearer ${token}`);
         ctx.status = 200;
     },

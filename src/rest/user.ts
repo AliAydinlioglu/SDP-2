@@ -13,7 +13,7 @@ const getUser = async (ctx: Context) => {
 
 const updateUser = {
     execute: async (ctx: Context) => {
-        const { voornaam, achternaam, email, password, geboorteDatum, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol } = ctx.request.body as {
+        const user = ctx.request.body as {
             voornaam: string;
             achternaam: string;
             email: string;
@@ -29,21 +29,7 @@ const updateUser = {
             rol: Rol;
         };
 
-        await userService.updateUser(ctx.user_id, {
-            voornaam,
-            achternaam,
-            email,
-            password,
-            straat,
-            huis_nr,
-            geboorteDatum,
-            postcode,
-            stad,
-            land,
-            gsm_nr,
-            actief,
-            rol,
-        });
+        await userService.updateUser(ctx.user_id, user);
 
         ctx.status = 200;
     },
