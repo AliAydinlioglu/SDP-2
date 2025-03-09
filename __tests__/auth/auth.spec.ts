@@ -50,6 +50,7 @@ describe("/api/auth/register", () => {
             postcode: "77704",
             land: "NUSA",
             gsm_nr: "555-7766",
+            geboorteDatum: new Date("1990-01-02"),
             actief: true,
             rol: Rol.ADMINISTRATOR,
         });
@@ -71,6 +72,7 @@ describe("/api/auth/register", () => {
             postcode: "77705",
             land: "NUSA",
             gsm_nr: "555-1234",
+            geboorteDatum: new Date("1990-01-02"),
             actief: true,
             rol: Rol.TECHNIEKER,
         });
@@ -90,6 +92,7 @@ describe("/api/auth/register", () => {
             postcode: "77709",
             land: "NUSA",
             gsm_nr: "555-8001",
+            geboorteDatum: new Date("1990-01-02"),
             actief: true,
             rol: Rol.TECHNIEKER,
         });
@@ -108,6 +111,7 @@ describe("/api/auth/register", () => {
             postcode: "77709",
             land: "NUSA",
             gsm_nr: "555-8002",
+            geboorteDatum: new Date("1990-01-02"),
             actief: true,
             rol: Rol.TECHNIEKER,
         });
@@ -128,6 +132,7 @@ describe("/api/auth/register", () => {
             postcode: "77708",
             land: "NUSA",
             gsm_nr: "555-9001",
+            geboorteDatum: new Date("1990-01-02"),
             actief: true,
             rol: Rol.GEBRUIKER,
         });
@@ -146,6 +151,7 @@ describe("/api/auth/register", () => {
             postcode: "77707",
             land: "NUSA",
             gsm_nr: "555-9002",
+            geboorteDatum: new Date("1990-01-02"),
             actief: true,
             rol: Rol.GEBRUIKER,
         });
@@ -169,6 +175,7 @@ describe("/api/auth/login", () => {
             postcode: "77701",
             land: "NUSA",
             gsm_nr: "555-3030",
+            geboorteDatum: new Date("1990-01-02"),
             actief: true,
             rol: Rol.TECHNIEKER,
         });

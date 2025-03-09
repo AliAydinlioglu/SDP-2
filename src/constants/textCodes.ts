@@ -18,7 +18,7 @@ enum textCodes {
     CARDUPDATED = "card updated",
     CARDCREATED = "card created",
     FOLDERCREATED = "folder created",
-    NODATA = '"value" must contain at least one of [voornaam, achternaam, email, password, straat, huis_nr, postcode, stad, land, gsm_nr, actief, rol]',
+    NODATA = '"value" must have at least 1 key',
     SCORECREATED = "score created",
     SCOREALREADYEXISTS = "score entry already exists",
     SCOREUPDATED = "score updated",

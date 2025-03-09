@@ -62,7 +62,7 @@ const updateUser = {
             gsm_nr: Joi.string().optional(),
             actief: Joi.boolean(),
             rol: Joi.object(),
-        }).or("voornaam", "achternaam", "email", "password", "straat", "huis_nr", "geboorteDatum", "postcode", "stad", "land", "gsm_nr", "actief", "rol"),
+        }).min(1),
     },
 };
 
