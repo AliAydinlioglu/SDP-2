@@ -8,7 +8,7 @@
         "startDemon": "env-cmd nodemon ./src/index.ts",
         "test": "env-cmd -f .env.test jest --runInBand",
         "test:coverage": "env-cmd -f .env.test jest --runInBand --coverage",
-        "test:reset": "prisma migrate reset --force && env-cmd -f .env.test jest --runInBand",
+        "test:reset": "env-cmd -f .env.test prisma migrate reset --force && env-cmd -f .env.test jest --runInBand",
         "startJS": "env-cmd node ./out/src/index.js --custom-string",
         "serverJS": "node ./out/src/index.js",
         "serverJSReset": "node ./out/src/index.js --custom-string",
