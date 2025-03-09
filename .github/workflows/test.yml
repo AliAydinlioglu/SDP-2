@@ -1,0 +1,31 @@
+name: Run Tests
+
+on:
+    push:
+        branches: [actions]
+    pull_request:
+        branches: [actions]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20.6.0
+                  cache: "yarn"
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Run tests
+              env:
+                  JWTSECRET: ${{ secrets.JWTSECRET }}
+                  PORT: ${{ secrets.PORT }}
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+                  # Add any other environment variables you need
+              run: yarn test
