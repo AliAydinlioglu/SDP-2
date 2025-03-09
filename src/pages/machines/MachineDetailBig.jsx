@@ -1,5 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { MACHINE_DATA } from '../../api/mock_data';
+import { IoTrashOutline, IoPencilOutline } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
 
 const MachineDetailBig = () => {
   const { id } = useParams();
@@ -19,8 +21,11 @@ const MachineDetailBig = () => {
   return (
     <div>
       <h1>Machine id: {machine.id}</h1>
-      <p>Machine status: {machine.status}</p>
-      <p>Machine productie status: {machine.prod_status}</p>
+      <p>Machine status: {machine.state}</p>
+      <p>Machine productie status: {machine.prod_state}</p>
+      <Link to={`/machines/edit/${machine.id}`} className='btn btn-light'>
+        <IoPencilOutline />
+      </Link>
     </div>
   );
 };

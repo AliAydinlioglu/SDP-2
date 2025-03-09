@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MACHINE_DATA } from '../../api/mock_data';
 import MachineTabelBig from '../../components/machines/MachineTabelBig';
+import { Link } from 'react-router-dom';
 
 const MachinesList = () => {
   const [machines, setMachines] = useState(MACHINE_DATA);
@@ -74,6 +75,12 @@ const MachinesList = () => {
           <option value='idle'>Idle</option>
           <option value='maintenance'>Maintenance</option>
         </select>
+
+        <div className='clearfix'>
+          <Link to='/machines/add' className='btn btn-primary float-end'>
+            Add machine
+          </Link>
+        </div>
       </div>
       <MachineTabelBig machines={machines} sortMachines={sortMachinesByProp} />
     </div>
