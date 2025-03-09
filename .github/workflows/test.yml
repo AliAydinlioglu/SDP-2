@@ -22,10 +22,13 @@ jobs:
             - name: Install dependencies
               run: yarn install --frozen-lockfile
 
+            - name: Create .env.test file
+              run: |
+                  cat > .env.test << EOF
+                  JWTSECRET=${{ secrets.JWTSECRET }}
+                  PORT=${{ secrets.PORT }}
+                  DATABASE_URL=${{ secrets.DATABASE_URL }}
+                  EOF
+
             - name: Run tests
-              env:
-                  JWTSECRET: ${{ secrets.JWTSECRET }}
-                  PORT: ${{ secrets.PORT }}
-                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-                  # Add any other environment variables you need
               run: yarn test
