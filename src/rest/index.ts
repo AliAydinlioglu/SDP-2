@@ -17,10 +17,8 @@ const installRest = (app: Application) => {
         await next();
     });
 
-    // add a route for the GET /api/ request
-    // .get() is a method that takes a path and a callback function. If the path matches, the callback function is called.
     router.get("/", async (ctx) => {
-        ctx.body = "API";
+        ctx.body = { message: "API" };
     });
 
     // Create nested routers for various endpoints

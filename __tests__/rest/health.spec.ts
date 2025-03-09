@@ -1,8 +1,8 @@
 import supertest from "supertest";
-import createServer from "../src/createServer";
+import createServer from "../../src/createServer";
 import Koa from "koa";
-import endpoints from "../src/constants/endpoints";
-import testEndpoints from "./testEndpoints";
+import endpoints from "../../src/constants/endpoints";
+import testEndpoints from "../testEndpoints";
 // TEST DATA
 
 // TESTS
