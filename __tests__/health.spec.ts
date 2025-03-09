@@ -14,7 +14,7 @@ let userUserEndpoint = endpoints.apiPrefix + endpoints.userPrefix;
 
 beforeAll(async () => {
     server = await createServer();
-    request = supertest(server.getKoa().callback()); // www.example.com{request} -> www.example.com/api/user/folder
+    request = supertest(server.getKoa().callback());
 });
 
 afterAll(async () => {

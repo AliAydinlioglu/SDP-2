@@ -13,7 +13,7 @@ let test_data: { createTestData: () => Promise<void>; deleteTestData: () => Prom
 
 beforeAll(async () => {
     server = await createServer();
-    request = supertest(server.getKoa().callback()); // www.example.com{request} -> www.example.com/api/user/folder
+    request = supertest(server.getKoa().callback());
 });
 
 beforeEach(async () => {
@@ -30,7 +30,7 @@ afterAll(async () => {
     await server.stop();
 });
 
-it("Should delete everything in the database (deleting user will delete folders and cards)", async () => {
+it("Should delete everything in the database.", async () => {
     await data.prisma.user.deleteMany();
 
     const result = await data.prisma.user.findMany();
