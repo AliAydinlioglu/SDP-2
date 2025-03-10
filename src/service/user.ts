@@ -53,7 +53,8 @@ const login = async ({ email, password }: { email: string; password: string }): 
 
     if (result === null) {
         // user not found
-        return textCodes.NOUSERFOUND;
+
+        throw new ServiceError(textCodes.NOUSERFOUND, 404);
     } else if (await argonPassword.verifyPassword(password, result.hashed_password)) {
         return jwtUse.generateJWT(result.id); // user found and password is correct, return a token.
     } else {

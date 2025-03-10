@@ -193,4 +193,14 @@ describe("/api/auth/login", () => {
         id = IDFromResponse(jwtResponse);
         expect(userService.find(id)).not.toBeNull();
     });
+
+    it("GET - Should 400 for user not existing in the server yet", async () => {
+        const jwtResponse = await request.post("/api/auth/login").send({
+            email: "userThatDoesNotExist@example.com",
+            password: "12345678910",
+        });
+
+        expect(jwtResponse.status).toBe(404);
+        expect(jwtResponse.body.message).toEqual(textCodes.NOUSERFOUND);
+    });
 });
