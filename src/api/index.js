@@ -25,11 +25,11 @@ export async function getAll(url) {
 
 export async function save(url, { arg: { id, ...data } }) {
     await axios({
-      method: id ? 'PUT' : 'POST',
-      url: `${baseUrl}/${url}/${id ?? ''}`,
-      data,
+        method: id ? 'PUT' : 'POST',
+        url: `${baseUrl}/${url}/${id ?? ''}`,
+        data,
     });
-  }
+}
 
 export const getById = async (url) => {
     const { data } = await axios.get(`${baseUrl}/${url}`);
@@ -38,4 +38,10 @@ export const getById = async (url) => {
 
 export const deleteById = async (url, { arg: id }) => {
     await axios.delete(`${baseUrl}/${url}/${id}`);
-  };
+};
+
+export const post = async (url, { arg }) => {
+    const { data } = await axios.post(url, arg);
+
+    return data;
+};

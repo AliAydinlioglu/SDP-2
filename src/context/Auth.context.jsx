@@ -13,13 +13,13 @@ export const AuthProvider = ({children}) =>{
     data: klant,
     loading: klantLoading,
     error: klantError,
-  } = useSWR(token ? 'klanten/me' : null, api.getById);
+  } = useSWR(token ? 'users/me' : null, api.getById);
 
   const {
     isMutating: loginLoading,
     error: loginError,
     trigger: doLogin,
-  } = useSWRMutation('sessions', api.post);
+  } = useSWRMutation('auth/login', api.post);
 
   const login = useCallback(
     async (email, password) =>{
