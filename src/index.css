@@ -5,7 +5,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,12 +23,8 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  margin: 10px;
+  margin-top: 70px;
   text-align: center;
 }
 
@@ -76,6 +71,16 @@ button:focus-visible {
   border: 1px solid #050505;
 }
 
+.dashboard h1 {
+  font-size: 2.5em;
+  margin-bottom: 1rem;
+  text-align: left;
+  margin-left: 1rem;
+}
+
+.graph {
+  width: 100%;
+}
 
 
 .form-wrapper {
@@ -118,6 +123,20 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+/* Sites List */
+.site-search-bar {
+  width: 50%;
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.site-cards-container {
+  display: flex;
+  justify-content: center;
 }
 
 /* Site Grid Layout */
@@ -239,41 +258,50 @@ button:focus-visible {
 .meldingen-table tbody tr:last-of-type {
   border-bottom: 2px solid #d56363;
 }
-
 /* Big Table Machines */
-.machine-tabel-big-container {
-  margin: 60px 0px;
-  width: 100%;
-}
-
 .machine-tabel-big {
-  width: 100%;
+  align-self: center;
+  margin: auto;
 }
 
-.machine-tabel-big th,
-.machine-tabel-big td {
+.machine-tabel-big th, .machine-tabel-big td {
   padding: 10px 100px;
-  /* Adjust padding as needed */
   text-align: center;
   border: 1px solid #ddd;
-  /* Add border to table cells */
 }
 
-.machine-tabel-big th {
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-  /* Ensure the background color matches the table */
-  z-index: 1;
-  /* Ensure the header stays on top */
+/* Search And Filter */
+.input-group {
+  margin: 70px auto 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
+
+.search-bar {
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 200px;
+  background-color: #fff;
+}
+
+.states, .production-states {
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
 
 /* Dashboard */
 
 .dashboard {
   min-width: 100vw;
   min-height: 80vh;
-  padding-top: 10vh;
 }
 
 .dashboard h1 {
@@ -360,6 +388,7 @@ button:focus-visible {
   margin-left: 2rem;
   vertical-align: middle;
 }
+
 /* Form Machine */
 .form-container {
   display: flex;
