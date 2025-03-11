@@ -1,29 +1,30 @@
 {
-  "compilerOptions": {
-    "types": [
-      "node",
-      "jest"
-    ],
-    /* Specify multiple folders that act like './node_modules/@types'. */
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types"
-    ],
-    "target": "es2016", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "commonjs", /* Specify what module code is generated. */
-    "resolveJsonModule": true, /* Enable importing .json files. */
-    "sourceMap": true, /* Create source map files for emitted JavaScript files. */
-    "outDir": "./out", /* Specify an output folder for all emitted files. */
-    "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
-    "strict": true, /* Enable all strict type-checking options. */
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
-  },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "jest.config.ts",
-    "__tests__"
-  ]
+    "compilerOptions": {
+        "types": [
+            "node",
+            "jest"
+        ],
+        /* Specify multiple folders that act like './node_modules/@types'. */
+        "typeRoots": [
+            "./node_modules/@types",
+            "./types"
+        ],
+        "target": "es2016", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+        "module": "commonjs", /* Specify what module code is generated. */
+        "resolveJsonModule": true, /* Enable importing .json files. */
+        "sourceMap": true, /* Create source map files for emitted JavaScript files. */
+        "outDir": "./out", /* Specify an output folder for all emitted files. */
+        "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+        "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
+        "strict": true, /* Enable all strict type-checking options. */
+        "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    },
+    "include": [
+        "**/*.ts",
+        "src/types/user.no"
+, "src/types/health.txtr"    ],
+    "exclude": [
+        "jest.config.ts",
+        "__tests__"
+    ]
 }
