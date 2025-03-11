@@ -29,7 +29,7 @@ const testData = async () => {
                 land: "NUSA",
                 gsm_nr: "555-1701",
                 actief: true,
-                rol: "MANAGER" as Rol,
+                rol: Rol.MANAGER,
             },
             {
                 voornaam: "Rosalind",
@@ -44,7 +44,7 @@ const testData = async () => {
                 land: "NUSA",
                 gsm_nr: "555-8808",
                 actief: true,
-                rol: "VERANTWOORDELIJKE" as Rol,
+                rol: Rol.VERANTWOORDELIJKE,
             },
             {
                 voornaam: "So",
@@ -59,7 +59,7 @@ const testData = async () => {
                 land: "NUSA",
                 gsm_nr: "555-3301",
                 actief: true,
-                rol: "GEBRUIKER" as Rol,
+                rol: Rol.GEBRUIKER,
             },
         ];
 

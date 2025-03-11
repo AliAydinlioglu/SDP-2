@@ -2,14 +2,14 @@
 import { ServiceError } from "../core/errorHandler";
 import textCodes from "../constants/textCodes";
 import data from "../data/index";
-import { Site } from "@prisma/client";
+import { Rol, Site } from "@prisma/client";
 import userService from "./user";
 
 // Create a new site
 const create = async ({ naam, verantw_id }: { naam: string; verantw_id: number }): Promise<number> => {
     let user = await userService.find(verantw_id);
 
-    if (user.rol !== "VERANTWOORDELIJKE") {
+    if (user.rol !== Rol.VERANTWOORDELIJKE) {
         throw new ServiceError(textCodes.INVALIDDATA, 400);
     }
 
@@ -34,7 +34,7 @@ const create = async ({ naam, verantw_id }: { naam: string; verantw_id: number }
 const update = async (site_id: number, { naam, verantw_id }: Partial<{ naam: string; verantw_id: number }>): Promise<1 | null> => {
     if (verantw_id) {
         let user = await userService.find(verantw_id);
-        if (user.rol !== "VERANTWOORDELIJKE") {
+        if (user.rol !== Rol.VERANTWOORDELIJKE) {
             throw new ServiceError(textCodes.INVALIDDATA, 400);
         }
     }
