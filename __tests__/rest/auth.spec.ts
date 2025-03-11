@@ -57,7 +57,7 @@ describe("/api/auth/register", () => {
 
         id = IDFromResponse(response);
         expect(response.status).toBe(200);
-        expect(userService.find(id)).not.toBeNull();
+        expect(await userService.find(id)).not.toBeNull();
     });
     it("GET - Don't register due to the password being too short", async () => {
         // Will try to access the user endpoint with a session_id
@@ -182,7 +182,7 @@ describe("/api/auth/login", () => {
 
         id = IDFromResponse(response);
         expect(response.status).toBe(200);
-        expect(userService.find(id)).not.toBeNull();
+        expect(await userService.find(id)).not.toBeNull();
 
         const jwtResponse = await request.post("/api/auth/login").send({
             email: "Valerie@example.com",
@@ -191,7 +191,7 @@ describe("/api/auth/login", () => {
 
         expect(jwtResponse.status).toBe(200);
         id = IDFromResponse(jwtResponse);
-        expect(userService.find(id)).not.toBeNull();
+        expect(await userService.find(id)).not.toBeNull();
     });
 
     it("GET - Should 400 for user not existing in the server yet", async () => {

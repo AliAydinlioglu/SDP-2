@@ -209,7 +209,7 @@ describe("/users", () => {
             expect(deleteResponse.status).toBe(401);
             expect(deleteResponse.body.message).toBe(errorCodes.INVALIDJWT);
 
-            const response = await request.delete(userUserEndpoint).set({
+            await request.delete(userUserEndpoint).set({
                 Authorization: `Bearer ${jwts[0]}`,
             });
 
@@ -217,9 +217,12 @@ describe("/users", () => {
 
             expect(initialAmountOfUsers.length - finalAmountOfUsers.length).toBe(1);
 
-            let user = await userService.find(user_id);
-            expect(response.status).toBe(200);
-            expect(user).toBeNull();
+            try {
+                await userService.find(user_id);
+                expect(true).toBe(false);
+            } catch (e: any) {
+                expect(e.message).toBe(errorCodes.NOUSERFOUND);
+            }
         });
     });
 });

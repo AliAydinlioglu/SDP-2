@@ -96,7 +96,7 @@ const find = async (user_id: number): Promise<PasswordlessUser | null> => {
     const result = (await data.prisma.user.findUnique({ where: { id: user_id } })) as DBUser;
 
     if (result === null) {
-        return null;
+        throw new ServiceError(textCodes.NOUSERFOUND, 404);
     }
 
     let passwordlessUser = {
