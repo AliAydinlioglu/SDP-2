@@ -25,7 +25,7 @@ const createUser = {
 
         let token = await userService.create(user);
 
-        ctx.set("Authorization", `Bearer ${token}`);
+        ctx.body = { token };
         ctx.status = 200;
     },
     schema: {
@@ -52,7 +52,8 @@ const loginUser = {
         const { email, password } = ctx.request.body as { email: string; password: string };
 
         const token = await userService.login({ email, password });
-        ctx.set("Authorization", `Bearer ${token}`);
+        // ctx.set("Authorization", `Bearer ${token}`);
+        ctx.body = { token };
         ctx.status = 200;
     },
     schema: {
