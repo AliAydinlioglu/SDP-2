@@ -92,7 +92,7 @@ const updateUser = async (user_id: number, { voornaam, achternaam, email, passwo
     }
 };
 
-const find = async (user_id: number): Promise<PasswordlessUser | null> => {
+const find = async (user_id: number): Promise<PasswordlessUser> => {
     const result = (await data.prisma.user.findUnique({ where: { id: user_id } })) as DBUser;
 
     if (result === null) {
