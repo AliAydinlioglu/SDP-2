@@ -1,5 +1,6 @@
 let api = "api";
 let user = "users";
+let site = "sites";
 
 // index.ts
 let apiPrefix = "/" + api;
@@ -19,12 +20,14 @@ let userPrefix = "/" + user;
 //// User
 let userUserEndpoint = "/";
 
-
+//site.ts
+////Site
+let sitePrefix = "/" + site;
 
 export default {
-
     apiPrefix,
     userPrefix,
+    sitePrefix,
 
     userUserEndpoint,
 

@@ -4,6 +4,7 @@ import user from "./user";
 import health from "./health";
 import auth from "./auth";
 import endpoints from "../constants/endpoints";
+import site from "./site";
 
 // From this file we will further install other routers to various endpoints.
 // This is the main entry point for the REST API.
@@ -25,6 +26,7 @@ const installRest = (app: Application) => {
     health.installRouter(router); // install the health router
     user.installRouter(router); // install the user router
     auth.installRouter(router); // install the auth router
+    site.installRouter(router); // install the site router
 
     // add the router to the koa app
     app.use(router.routes()).use(router.allowedMethods());
