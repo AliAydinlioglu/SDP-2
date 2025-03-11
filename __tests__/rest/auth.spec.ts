@@ -9,7 +9,7 @@ import data from "../../src/data";
 import resetDatabase from "../../src/data/resetDatabase";
 
 const IDFromResponse = (response: supertest.Response): number => {
-    return jwtUse.getUserID(response.headers.authorization.split(" ")[1]);
+    return jwtUse.getUserID(response.body.token);
 };
 
 // TEST
