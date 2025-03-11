@@ -53,16 +53,16 @@ const create = async ({ naam, verantw_id }: { naam: string; verantw_id: number }
 //     }
 // };
 
-// // Find a site by ID
-// const find = async (site_id: number): Promise<Site | null> => {
-//     const result = await data.prisma.site.findUnique({ where: { id: site_id } });
+// Find a site by ID
+const find = async (site_id: number): Promise<Site | null> => {
+    const result = await data.prisma.site.findUnique({ where: { id: site_id } });
 
-//     if (result === null) {
-//         return null;
-//     }
+    if (result === null) {
+        return null;
+    }
 
-//     return result;
-// };
+    return result;
+};
 
 // // Delete a site
 // const deleteSite = async (site_id: number): Promise<number> => {
@@ -78,6 +78,6 @@ const create = async ({ naam, verantw_id }: { naam: string; verantw_id: number }
 export default {
     create,
     // update,
-    // find,
+    find,
     // deleteSite,
 };
