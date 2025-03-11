@@ -1,0 +1,23 @@
+import type { Entity, ListResponse } from "./common";
+import type { Prisma } from "@prisma/client";
+import type { User } from "./user.no";
+import type { Machine } from "./machine";
+
+export interface Site extends Entity {
+    naam: string;
+    verantw: Pick<User, "id" | "voornaam" | "achternaam">;
+    machines: Pick<Machine, "id" | "locatie">[];
+}
+
+export interface SiteCreateInput {
+    naam: string;
+    verantw_id: number;
+}
+
+export interface CreateSiteRequest extends SiteCreateInput {}
+export interface UpdateSiteRequest extends Partial<SiteCreateInput> {}
+
+export interface GetAllSitesResponse extends ListResponse<Site> {}
+export interface GetSiteByIdResponse extends Site {}
+export interface CreateSiteResponse extends GetSiteByIdResponse {}
+export interface UpdateSiteResponse extends GetSiteByIdResponse {}

@@ -12,6 +12,7 @@ enum textCodes {
     NODATA = '"value" must have at least 1 key',
     EMAILALREADYEXISTS = "email already exists",
     SHORTPASSWORD = '"password" length must be at least 8 characters long',
+    SITENOTFOUND = "site not found",
 }
 
 export = textCodes;

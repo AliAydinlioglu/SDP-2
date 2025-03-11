@@ -69,13 +69,7 @@ const testData = async () => {
         }
     };
 
-    const deleteTestData = async () => {
-        await resetDatabase();
-        // deleting users will delete everything else due to foreign key constraints.
-        data.prisma.user.deleteMany();
-    };
-
-    return { createTestData, deleteTestData, getJWTs };
+    return { createTestData, getJWTs };
 };
 
 export default testData;

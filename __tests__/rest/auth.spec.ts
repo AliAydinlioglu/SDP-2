@@ -6,6 +6,7 @@ import userService from "../../src/service/user";
 import textCodes from "../../src/constants/textCodes";
 import { Rol } from "@prisma/client";
 import data from "../../src/data";
+import resetDatabase from "../../src/data/resetDatabase";
 
 const IDFromResponse = (response: supertest.Response): number => {
     return jwtUse.getUserID(response.headers.authorization.split(" ")[1]);
@@ -30,10 +31,7 @@ let ids: number[] = [];
 
 beforeEach(async () => {
     id = -1; // making sure it's not set to a valid id before each test.
-});
-
-afterEach(async () => {
-    await data.prisma.user.deleteMany();
+    await resetDatabase();
 });
 
 describe("/api/auth/register", () => {
@@ -57,7 +55,7 @@ describe("/api/auth/register", () => {
 
         id = IDFromResponse(response);
         expect(response.status).toBe(200);
-        expect(userService.find(id)).not.toBeNull();
+        expect(await userService.find(id)).not.toBeNull();
     });
     it("GET - Don't register due to the password being too short", async () => {
         // Will try to access the user endpoint with a session_id
@@ -182,7 +180,7 @@ describe("/api/auth/login", () => {
 
         id = IDFromResponse(response);
         expect(response.status).toBe(200);
-        expect(userService.find(id)).not.toBeNull();
+        expect(await userService.find(id)).not.toBeNull();
 
         const jwtResponse = await request.post("/api/auth/login").send({
             email: "Valerie@example.com",
@@ -191,7 +189,7 @@ describe("/api/auth/login", () => {
 
         expect(jwtResponse.status).toBe(200);
         id = IDFromResponse(jwtResponse);
-        expect(userService.find(id)).not.toBeNull();
+        expect(await userService.find(id)).not.toBeNull();
     });
 
     it("GET - Should 400 for user not existing in the server yet", async () => {
