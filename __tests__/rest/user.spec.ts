@@ -7,13 +7,14 @@ import errorCodes from "../../src/constants/textCodes";
 import testData from "../testdata";
 import endpoints from "../../src/constants/endpoints";
 import data from "../../src/data/index";
+import resetDatabase from "../../src/data/resetDatabase";
 // TEST DATA
 
 // TESTS
 let jwts: string[] = [];
 let server: { getKoa: () => Koa; start: () => Promise<void>; stop: () => Promise<void> };
 let request: supertest.SuperTest<supertest.Test>;
-let test_data: { createTestData: () => Promise<void>; deleteTestData: () => Promise<void>; getJWTs: () => string[] };
+let test_data: { createTestData: () => Promise<void>; getJWTs: () => string[] };
 
 let userUserEndpoint = endpoints.apiPrefix + endpoints.userPrefix;
 
@@ -23,13 +24,10 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+    await resetDatabase();
     test_data = await testData();
     await test_data.createTestData();
     jwts = test_data.getJWTs();
-});
-
-afterEach(async () => {
-    await test_data.deleteTestData();
 });
 
 afterAll(async () => {
