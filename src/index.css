@@ -410,30 +410,15 @@ button:focus-visible {
 }
 
 .machine-form .form-select {
-  width: 100%;
+  width: 85%;
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
 }
 
-.machine-form .btn-group {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.machine-form .btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.25s;
-}
-
 .machine-form .btn:hover {
-  background-color: #0056b3;
+  background-color: #ae4e4e;
 }
 
 .machine-form .form-text.text-danger {
