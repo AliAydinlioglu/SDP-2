@@ -82,16 +82,6 @@ button:focus-visible {
   width: 100%;
 }
 
-
-.form-wrapper {
-  width: 100%;
-  max-width: 400px;
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
 .btn {
   border: none;
   padding: 10px 20px;
@@ -132,6 +122,7 @@ button:focus-visible {
   border: 1px solid #ddd;
   border-radius: 5px;
   background-color: #fff;
+  display: inline;
 }
 
 .site-cards-container {
@@ -383,60 +374,27 @@ button:focus-visible {
   cursor: move;
 }
 
-.form-select {
-  width: 350px;
-  margin-left: 2rem;
-  vertical-align: middle;
-}
-
-/* Form Machine */
+/* Form */
 .form-container {
   display: flex;
   justify-content: center;
 }
 
-.machine-form {
+form {
   width: 100%;
-  max-width: 500px;
-  padding: 20px;
+  max-width: 400px;
   background-color: #fff;
-  border-radius: 8px;
+  padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-.machine-form .form-label {
+form .form-label {
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.machine-form .form-select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.machine-form .btn-group {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.machine-form .btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.25s;
-}
-
-.machine-form .btn:hover {
-  background-color: #0056b3;
-}
-
-.machine-form .form-text.text-danger {
+form .form-text.text-danger {
   color: #dc3545;
   font-size: 0.875em;
 }

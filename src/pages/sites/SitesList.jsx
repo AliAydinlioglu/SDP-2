@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SITE_DATA } from '../../api/mock_data';
 import SiteCards from '../../components/sites/SiteCards';
+import { Link } from 'react-router-dom';
 
 const SitesList = () => {
   const [text, setText] = useState('');
@@ -24,6 +25,9 @@ const SitesList = () => {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
+        <Link to='/sites/add' className='btn btn-primary float-end'>
+          Add site
+        </Link>
       </div>
       <div className='sites-cards-container'>
         <SiteCards sites={sites} />

@@ -18,6 +18,7 @@ import MachineDetailBig from './pages/machines/MachineDetailBig.jsx';
 
 import Meldingen from './pages/Meldingen.jsx';
 import AddOrEditMachine from './pages/machines/AddOrEditMachine.jsx';
+import AddOrEditSite from './pages/sites/AddOrEditSite.jsx';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,14 @@ const router = createBrowserRouter([
                 element: <MachineSmallDetail />,
               },
             ],
+          },
+          {
+            path: 'add',
+            element: <AddOrEditSite />,
+          },
+          {
+            path: 'edit/:id',
+            element: <AddOrEditSite />,
           },
         ],
       },
