@@ -28,7 +28,7 @@ export const AuthProvider = ({children}) =>{
           email,
           password,
         });
-
+        
         setToken(token);
 
         localStorage.setItem(JWT_TOKEN_KEY, token);
