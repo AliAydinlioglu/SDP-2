@@ -132,6 +132,7 @@ button:focus-visible {
   border: 1px solid #ddd;
   border-radius: 5px;
   background-color: #fff;
+  display: inline;
 }
 
 .site-cards-container {
@@ -395,33 +396,22 @@ button:focus-visible {
   justify-content: center;
 }
 
-.machine-form {
+/* form {
   width: 100%;
   max-width: 500px;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+  justify-items: center;
+} */
 
-.machine-form .form-label {
+form .form-label {
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.machine-form .form-select {
-  width: 85%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.machine-form .btn:hover {
-  background-color: #ae4e4e;
-}
-
-.machine-form .form-text.text-danger {
+form .form-text.text-danger {
   color: #dc3545;
   font-size: 0.875em;
 }
