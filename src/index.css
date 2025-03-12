@@ -82,16 +82,6 @@ button:focus-visible {
   width: 100%;
 }
 
-
-.form-wrapper {
-  width: 100%;
-  max-width: 400px;
-  background-color: #fff;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
 .btn {
   border: none;
   padding: 10px 20px;
@@ -384,27 +374,20 @@ button:focus-visible {
   cursor: move;
 }
 
-.form-select {
-  width: 350px;
-  margin-left: 2rem;
-  vertical-align: middle;
-}
-
-/* Form Machine */
+/* Form */
 .form-container {
   display: flex;
   justify-content: center;
 }
 
-/* form {
+form {
   width: 100%;
-  max-width: 500px;
-  padding: 20px;
+  max-width: 400px;
   background-color: #fff;
-  border-radius: 8px;
+  padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  justify-items: center;
-} */
+  border-radius: 8px;
+}
 
 form .form-label {
   font-weight: bold;

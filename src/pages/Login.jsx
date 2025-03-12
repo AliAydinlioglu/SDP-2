@@ -60,50 +60,48 @@ export default function Login() {
   );
 
   return (
-    <div className='container'>
-      <div className='form-wrapper'>
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(handleLogin)}>
-            <h1>Log in</h1>
-            <Error error={error} />
-            <LabelInput
-              label='Email'
-              name='email'
-              type='email'
-              validationRules={validationRules.email}
-              data-cy='email-input'
-            />
-            <LabelInput
-              label='Wachtwoord'
-              name='password'
-              type='password'
-              validationRules={validationRules.password}
-              data-cy='password-input'
-            />
-            <div className='clearfix'>
-              <div className='btn-group d-flex justify-content-center'>
-                <button
-                  type='submit'
-                  className='btn'
-                  disabled={loading}
-                  data-cy='submit-btn'
-                >
-                  Log in
-                </button>
+    <div className='form-container'>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(handleLogin)}>
+          <h1>Log in</h1>
+          <Error error={error} />
+          <LabelInput
+            label='Email'
+            name='email'
+            type='email'
+            validationRules={validationRules.email}
+            data-cy='email-input'
+          />
+          <LabelInput
+            label='Wachtwoord'
+            name='password'
+            type='password'
+            validationRules={validationRules.password}
+            data-cy='password-input'
+          />
+          <div className='clearfix'>
+            <div className='btn-group d-flex justify-content-center'>
+              <button
+                type='submit'
+                className='btn'
+                disabled={loading}
+                data-cy='submit-btn'
+              >
+                Log in
+              </button>
 
-                <button
-                  type='button'
-                  className='btn'
-                  onClick={handleCancel}
-                  data-cy='login-cancel-btn'
-                >
-                  Cancel
-                </button>
-              </div>
+              <button
+                type='button'
+                className='btn'
+                onClick={handleCancel}
+                data-cy='login-cancel-btn'
+              >
+                Cancel
+              </button>
             </div>
-          </form>
-        </FormProvider>
-      </div>
+          </div>
+        </form>
+      </FormProvider>
     </div>
   );
 };
