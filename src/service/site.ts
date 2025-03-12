@@ -31,34 +31,50 @@ const create = async ({ naam, verantw_id }: { naam: string; verantw_id: number }
 };
 
 // Update an existing site
-const update = async (site_id: number, { naam, verantw_id }: Partial<{ naam: string; verantw_id: number }>): Promise<1 | null> => {
+const update = async (
+    site_id: number,
+    { naam, verantw_id }: Partial<{ naam: string; verantw_id: number }>
+): Promise<1 | null> => {
+    // Check if the site exists
+    const existingSite = await data.prisma.site.findUnique({
+        where: { id: site_id },
+    });
+    if (!existingSite) {
+        throw new ServiceError(textCodes.SITENOTFOUND, 404);
+    }
+
+    // Validate naam (should not be empty)
+    if (naam !== undefined && naam.trim() === "") {
+        throw new ServiceError(textCodes.INVALIDDATA, 400);
+    }
+
+    // Validate verantw_id
     if (verantw_id) {
         let user = await userService.find(verantw_id);
-        if (user.rol !== Rol.VERANTWOORDELIJKE) {
+        if (!user || user.rol !== Rol.VERANTWOORDELIJKE) {
             throw new ServiceError(textCodes.INVALIDDATA, 400);
         }
     }
 
-    try {
-        await data.prisma.site.update({
-            where: { id: site_id },
-            data: {
-                naam,
-                verantw_id,
-            },
-        });
-        return 1;
-    } catch (e) {
-        throw new ServiceError(textCodes.INVALIDDATA, 404);
-    }
+    // Update site
+    await data.prisma.site.update({
+        where: { id: site_id },
+        data: {
+            naam,
+            verantw_id,
+        },
+    });
+
+    return 1;
 };
+
 
 // Find a site by ID
 const find = async (site_id: number): Promise<Site | null> => {
     const result = await data.prisma.site.findUnique({ where: { id: site_id } });
 
-    if (result === null) {
-        return null;
+    if (!result) {
+        throw new ServiceError(textCodes.SITENOTFOUND, 404);
     }
 
     return result;
