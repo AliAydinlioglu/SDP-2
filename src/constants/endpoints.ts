@@ -1,6 +1,6 @@
 let api = "api";
 let user = "users";
-let site = "sites"; // Added site
+let site = "sites"
 
 // index.ts
 let apiPrefix = "/" + api;
@@ -19,6 +19,7 @@ let version = "/" + "version";
 let userPrefix = "/" + user;
 //// User
 let userUserEndpoint = "/";
+
 
 // site.ts
 //// Root

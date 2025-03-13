@@ -69,6 +69,7 @@ const update = async (
 };
 
 
+
 // Find a site by ID
 const find = async (site_id: number): Promise<Site | null> => {
     const result = await data.prisma.site.findUnique({ where: { id: site_id } });
@@ -82,13 +83,13 @@ const find = async (site_id: number): Promise<Site | null> => {
 
 // Delete a site
 const deleteSite = async (site_id: number): Promise<number> => {
-    try {
-        await data.prisma.site.delete({ where: { id: site_id } });
-    } catch (e) {
-        throw new ServiceError(textCodes.SITENOTFOUND, 404);
-    }
+     try {
+         await data.prisma.site.delete({ where: { id: site_id } });
+     } catch (e) {
+         throw new ServiceError(textCodes.SITENOTFOUND, 404);
+     }
 
-    return 1;
+     return 1;
 };
 
 export default {

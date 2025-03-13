@@ -1,9 +1,33 @@
 import { Context } from "koa";
-import siteService from "../service/site";
 import Router from "@koa/router";
 import Joi from "joi";
 import validation from "../core/validation";
 import endpoints from "../constants/endpoints";
+import { Rol } from "@prisma/client";
+import permissionCheck from "../core/CRUDPerms";
+import siteService from "../service/site";
+
+const createSite = {
+    execute: async (ctx: Context) => {
+        await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
+
+        const site = ctx.request.body as {
+            naam: string;
+            verantw_id: number;
+        };
+
+        let id = await siteService.create(site);
+
+        ctx.status = 200;
+    },
+    schema: {
+        body: Joi.object({
+            naam: Joi.string().required(),
+
+            verantw_id: Joi.number().required(),
+        }),
+    },
+};
 
 // Get a specific site
 const getSite = async (ctx: Context) => {
@@ -12,22 +36,7 @@ const getSite = async (ctx: Context) => {
     ctx.body = { message: `Found site with id: ${site_id}` };
     ctx.status = 200;
 };
-
-// Create a new site
-const createSite = {
-    execute: async (ctx: Context) => {
-        const site_id = await siteService.create(ctx.request.body);
-        ctx.status = 201;
-        ctx.body = { message: `Site created with id: ${site_id}` };
-    },
-    schema: {
-        body: Joi.object({
-            naam: Joi.string().required(),
-            verantw_id: Joi.number().required(),
-        }),
-    },
-};
-
+      
 // Update a site
 const updateSite = {
     execute: async (ctx: Context) => {
@@ -56,9 +65,11 @@ const deleteSite = async (ctx: Context) => {
 const installRouter = (parentRouter: Router) => {
     const router = new Router({
         prefix: endpoints.sitePrefix, // "/sites"
+
     });
 
     router.use(validation.validateSchema(validation.headerAuthorizationSchema));
+
 
     router.get(endpoints.siteSiteEndpoint, getSite); // GET /sites
     router.post(endpoints.siteSiteEndpoint, validation.validateSchema(createSite.schema), createSite.execute); // POST /sites
@@ -71,4 +82,3 @@ const installRouter = (parentRouter: Router) => {
 };
 
 export default { installRouter };
-
