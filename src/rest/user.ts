@@ -5,9 +5,23 @@ import Joi from "joi";
 import validation from "../core/validation";
 import endpoints from "../constants/endpoints";
 import { Rol } from "@prisma/client";
+import textCodes from "../constants/textCodes";
 
 const getUser = async (ctx: Context) => {
     ctx.body = await userService.find(ctx.user_id);
+    ctx.status = 200;
+};
+
+const findAnyUser = async (ctx: Context) => {
+    let currnetUser = await userService.find(ctx.user_id);
+
+    if (currnetUser.rol !== Rol.ADMINISTRATOR) {
+        ctx.status = 403;
+        ctx.body = { message: textCodes.NOACCESS };
+        return;
+    }
+
+    ctx.body = await userService.find(Number(ctx.params.id));
     ctx.status = 200;
 };
 
@@ -67,6 +81,7 @@ const installRouter = (parentRouter: Router) => {
     router.use(validation.validateSchema(validation.headerAuthorizationSchema));
 
     router.get(endpoints.userUserEndpoint, getUser);
+    router.get(endpoints.userUserEndpoint + ":id", findAnyUser);
     router.put(endpoints.userUserEndpoint, validation.validateSchema(updateUser.schema), updateUser.execute);
     router.delete(endpoints.userUserEndpoint, deleteUser);
 

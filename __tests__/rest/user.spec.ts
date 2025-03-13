@@ -8,6 +8,8 @@ import testData from "../testdata";
 import endpoints from "../../src/constants/endpoints";
 import data from "../../src/data/index";
 import resetDatabase from "../../src/data/resetDatabase";
+import user from "../../src/service/user";
+import { Rol } from "@prisma/client";
 // TEST DATA
 
 // TESTS
@@ -55,6 +57,52 @@ describe("/users", () => {
         expect(user.id).toStrictEqual(jwtUse.getUserID(jwts[0])); // Solomon
         expect(user.voornaam).toStrictEqual("Solomon"); // Solomon
         expect(user.email).toStrictEqual("solomonreed@email.com"); // Solomon's email
+    });
+    it("GET - JWT - an authorized user tries to get user information.", async () => {
+        let adminJWT = await user.create({
+            voornaam: "Solomon",
+            achternaam: "Reed",
+            email: "solomonreedasdasde@email.com",
+            password: "therealslimshady",
+            straat: "Corpo Plaza",
+            huis_nr: "505",
+            geboorteDatum: new Date("1990-01-01"),
+            stad: "Night City",
+            postcode: "77704",
+            land: "NUSA",
+            gsm_nr: "555-1701",
+            actief: true,
+            rol: Rol.ADMINISTRATOR,
+        });
+
+        let verantw_obj = {
+            voornaam: "V",
+            achternaam: "V",
+            email: "V@email.com",
+            password: "therealslimshady",
+            straat: "Corpo Plaza",
+            huis_nr: "505",
+            geboorteDatum: new Date("1990-01-01"),
+            stad: "Night City",
+            postcode: "77704",
+            land: "NUSA",
+            gsm_nr: "555-1701",
+            actief: true,
+            rol: Rol.VERANTWOORDELIJKE,
+        };
+
+        let verantwJWT = await user.create(verantw_obj);
+
+        let verantwID = jwtUse.getUserID(verantwJWT);
+
+        const response = await request.get(userUserEndpoint + "/" + verantwID).set({
+            Authorization: `Bearer ${adminJWT}`,
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.body.voornaam === verantw_obj.voornaam);
+        expect(response.body.achternaam === verantw_obj.achternaam);
+        expect(response.body.rol === verantw_obj.rol);
     });
     describe("PUT", () => {
         it("PUT - Should only change Solomon's voornaam to Judy while keeping the id.", async () => {
