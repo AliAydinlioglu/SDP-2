@@ -13,8 +13,8 @@ const installMiddleware = (koa: Koa) => {
     const CORS_ORIGINS = config.get("cors.origins") as string[];
     const CORS_MAX_AGE = config.get("cors.maxAge") as number;
 
-    koa.use(koaBody({ multipart: true })); // Allows us to use ctx.request.body
-    koa.use(koaHelmet()); // Adds security headers
+
+
 
     koa.use(
         koaCors({
@@ -28,6 +28,10 @@ const installMiddleware = (koa: Koa) => {
             maxAge: CORS_MAX_AGE,
         })
     );
+
+    koa.use(koaBody({ multipart: true })); // Allows us to use ctx.request.body
+
+    koa.use(koaHelmet()); // Adds security headers
 };
 
 export default installMiddleware;
