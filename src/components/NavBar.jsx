@@ -1,5 +1,5 @@
-import Meldingen from './Meldingen';
 import { useAuth } from '../context/auth';
+import Notifications from './Notifications';
 
 export default function NavBar() {
   const {isAuthed} = useAuth();
@@ -26,7 +26,7 @@ export default function NavBar() {
           </ul>
           <ul className="navbar-nav ms-auto me-3">
             <li className="nav-item nav-link">
-              <Meldingen />
+              <Notifications />
             </li>
             { isAuthed ? (
               <li className="nav-item">

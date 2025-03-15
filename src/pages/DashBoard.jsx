@@ -90,18 +90,21 @@ export default function Dashboard() {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>Dashboard</h1>
-        <button className="edit-button" onClick={() => setIsEditable(!isEditable)}>
+        <button className="edit-button" onClick={() => setIsEditable(true)}>
           <BsPencilSquare className="edit-icon" />
         </button>
         {isEditable && (
-          <select className="form-select" value={selectedKpi} onChange={handleKpiSelect}>
-            <option value="">Select KPI</option>
-            {kpiList.filter((kpi) => !kpi.onDashboard).map((kpi) => (
-              <option key={kpi.id} value={kpi.id}>
-                {kpi.title}
-              </option>
-            ))}
-          </select>
+          <>
+            <select className="form-select" value={selectedKpi} onChange={handleKpiSelect}>
+              <option value="">Select KPI</option>
+              {kpiList.filter((kpi) => !kpi.onDashboard).map((kpi) => (
+                <option key={kpi.id} value={kpi.id}>
+                  {kpi.title}
+                </option>
+              ))}
+            </select>
+            <button className='btn save-btn' onClick={() => setIsEditable(false)}>save</button>
+          </>
         )}
       </div>
       <div className="border-container">

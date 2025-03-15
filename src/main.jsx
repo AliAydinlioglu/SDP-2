@@ -18,9 +18,9 @@ import MachineSmallDetail from './components/machines/MachineSmallDetail.jsx';
 import MachinesList from './pages/machines/MachinesList.jsx';
 import MachineDetailBig from './pages/machines/MachineDetailBig.jsx';
 
-import Meldingen from './pages/Meldingen.jsx';
 import AddOrEditMachine from './pages/machines/AddOrEditMachine.jsx';
 import AddOrEditSite from './pages/sites/AddOrEditSite.jsx';
+import Notifications from './pages/Notifications.jsx';
 
 const router = createBrowserRouter([
   {
@@ -89,7 +89,7 @@ const router = createBrowserRouter([
             element: <NotFound />,
           },
           
-          {path: '/meldingen', element: <Meldingen/>}, // moet nog verandert worden naar meldingen van een user
+          {path: '/notifications', element: <Notifications/>}, // moet nog verandert worden naar meldingen van een user
         ],
       },
     ],
