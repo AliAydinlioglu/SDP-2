@@ -2,11 +2,11 @@ import { FaBell } from 'react-icons/fa';
 import { MELDING_DATA } from '../api/mock_data';
 import { useNavigate } from 'react-router';
 
-export default function Meldingen() {
+export default function Notifications() {
 
   const navigate = useNavigate();
   const handleOnClick = () => {
-    navigate('/meldingen');
+    navigate('/notifications');
   };
 
   const meldingen = MELDING_DATA.slice(-5);
@@ -25,7 +25,7 @@ export default function Meldingen() {
           </li>
         ))}
         <li><hr className="dropdown-divider" /></li>
-        <li className="text-center"><button onClick={handleOnClick} >Alle meldingen</button></li>
+        <li className="text-center"><button onClick={handleOnClick} >All notifications</button></li>
       </ul>
     </div>
   );

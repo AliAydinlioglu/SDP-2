@@ -114,6 +114,7 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
 /* Sites List */
 .site-search-bar {
   width: 50%;
@@ -212,7 +213,7 @@ button:focus-visible {
 
 .meldingen-container h1 {
   text-align: left;
-  border-bottom: 2px solid #1f1c1c;
+
 }
 
 .meldingen-table {
@@ -249,13 +250,15 @@ button:focus-visible {
 .meldingen-table tbody tr:last-of-type {
   border-bottom: 2px solid #d56363;
 }
+
 /* Big Table Machines */
 .machine-tabel-big {
   align-self: center;
   margin: auto;
 }
 
-.machine-tabel-big th, .machine-tabel-big td {
+.machine-tabel-big th,
+.machine-tabel-big td {
   padding: 10px 100px;
   text-align: center;
   border: 1px solid #ddd;
@@ -278,7 +281,8 @@ button:focus-visible {
   background-color: #fff;
 }
 
-.states, .production-states {
+.states,
+.production-states {
   color: #050505;
   padding: 10px;
   border: 1px solid #ddd;
@@ -308,9 +312,10 @@ button:focus-visible {
   border-radius: 8px;
   height: auto;
   padding: 1rem;
-  margin: 1rem;
+  margin: 1rem 1rem 1rem 0;
   background-color: darkgray;
   min-height: 80vh;
+  width: 98%;
 }
 
 
@@ -374,6 +379,10 @@ button:focus-visible {
   cursor: move;
 }
 
+.form-select {
+  width: 25%;
+}
+
 /* Form */
 .form-container {
   display: flex;
@@ -397,4 +406,11 @@ form .form-label {
 form .form-text.text-danger {
   color: #dc3545;
   font-size: 0.875em;
+}
+
+
+.alert-info {
+  width: 400px;
+  margin: 0 auto;
+  margin-bottom: 30px;
 }

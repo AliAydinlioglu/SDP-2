@@ -8,6 +8,8 @@ import DashBoard from './pages/DashBoard.jsx';
 import Site from './pages/sites/Site.jsx';
 import SitesList from './pages/sites/SitesList.jsx';
 
+import PrivateRoute from './components/PrivateRoute.jsx';
+
 import { AuthProvider } from './context/Auth.context.jsx';
 import Login from './pages/Login.jsx';
 import Logout from './pages/Logout.jsx';
@@ -16,79 +18,87 @@ import MachineSmallDetail from './components/machines/MachineSmallDetail.jsx';
 import MachinesList from './pages/machines/MachinesList.jsx';
 import MachineDetailBig from './pages/machines/MachineDetailBig.jsx';
 
-import Meldingen from './pages/Meldingen.jsx';
 import AddOrEditMachine from './pages/machines/AddOrEditMachine.jsx';
 import AddOrEditSite from './pages/sites/AddOrEditSite.jsx';
+import Notifications from './pages/Notifications.jsx';
 
 const router = createBrowserRouter([
   {
-    element: <Layout />,
+    element: <PrivateRoute/>,
     children: [
-      {
-        path: '/',
-        element: <Navigate replace to='/dashboard' />,
-      },
-      {
-        path: '/dashboard',
-        element: <DashBoard />,
-      },
-      {
-        path: '/sites',
+      {element: <Layout />,
         children: [
           {
-            index: true,
-            element: <SitesList />,
+            path: '/',
+            element: <Navigate replace to='/dashboard' />,
           },
           {
-            path: ':id',
-            element: <Site />,
+            path: '/dashboard',
+            element: <DashBoard />,
+          },
+          {
+            path: '/sites',
             children: [
               {
-                path: 'machines/:machineId',
-                element: <MachineSmallDetail />,
+                index: true,
+                element: <SitesList />,
+              },
+              {
+                path: ':id',
+                element: <Site />,
+                children: [
+                  {
+                    path: 'machines/:machineId',
+                    element: <MachineSmallDetail />,
+                  },
+                ],
+              },
+              {
+                path: 'add',
+                element: <AddOrEditSite />,
+              },
+              {
+                path: 'edit/:id',
+                element: <AddOrEditSite />,
               },
             ],
           },
           {
-            path: 'add',
-            element: <AddOrEditSite />,
+            path: '/machines',
+            children: [
+              {
+                index: true,
+                element: <MachinesList />,
+              },
+              {
+                path: ':id',
+                element: <MachineDetailBig />,
+              },
+              {
+                path: 'add',
+                element: <AddOrEditMachine />,
+              },
+              {
+                path: 'edit/:id',
+                element: <AddOrEditMachine />,
+              },
+            ],
           },
           {
-            path: 'edit/:id',
-            element: <AddOrEditSite />,
+            path: '*',
+            element: <NotFound />,
           },
+          
+          {path: '/notifications', element: <Notifications/>}, // moet nog verandert worden naar meldingen van een user
         ],
       },
-      {
-        path: '/machines',
-        children: [
-          {
-            index: true,
-            element: <MachinesList />,
-          },
-          {
-            path: ':id',
-            element: <MachineDetailBig />,
-          },
-          {
-            path: 'add',
-            element: <AddOrEditMachine />,
-          },
-          {
-            path: 'edit/:id',
-            element: <AddOrEditMachine />,
-          },
-        ],
-      },
-      {
-        path: '*',
-        element: <NotFound />,
-      },
-      {path: 'login', element: <Login/>},
-      {path: 'logout', element: <Logout/> },
-      {path: 'meldingen', element: <Meldingen/>}, // moet nog verandert worden naar meldingen van een user
     ],
   },
+  {
+    element: <Login />,
+    path: '/login',
+  },
+  {path: '/logout', element: <Logout/> },
 ]);
 
 createRoot(document.getElementById('root')).render(
