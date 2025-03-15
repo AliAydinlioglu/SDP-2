@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useAuth } from '../context/auth.js';
+import Login from './Login.jsx';
 
 export default function Logout() {
   const { isAuthed, logout } = useAuth();
@@ -21,12 +22,6 @@ export default function Logout() {
   }
 
   return (
-    <div className='container'>
-      <div className='row'>
-        <div className='col-12'>
-          <h1>U bent succesvol uitgelogd</h1>
-        </div>
-      </div>
-    </div>
+    <Login message={'U have been succesfully logged out'} />
   );
 }

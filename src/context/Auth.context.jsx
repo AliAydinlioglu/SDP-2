@@ -10,10 +10,10 @@ export const AuthProvider = ({children}) =>{
   const [token, setToken] = useState(localStorage.getItem(JWT_TOKEN_KEY));
   
   const {
-    data: klant,
-    loading: klantLoading,
-    error: klantError,
-  } = useSWR(token ? 'users/me' : null, api.getById);
+    data: user,
+    loading: userLoading,
+    error: userError,
+  } = useSWR(token ? 'users' : null, api.getById);
 
   const {
     isMutating: loginLoading,
@@ -49,15 +49,15 @@ export const AuthProvider = ({children}) =>{
 
   const value = useMemo(
     () => ({
-      klant,
-      error: klantError || loginError,
-      loading: klantLoading || loginLoading,
+      user,
+      error: userError || loginError,
+      loading: userLoading || loginLoading,
       isAuthed: Boolean(token),
-      ready: !klantLoading,
+      ready: !userLoading,
       login,
       logout,
     }),
-    [token, klant, klantLoading, klantError, login, loginLoading, loginError, logout],
+    [token, user, userLoading, userError, login, loginLoading, loginError, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
