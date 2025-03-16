@@ -1,9 +1,14 @@
 import { useEffect } from 'react';
 import { useAuth } from '../context/auth.js';
-import Login from './Login.jsx';
+import { useNavigate } from 'react-router';
 
 export default function Logout() {
   const { isAuthed, logout } = useAuth();
+
+  const navigate = useNavigate();
+  const handleOnClick = () => {
+    navigate('/notifications');
+  };
 
   useEffect(() => {
     logout();
@@ -22,6 +27,9 @@ export default function Logout() {
   }
 
   return (
-    <Login message={'U have been succesfully logged out'} />
+    <>
+      <div className='alert alert-info'>U have been succesfully logged out</div>
+      <button className='btn' onClick={handleOnClick}>Log in</button>
+    </>
   );
 }

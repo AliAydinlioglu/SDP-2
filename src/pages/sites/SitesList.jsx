@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { SITE_DATA } from '../../api/mock_data';
 import SiteCards from '../../components/sites/SiteCards';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/auth';
 
 const SitesList = () => {
   const [text, setText] = useState('');
   const [sites, setSites] = useState(SITE_DATA);
+
+  const {user} = useAuth();
+  const isAdmin = user?.rol === 'ADMINISTRATOR';
 
   useEffect(() => {
     const filteredSites = SITE_DATA.filter((s) => {
@@ -25,9 +29,11 @@ const SitesList = () => {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <Link to='/sites/add' className='btn btn-primary float-end'>
-          Add site
-        </Link>
+        {isAdmin && (
+          <Link to='/sites/add' className='btn btn-primary'>
+            Add site
+          </Link>
+        )}
       </div>
       <div className='sites-cards-container'>
         <SiteCards sites={sites} />

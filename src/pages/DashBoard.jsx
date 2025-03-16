@@ -90,12 +90,12 @@ export default function Dashboard() {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>Dashboard</h1>
-        <button className="edit-button" onClick={() => setIsEditable(true)}>
+        <button className="edit-button" data-cy="edit-btn" onClick={() => setIsEditable(true)}>
           <BsPencilSquare className="edit-icon" />
         </button>
         {isEditable && (
           <>
-            <select className="form-select" value={selectedKpi} onChange={handleKpiSelect}>
+            <select className="form-select" value={selectedKpi} onChange={handleKpiSelect} data-cy="kpi-select">
               <option value="">Select KPI</option>
               {kpiList.filter((kpi) => !kpi.onDashboard).map((kpi) => (
                 <option key={kpi.id} value={kpi.id}>
@@ -103,7 +103,7 @@ export default function Dashboard() {
                 </option>
               ))}
             </select>
-            <button className='btn save-btn' onClick={() => setIsEditable(false)}>save</button>
+            <button className='btn save-btn' data-cy="save-btn" onClick={() => setIsEditable(false)}>save</button>
           </>
         )}
       </div>
@@ -123,11 +123,12 @@ export default function Dashboard() {
           {kpiList
             .filter((kpi) => kpi.onDashboard)
             .map((kpi) => (
-              <div key={kpi.id} className="widget">
+              <div key={kpi.id} className="widget" data-cy="kpi">
                 {isEditable && (
                   <button
                     className="remove-button"
                     onClick={() => handleRemoveKpi(kpi.id.toString())}
+                    data-cy="remove-btn"
                   >
                     <BsTrash className="remove-icon" />
                   </button>
