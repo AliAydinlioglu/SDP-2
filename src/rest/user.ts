@@ -7,7 +7,7 @@ import endpoints from "../constants/endpoints";
 import { Rol } from "@prisma/client";
 import textCodes from "../constants/textCodes";
 
-const getUser = async (ctx: Context) => {
+const getSelf = async (ctx: Context) => {
     ctx.body = await userService.find(ctx.user_id);
     ctx.status = 200;
 };
@@ -25,7 +25,69 @@ const findAnyUser = async (ctx: Context) => {
     ctx.status = 200;
 };
 
+const findAllUsers = async (ctx: Context) => {
+    let currnetUser = await userService.find(ctx.user_id);
+
+    if (currnetUser.rol !== Rol.ADMINISTRATOR) {
+        ctx.status = 403;
+        ctx.body = { message: textCodes.NOACCESS };
+        return;
+    }
+
+    ctx.body = await userService.findAll();
+    ctx.status = 200;
+};
+
 const updateUser = {
+    execute: async (ctx: Context) => {
+        let currnetUser = await userService.find(ctx.user_id);
+
+        if (currnetUser.rol !== Rol.ADMINISTRATOR) {
+            ctx.status = 403;
+            ctx.body = { message: textCodes.NOACCESS };
+            return;
+        }
+
+        const user = ctx.request.body as {
+            voornaam: string;
+            achternaam: string;
+            email: string;
+            gsm_nr?: string;
+            geboorteDatum: Date;
+            straat: string;
+            huis_nr: string;
+            stad: string;
+            postcode: string;
+            land: string;
+            password: string;
+            actief: boolean;
+            rol: Rol;
+        };
+
+        await userService.updateUser(Number(ctx.params.id), user);
+
+        ctx.status = 200;
+    },
+    schema: {
+        body: Joi.object({
+            voornaam: Joi.string(),
+            achternaam: Joi.string(),
+            email: Joi.string().email(),
+            password: Joi.string(),
+            straat: Joi.string(),
+            huis_nr: Joi.string(),
+            geboorteDatum: Joi.date(),
+            postcode: Joi.string().pattern(/^\d{4,5}$/),
+            stad: Joi.string(),
+            land: Joi.string(),
+            gsm_nr: Joi.string().optional(),
+            actief: Joi.boolean(),
+            rol: Joi.object(),
+        }).min(1),
+    },
+};
+
+const updateSelf = {
     execute: async (ctx: Context) => {
         const user = ctx.request.body as {
             voornaam: string;
@@ -80,10 +142,14 @@ const installRouter = (parentRouter: Router) => {
 
     router.use(validation.validateSchema(validation.headerAuthorizationSchema));
 
-    router.get(endpoints.userUserEndpoint, getUser);
-    router.get(endpoints.userUserEndpoint + ":id", findAnyUser);
-    router.put(endpoints.userUserEndpoint, validation.validateSchema(updateUser.schema), updateUser.execute);
-    router.delete(endpoints.userUserEndpoint, deleteUser);
+    router.get(endpoints.userSelfEndpoint, getSelf); // /users/me
+    router.get(endpoints.userUserEndpoint + ":id", findAnyUser); // /users/:id
+    router.get(endpoints.userUserEndpoint, findAllUsers); // /users
+
+    router.put(endpoints.userSelfEndpoint, validation.validateSchema(updateSelf.schema), updateSelf.execute); // /users/me
+    router.put(endpoints.userUserEndpoint + ":id", validation.validateSchema(updateUser.schema), updateUser.execute); // /users/:id
+
+    router.delete(endpoints.userUserEndpoint, deleteUser); // /users
 
     parentRouter.use(router.routes()).use(router.allowedMethods());
 };

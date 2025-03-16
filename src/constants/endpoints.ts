@@ -1,6 +1,6 @@
 let api = "api";
 let user = "users";
-let site = "sites"
+let site = "sites";
 
 // index.ts
 let apiPrefix = "/" + api;
@@ -19,7 +19,7 @@ let version = "/" + "version";
 let userPrefix = "/" + user;
 //// User
 let userUserEndpoint = "/";
-
+let userSelfEndpoint = "/me";
 
 // site.ts
 //// Root
@@ -33,6 +33,7 @@ export default {
 
     userPrefix,
     userUserEndpoint,
+    userSelfEndpoint,
 
     sitePrefix,
     siteSiteEndpoint,
