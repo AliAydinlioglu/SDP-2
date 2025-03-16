@@ -8,7 +8,6 @@ import testData from "../testdata";
 import endpoints from "../../src/constants/endpoints";
 import data from "../../src/data/index";
 import resetDatabase from "../../src/data/resetDatabase";
-import user from "../../src/service/user";
 import { Rol } from "@prisma/client";
 // TEST DATA
 
@@ -39,14 +38,14 @@ afterAll(async () => {
 describe("/users", () => {
     it("GET - No JWT - should 401 and return no jwt", async () => {
         // Will try to access the user endpoint without a session_id
-        const response = await request.get(userUserEndpoint);
+        const response = await request.get(userUserEndpoint + endpoints.userSelfEndpoint);
 
         expect(response.status).toBe(401);
         expect(response.body.message).toEqual(errorCodes.NOJWT);
     });
     it("GET - JWT - should 200 and return 3 items (id, voornaam and email).", async () => {
         // Will try to access the user endpoint with a session_id
-        const response = await request.get(userUserEndpoint).set({
+        const response = await request.get(userUserEndpoint + endpoints.userSelfEndpoint).set({
             Authorization: `Bearer ${jwts[0]}`,
         });
 
@@ -59,7 +58,7 @@ describe("/users", () => {
         expect(user.email).toStrictEqual("solomonreed@email.com"); // Solomon's email
     });
     it("GET - JWT - an authorized user tries to get user information.", async () => {
-        let adminJWT = await user.create({
+        let adminJWT = await userService.create({
             voornaam: "Solomon",
             achternaam: "Reed",
             email: "solomonreedasdasde@email.com",
@@ -91,7 +90,7 @@ describe("/users", () => {
             rol: Rol.VERANTWOORDELIJKE,
         };
 
-        let verantwJWT = await user.create(verantw_obj);
+        let verantwJWT = await userService.create(verantw_obj);
 
         let verantwID = jwtUse.getUserID(verantwJWT);
 
@@ -104,6 +103,31 @@ describe("/users", () => {
         expect(response.body.achternaam === verantw_obj.achternaam);
         expect(response.body.rol === verantw_obj.rol);
     });
+    it("GET - Admin gets all users", async () => {
+        // Will try to access the user endpoint without a session_id
+        let adminJWT = await userService.create({
+            voornaam: "Solomon",
+            achternaam: "Reed",
+            email: "solomonreedasdasde@email.com",
+            password: "therealslimshady",
+            straat: "Corpo Plaza",
+            huis_nr: "505",
+            geboorteDatum: new Date("1990-01-01"),
+            stad: "Night City",
+            postcode: "77704",
+            land: "NUSA",
+            gsm_nr: "555-1701",
+            actief: true,
+            rol: Rol.ADMINISTRATOR,
+        });
+
+        const response = await request.get(userUserEndpoint).set({
+            Authorization: `Bearer ${adminJWT}`,
+        });
+
+        let user = response.body;
+        expect(user.length).toStrictEqual(4); // 3 users + 1 admin that's created in the test
+    });
     describe("PUT", () => {
         it("PUT - Should only change Solomon's voornaam to Judy while keeping the id.", async () => {
             let sameId = jwtUse.getUserID(jwts[0]);
@@ -112,7 +136,7 @@ describe("/users", () => {
             expect(voornaam).toBe("Solomon");
 
             const response = await request
-                .put(userUserEndpoint)
+                .put(userUserEndpoint + endpoints.userSelfEndpoint)
                 .set({
                     Authorization: `Bearer ${jwts[0]}`,
                 })
@@ -133,7 +157,7 @@ describe("/users", () => {
             expect(voornaam).toBe("Solomon");
 
             const response = await request
-                .put(userUserEndpoint)
+                .put(userUserEndpoint + endpoints.userSelfEndpoint)
                 .set({
                     Authorization: `Bearer ${jwts[0]}`,
                 })
@@ -154,7 +178,7 @@ describe("/users", () => {
             expect(voornaam).toBe("Solomon");
 
             const response = await request
-                .put(userUserEndpoint)
+                .put(userUserEndpoint + endpoints.userSelfEndpoint)
                 .set({
                     Authorization: `Bearer ${jwts[0]}`,
                 })
@@ -174,7 +198,7 @@ describe("/users", () => {
             expect(voornaam).toBe("Solomon");
 
             const response = await request
-                .put(userUserEndpoint)
+                .put(userUserEndpoint + endpoints.userSelfEndpoint)
                 .set({
                     Authorization: `Bearer ${jwts[0]}`,
                 })
@@ -194,7 +218,7 @@ describe("/users", () => {
             expect(voornaam).toBe("Solomon");
 
             const response = await request
-                .put(userUserEndpoint)
+                .put(userUserEndpoint + endpoints.userSelfEndpoint)
                 .set({
                     Authorization: `Bearer ${jwts[0]}`,
                 })
@@ -213,7 +237,7 @@ describe("/users", () => {
             let user = (await userService.find(sameId))!;
 
             const response = await request
-                .put(userUserEndpoint)
+                .put(userUserEndpoint + endpoints.userSelfEndpoint)
                 .set({
                     Authorization: `Bearer ${jwt}`,
                 })
@@ -231,7 +255,7 @@ describe("/users", () => {
             let user = (await userService.find(sameId))!;
 
             const response = await request
-                .put(userUserEndpoint)
+                .put(userUserEndpoint + endpoints.userSelfEndpoint)
                 .set({
                     Authorization: `Bearer ${jwt}`,
                 })

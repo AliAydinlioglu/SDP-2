@@ -115,8 +115,11 @@ De tests moeten worden uitgevoerd op een lege DB (sommige tests zijn zoektests d
 
 #### users
 
--   `GET    /api/users`: Haalt je accountinformatie op.
--   `PUT    /api/users`: Werkt je accountinformatie bij.
+-   `GET    /api/users`: Haalt alle gebruikers op.
+-   `GET    /api/users/me`: Haalt je accountinformatie op.
+-   `GET    /api/users/:id`: Haalt de accountinformatie van een gebruiker op.
+-   `PUT    /api/users/:id`: Werkt de accountinformatie van een gebruiker bij.
+-   `PUT    /api/users/me`: Werkt je accountinformatie bij.
 -   `DELETE /api/users`: Verwijdert je account.
 
 ### Health

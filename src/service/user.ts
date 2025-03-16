@@ -118,6 +118,28 @@ const find = async (user_id: number): Promise<PasswordlessUser> => {
     return passwordlessUser;
 };
 
+const findAll = async (): Promise<PasswordlessUser[]> => {
+    const result = await data.prisma.user.findMany();
+
+    return result.map((user) => {
+        return {
+            id: user.id,
+            voornaam: user.voornaam,
+            achternaam: user.achternaam,
+            email: user.email,
+            straat: user.straat,
+            huis_nr: user.huis_nr,
+            geboorteDatum: user.geboorteDatum,
+            postcode: user.postcode,
+            stad: user.stad,
+            land: user.land,
+            gsm_nr: user.gsm_nr ?? undefined,
+            actief: user.actief,
+            rol: user.rol,
+        };
+    });
+};
+
 const deleteUser = async (user_id: number): Promise<number> => {
     try {
         await data.prisma.user.delete({ where: { id: user_id } });
@@ -132,5 +154,6 @@ export default {
     login,
     updateUser,
     find,
+    findAll,
     deleteUser,
 };
