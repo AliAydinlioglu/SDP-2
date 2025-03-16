@@ -22,7 +22,7 @@ const validationRules = {
   },
 };
 
-export default function Login({message}) {
+export default function Login() {
   const { search} = useLocation();
 
   const {error, loading, login} = useAuth();
@@ -55,44 +55,41 @@ export default function Login({message}) {
   );
 
   return (
-    <>
-      <div className='message-container'>
-        {message && <div className='alert alert-info'>{message}</div>}
-      </div>
-      <div className='form-container'>
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(handleLogin)}>
-            <h1>Log in</h1>
-            <Error error={error} />
-            <LabelInput
-              label='Email'
-              name='email'
-              type='email'
-              validationRules={validationRules.email}
-              data-cy='email-input'
-            />
-            <LabelInput
-              label='Wachtwoord'
-              name='password'
-              type='password'
-              validationRules={validationRules.password}
-              data-cy='password-input'
-            />
-            <div className='clearfix'>
-              <div className='btn-group w-100'>
-                <button
-                  type='submit'
-                  className='btn'
-                  disabled={loading}
-                  data-cy='submit-btn'
-                >
-                  Log in
-                </button>
-              </div>
+    
+    <div className='form-container'>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(handleLogin)}>
+          <h1>Log in</h1>
+          <Error error={error} />
+          <LabelInput
+            label='Email'
+            name='email'
+            type='email'
+            validationRules={validationRules.email}
+            data-cy='email-input'
+          />
+          <LabelInput
+            label='Wachtwoord'
+            name='password'
+            type='password'
+            validationRules={validationRules.password}
+            data-cy='password-input'
+          />
+          <div className='clearfix'>
+            <div className='btn-group w-100'>
+              <button
+                type='submit'
+                className='btn'
+                disabled={loading}
+                data-cy='submit-btn'
+              >
+                Log in
+              </button>
             </div>
-          </form>
-        </FormProvider>
-      </div>
-    </>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
+    
   );
 };

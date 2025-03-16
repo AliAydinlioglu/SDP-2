@@ -316,6 +316,7 @@ button:focus-visible {
   background-color: darkgray;
   min-height: 80vh;
   width: 98%;
+  display: flex;
 }
 
 
@@ -355,6 +356,7 @@ button:focus-visible {
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
 }
 
 .remove-button {

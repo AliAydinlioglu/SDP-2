@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/indent */
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -10,7 +11,37 @@
 //
 //
 // -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
+Cypress.on('uncaught:exception', () => {
+    return false;
+});
+Cypress.Commands.add('login', (email, password) => {
+    Cypress.log({
+        displayName: 'login',
+    });
+
+    cy.intercept('/api/auth/login').as('login');
+
+    cy.visit('http://localhost:5173/login');
+
+    cy.get('[data-cy=email-input]').clear();
+
+    cy.get('[data-cy=email-input]').type(email);
+
+    cy.get('[data-cy=password-input]').clear();
+    cy.get('[data-cy=password-input]').type(password);
+
+    cy.get('[data-cy=submit-btn]').click();
+    cy.wait('@login');
+});
+
+Cypress.Commands.add('logout', () => {
+    Cypress.log({
+        displayName: 'logout',
+    });
+
+    cy.visit('http://localhost:5173');
+    cy.get('[data-cy=logout_btn]').click();
+});
 //
 //
 // -- This is a child command --

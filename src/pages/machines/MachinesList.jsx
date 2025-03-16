@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MACHINE_DATA } from '../../api/mock_data';
 import MachineTabelBig from '../../components/machines/MachineTabelBig';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/auth';
 
 const MachinesList = () => {
   const [machines, setMachines] = useState(MACHINE_DATA);
@@ -10,6 +11,9 @@ const MachinesList = () => {
   const [text, setText] = useState('');
   const [stateFilter, setStateFilter] = useState('');
   const [productionStateFilter, setProductionStateFilter] = useState('');
+
+  const {user} = useAuth();
+  const isAdmin = user?.rol === 'ADMINISTRATOR';
 
   const sortMachinesByProp = (prop) => {
     let sortOrder, setSortOrder;
@@ -77,9 +81,11 @@ const MachinesList = () => {
         </select>
 
         <div className='clearfix'>
-          <Link to='/machines/add' className='btn btn-primary float-end'>
-            Add machine
-          </Link>
+          {isAdmin && (
+            <Link to='/machines/add' className='btn btn-primary float-end'>
+              Add machine
+            </Link>
+          )}
         </div>
       </div>
       <MachineTabelBig machines={machines} sortMachines={sortMachinesByProp} />

@@ -34,7 +34,7 @@ export default function NavBar() {
               </li>
             ): (
               <li className="nav-item">
-                <a className="nav-link" href="/login">Login</a>
+                <a className="nav-link" data-cy="logout_btn" href="/login">Login</a>
               </li>
             )}
           </ul>
