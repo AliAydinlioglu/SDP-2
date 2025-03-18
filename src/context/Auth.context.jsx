@@ -13,7 +13,7 @@ export const AuthProvider = ({children}) =>{
     data: user,
     loading: userLoading,
     error: userError,
-  } = useSWR(token ? 'users' : null, api.getById);
+  } = useSWR(token ? 'users/me' : null, api.getById);
 
   const {
     isMutating: loginLoading,
