@@ -95,7 +95,7 @@ export default function Dashboard() {
         </button>
         {isEditable && (
           <>
-            <select className="form-select" value={selectedKpi} onChange={handleKpiSelect} data-cy="kpi-select">
+            <select className="kpi-select" value={selectedKpi} onChange={handleKpiSelect} data-cy="kpi-select">
               <option value="">Select KPI</option>
               {kpiList.filter((kpi) => !kpi.onDashboard).map((kpi) => (
                 <option key={kpi.id} value={kpi.id}>

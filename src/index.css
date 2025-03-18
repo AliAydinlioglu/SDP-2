@@ -222,7 +222,6 @@ button:focus-visible {
   margin: 20px auto;
   font-size: 1.2em;
   min-width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   table-layout: fixed;
 }
 
@@ -262,6 +261,11 @@ button:focus-visible {
   padding: 10px 100px;
   text-align: center;
   border: 1px solid #ddd;
+}
+
+.machine-tabel-big thead tr {
+  background-color: #d56363;
+  color: #ffffff;
 }
 
 /* Search And Filter */
@@ -381,8 +385,13 @@ button:focus-visible {
   cursor: move;
 }
 
-.form-select {
+.kpi-select {
   width: 25%;
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
 }
 
 /* Form */
