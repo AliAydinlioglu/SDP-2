@@ -31,10 +31,10 @@ export default function MachineTabelSmall({ machines }) {
                   {machine.site_id}
                 </td>
                 <td>
-                  {machine.state}
+                  {machine.status}
                 </td>
                 <td>
-                  {machine.prod_state}
+                  {machine.prod_status}
                 </td>
               </tr>
             ))}

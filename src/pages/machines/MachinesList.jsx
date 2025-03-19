@@ -13,7 +13,7 @@ const MachinesList = () => {
   const [productionStateFilter, setProductionStateFilter] = useState('');
 
   const {user} = useAuth();
-  const isAdmin = user?.rol === 'ADMINISTRATOR';
+  const isAdmin = user?.rol === 'ADMINISTRATOR';  
 
   const sortMachinesByProp = (prop) => {
     let sortOrder, setSortOrder;

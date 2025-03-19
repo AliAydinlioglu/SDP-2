@@ -16,8 +16,9 @@ const MachineSmallDetail = () => {
   return (
     <div>
       <h1>Machine id: {machine.id}</h1>
-      <p>Machine state: {machine.state}</p>
-      <p>Machine production state: {machine.prod_state}</p>
+      <p>Machine state: {machine.status}</p>
+      <p>Machine production state: {machine.prod_status}</p>
+      <a href={`/machines/${machineId}`}>zie meer</a>
     </div>
   );
 };

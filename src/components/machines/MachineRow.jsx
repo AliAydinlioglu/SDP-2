@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-const MachineRow = ({ id, site_id, state, prod_state }) => {
+const MachineRow = ({ id, site_id, info, status, prod_status }) => {
   const navigate = useNavigate();
 
   const handleRowClick = (id) => {
@@ -17,10 +17,13 @@ const MachineRow = ({ id, site_id, state, prod_state }) => {
         {site_id}
       </td>
       <td>
-        {state}
+        {info}
       </td>
       <td>
-        {prod_state}
+        {status}
+      </td>
+      <td>
+        {prod_status}
       </td>
     </tr>
   );

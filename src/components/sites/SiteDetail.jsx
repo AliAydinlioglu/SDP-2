@@ -8,9 +8,8 @@ export default function SiteDetail({ site }) {
   return (
     <div>
       <h1>Site Detail</h1>
-      <p>Name: {site.name}</p>
-      <p>Manager: {site.manager}</p>
-      <p>Address: {site.address}</p>
+      <p>Name: {site.naam}</p>
+      <p>Manager: {site.verantw_id}</p>
       <p>Number of Machines: {machineCount}</p>
       <Link to={`/sites/edit/${site.id}`} className='btn btn-light'>
         <IoPencilOutline />

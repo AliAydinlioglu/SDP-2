@@ -2,22 +2,18 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 
 const validationRules = {
-  name: {
+  naam: {
     required: 'Site name is required',
   },
-  manager: {
+  verantw_id: {
     required: 'Manager is required',
-  },
-  address: {
-    required: 'Address is required',
   },
 };
 
 const EMPTY_SITE = {
   id: undefined,
-  name: '',
-  manager: '',
-  address: '',
+  naam: '',
+  verantw_id: '',
 };
 
 export default function SiteForm({ site = EMPTY_SITE, saveSite }) {
@@ -25,8 +21,8 @@ export default function SiteForm({ site = EMPTY_SITE, saveSite }) {
   const { register, handleSubmit, formState: { errors, isValid } } = useForm({
     mode: 'onBlur',
     defaultValues: {
-      name: site?.name,
-      manager: site?.manager,
+      naam: site?.naam,
+      verantw_id: site?.verantw_id,
       address: site?.address,
     },
   });
@@ -47,42 +43,29 @@ export default function SiteForm({ site = EMPTY_SITE, saveSite }) {
     <div className='form-container'>
       <form onSubmit={handleSubmit(onSubmit)} className='site-form'>
         <div className='mb-3'>
-          <label htmlFor='name' className='form-label'>
-            Site Name
+          <label htmlFor='naam' className='form-label'>
+            Site Naam
           </label>
           <input
-            {...register('name', validationRules.name)}
-            id='name'
-            name='name'
+            {...register('naam', validationRules.naam)}
+            id='naam'
+            name='naam'
             className='form-control'
           />
-          {errors.name ? <p className="form-text text-danger">{errors.name.message}</p> : null}
+          {errors.naam ? <p className="form-text text-danger">{errors.naam.message}</p> : null}
         </div>
 
         <div className='mb-3'>
-          <label htmlFor='manager' className='form-label'>
+          <label htmlFor='verantw_id' className='form-label'>
             Manager
           </label>
           <input
-            {...register('manager', validationRules.manager)}
-            id='manager'
-            name='manager'
+            {...register('verantw_id', validationRules.verantw_id)}
+            id='verantw_id'
+            name='verantw_id'
             className='form-control'
           />
-          {errors.manager ? <p className="form-text text-danger">{errors.manager.message}</p> : null}
-        </div>
-
-        <div className='mb-3'>
-          <label htmlFor='address' className='form-label'>
-            Address
-          </label>
-          <input
-            {...register('address', validationRules.address)}
-            id='address'
-            name='address'
-            className='form-control'
-          />
-          {errors.address ? <p className="form-text text-danger">{errors.address.message}</p> : null}
+          {errors.verantw_id ? <p className="form-text text-danger">{errors.verantw_id.message}</p> : null}
         </div>
 
         <div className='clearfix'>

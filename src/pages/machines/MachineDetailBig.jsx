@@ -21,8 +21,8 @@ const MachineDetailBig = () => {
   return (
     <div>
       <h1>Machine id: {machine.id}</h1>
-      <p>Machine status: {machine.state}</p>
-      <p>Machine productie status: {machine.prod_state}</p>
+      <p>Machine status: {machine.status}</p>
+      <p>Machine productie status: {machine.prod_status}</p>
       <Link to={`/machines/edit/${machine.id}`} className='btn btn-light'>
         <IoPencilOutline />
       </Link>
