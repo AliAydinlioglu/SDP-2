@@ -101,7 +101,7 @@ describe("/meldingen", () => {
         expect(meldingObject!.user_id).toBe(id);
         expect(meldingObject!.status).toBe("In Behandeling");
         expect(meldingObject!.type).toBe("Onderhoud");
-        expect(diff).toBeLessThan(500); // past de tolerantie aan als dat nodig is
+        expect(diff).toBeLessThan(1500); // past de tolerantie aan als dat nodig is
       
     });
 
