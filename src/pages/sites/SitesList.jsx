@@ -13,7 +13,7 @@ const SitesList = () => {
 
   useEffect(() => {
     const filteredSites = SITE_DATA.filter((s) => {
-      return s.name.toLowerCase().includes(text.toLowerCase());
+      return s.naam.toLowerCase().includes(text.toLowerCase());
     });
     setSites(filteredSites);
   }, [text]);

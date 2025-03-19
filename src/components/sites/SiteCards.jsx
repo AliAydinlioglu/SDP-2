@@ -18,8 +18,8 @@ export default function SiteCards({ sites }) {
           <Link to={`/sites/${site.id}`} key={site.id}>
             <div className="card">
               <div className="card-body">
-                <h5 className="card-title">{site.name}</h5>
-                <p className="card-text">{site.manager}</p>
+                <h5 className="card-title">{site.naam}</h5>
+                <p className="card-text">{site.verantw_id}</p>
                 <p className="card-text">Number of Machines: {machineCount}</p>
               </div>
             </div>

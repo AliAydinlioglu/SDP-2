@@ -16,6 +16,7 @@ function MachineTabelBig({ machines, sortMachines }) {
           <tr>
             <th onClick={() => sortMachines('id')} style={{ cursor: 'pointer' }}>Machine ID <FaSort /></th>
             <th onClick={() => sortMachines('site_id')} style={{ cursor: 'pointer' }}>Site ID <FaSort /></th>
+            <th>Info</th>
             <th>State</th>
             <th>Production State</th>
           </tr>
