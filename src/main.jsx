@@ -21,7 +21,8 @@ import MachineDetailBig from './pages/machines/MachineDetailBig.jsx';
 import AddOrEditMachine from './pages/machines/AddOrEditMachine.jsx';
 import AddOrEditSite from './pages/sites/AddOrEditSite.jsx';
 import Notifications from './pages/Notifications.jsx';
-import Users from './pages/Users.jsx';
+
+import UsersList from './pages/UsersList.jsx';
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <Users />,
+                element: <UsersList />,
               },
             ],
           },

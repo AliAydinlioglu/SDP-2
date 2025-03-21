@@ -5,10 +5,21 @@ import 'react-resizable/css/styles.css';
 import Chart from '../components/KPI/Chart';
 import { BsPencilSquare, BsTrash } from 'react-icons/bs';
 import { KPI_DATA } from '../api/mock_data';
+import { useAuth } from '../context/auth';
+import { useNavigate } from 'react-router';
 
 export default function Dashboard() {
   const [isEditable, setIsEditable] = useState(false);
   const [selectedKpi, setSelectedKpi] = useState('');
+  const navigate = useNavigate();
+
+  const {user} = useAuth();
+
+  const isAdmin = user?.rol === 'ADMINISTRATOR';
+
+  if(isAdmin){
+    navigate('/users', { replace: true });
+  }
 
   const data = KPI_DATA;
 

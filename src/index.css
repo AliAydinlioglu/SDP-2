@@ -425,3 +425,34 @@ form .form-text.text-danger {
   margin: 0 auto;
   margin-bottom: 30px;
 }
+
+/* Users */
+.user-table {
+  align-self: center;
+  margin: auto;
+  width: 90%;
+}
+
+.user-table th,
+.user-table td {
+  padding: 10px 100px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.user-table thead tr {
+  background-color: #d56363;
+  color: #ffffff;
+}
+
+.user-search-bar{
+  color: #050505;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 400px;
+  background-color: #fff;
+  height: auto;
+  justify-self:left;
+
+}

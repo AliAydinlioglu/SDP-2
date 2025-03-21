@@ -5,7 +5,8 @@ import { getAll } from '../api';
 import AsyncData from './AsyncData';
 
 export default function NavBar() {
-  const {isAuthed} = useAuth();
+  const {isAuthed, user} = useAuth();
+  const isAdmin = user?.rol === 'ADMINISTRATOR';
 
   const {
     meldingen = [],
@@ -23,14 +24,19 @@ export default function NavBar() {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
+            {!isAdmin && 
             <li className="nav-item">
               <a className="nav-link" href="/dashboard">Dashboard</a>
-            </li>
+            </li>}
             <li className="nav-item">
               <a className="nav-link" href="/sites">Sites</a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/machines">Machines</a>
+            </li>
+            <li className='nav-item'>
+              {isAdmin && <a className='nav-link' href='/users'>Users</a>}
+
             </li>
           </ul>
           <ul className="navbar-nav ms-auto">
