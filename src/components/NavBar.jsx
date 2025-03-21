@@ -1,8 +1,17 @@
+import useSWR from 'swr';
 import { useAuth } from '../context/auth';
 import Notifications from './Notifications';
+import { getAll } from '../api';
+import AsyncData from './AsyncData';
 
 export default function NavBar() {
   const {isAuthed} = useAuth();
+
+  const {
+    meldingen = [],
+    meldingenError,
+    meldingenLoading,
+  } = useSWR('meldingen', getAll);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
@@ -24,9 +33,11 @@ export default function NavBar() {
               <a className="nav-link" href="/machines">Machines</a>
             </li>
           </ul>
-          <ul className="navbar-nav ms-auto me-3">
+          <ul className="navbar-nav ms-auto">
             <li className="nav-item nav-link">
-              <Notifications />
+              <AsyncData loading={meldingenLoading} error={meldingenError}>
+                <Notifications meldingen={meldingen} />
+              </AsyncData>
             </li>
             { isAuthed ? (
               <li className="nav-item">

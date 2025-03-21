@@ -21,6 +21,7 @@ import MachineDetailBig from './pages/machines/MachineDetailBig.jsx';
 import AddOrEditMachine from './pages/machines/AddOrEditMachine.jsx';
 import AddOrEditSite from './pages/sites/AddOrEditSite.jsx';
 import Notifications from './pages/Notifications.jsx';
+import Users from './pages/Users.jsx';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,15 @@ const router = createBrowserRouter([
           {
             path: '/',
             element: <Navigate replace to='/dashboard' />,
+          },
+          {
+            path: '/users',
+            children: [
+              {
+                index: true,
+                element: <Users />,
+              },
+            ],
           },
           {
             path: '/dashboard',

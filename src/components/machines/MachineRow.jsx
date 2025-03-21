@@ -14,7 +14,7 @@ const MachineRow = ({ id, site_id, info, status, prod_status }) => {
         {id}
       </td>
       <td>
-        {site_id}
+        {site_id} {/*moet nog verandert worden naar site naam*/}
       </td>
       <td>
         {info}
