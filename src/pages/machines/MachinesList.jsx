@@ -38,7 +38,6 @@ const MachinesList = () => {
 
   useEffect(() => {
     const filteredMachines = MACHINE_DATA.filter((m) => {
-      console.log(m.status);
       
       return (
         m.id.toString().includes(text.toLowerCase()) &&

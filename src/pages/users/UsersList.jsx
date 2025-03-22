@@ -1,13 +1,14 @@
 import useSWR from 'swr';
 import { useState } from 'react';
-import { getAll } from '../api';
-import AsyncData from '../components/AsyncData';
-import { FaSort } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { getAll } from '../../api';
+import AsyncData from '../../components/AsyncData';
 
 export default function UsersList() {
   const { data: users = [], loading: usersLoading, error: usersError } = useSWR('/users', getAll);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
+  const navigate = useNavigate();
 
   const roles = [...new Set(users.map((user) => user.rol))];
 
@@ -17,6 +18,10 @@ export default function UsersList() {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (selectedRole === '' || user.rol === selectedRole),
   );
+
+  const handleRowClick = (id) => {
+    navigate(`/users/${id}`);
+  };
 
   return (
     <div>
@@ -46,13 +51,17 @@ export default function UsersList() {
               <tr>
                 <th>ID </th>
                 <th>Name </th>
-                <th>Email <FaSort /></th>
+                <th>Email </th>
                 <th>Role</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user.id}>
+                <tr
+                  key={user.id}
+                  style={{ color: user.actief ? 'inherit' : '#b6b8b8', cursor: 'pointer' }}
+                  onClick={() => handleRowClick(user.id)}
+                >
                   <td>{user.id}</td>
                   <td>{user.voornaam + ' ' + user.achternaam}</td>
                   <td>{user.email}</td>
