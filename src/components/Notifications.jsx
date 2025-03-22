@@ -1,15 +1,30 @@
 import { FaBell } from 'react-icons/fa';
-import { MELDING_DATA } from '../api/mock_data';
 import { useNavigate } from 'react-router';
 
-export default function Notifications() {
+export default function Notifications({meldingen}) {
 
   const navigate = useNavigate();
   const handleOnClick = () => {
     navigate('/notifications');
   };
 
-  const meldingen = MELDING_DATA.slice(-5);
+  meldingen = meldingen.slice(-5);
+
+  if(meldingen.length === 0) {
+    return (
+      <div className="dropdown me-5">
+        <FaBell className="bell-icon" type="button" 
+          data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="10,20"/>
+        <ul className="dropdown-menu dropdown-menu-end ">
+          <li className='dropdown-list'>
+            <a className="dropdown-item disabled text-wrap d-flex align-items-center justify-content-between">
+              No notifications
+            </a>
+          </li>
+        </ul>
+      </div>
+    );
+  }
 
   return (
     <div className="dropdown me-5">

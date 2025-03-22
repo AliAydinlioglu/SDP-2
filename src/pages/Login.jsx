@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm, FormProvider } from 'react-hook-form';
 import LabelInput from '../components/LabelInput.jsx';
 import { useCallback } from 'react';
@@ -23,7 +23,6 @@ const validationRules = {
 };
 
 export default function Login() {
-  const { search} = useLocation();
 
   const {error, loading, login} = useAuth();
 
@@ -44,14 +43,10 @@ export default function Login() {
       const loggedIn = await login(email, password);
 
       if (loggedIn) {
-        const params = new URLSearchParams(search);
-        navigate({
-          pathname: params.get('redirect') || '/',
-          replace: true,
-        });
+        navigate('/dashboard', { replace: true });
       }
     },
-    [login, navigate, search],
+    [login, navigate],
   );
 
   return (

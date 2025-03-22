@@ -15,7 +15,7 @@ __metadata:
     "@types/react-dom": "npm:^19.0.3"
     "@typescript-eslint/utils": "npm:^8.25.0"
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
-    axios: "npm:^1.8.1"
+    axios: "npm:^1.8.4"
     cypress: "npm:^14.1.0"
     eslint: "npm:^9.19.0"
     eslint-plugin-cypress: "npm:^4.1.0"
@@ -33,7 +33,7 @@ __metadata:
     react-router: "npm:~6.26.0"
     react-router-dom: "npm:~6.26.0"
     recharts: "npm:^2.15.1"
-    swr: "npm:^2.3.2"
+    swr: "npm:^2.3.3"
     vite: "npm:^6.1.0"
   languageName: unknown
   linkType: soft
@@ -1382,14 +1382,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "axios@npm:1.8.1"
+"axios@npm:^1.8.4":
+  version: 1.8.4
+  resolution: "axios@npm:1.8.4"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/b2e1d5a61264502deee4b50f0a6df0aa3b174c546ccf68c0dff714a2b8863232e0bd8cb5b84f853303e97f242a98260f9bb9beabeafe451ad5af538e9eb7ac22
+  checksum: 10c0/450993c2ba975ffccaf0d480b68839a3b2435a5469a71fa2fb0b8a55cdb2c2ae47e609360b9c1e2b2534b73dfd69e2733a1cf9f8215bee0bcd729b72f801b0ce
   languageName: node
   linkType: hard
 
@@ -5183,15 +5183,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swr@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "swr@npm:2.3.2"
+"swr@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "swr@npm:2.3.3"
   dependencies:
     dequal: "npm:^2.0.3"
     use-sync-external-store: "npm:^1.4.0"
   peerDependencies:
     react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/981d3138c1959f1f15ddb74ed3c98f34fbcae8e68ee1b0e6ce3af7e1fcf65ecdb3a2c525b42338cbcef0f7a992d41e1aeb3982501e86239e8aeef6c34fe3b580
+  checksum: 10c0/882fc8291912860e0c50eae3470ebf0cd58b0144cb12adcc4b14c5cef913ea06479043830508d8b0b3d4061d99ad8dd52485c9c879fbd4e9b893484e6d8da9e3
   languageName: node
   linkType: hard
 

@@ -22,6 +22,10 @@ import AddOrEditMachine from './pages/machines/AddOrEditMachine.jsx';
 import AddOrEditSite from './pages/sites/AddOrEditSite.jsx';
 import Notifications from './pages/Notifications.jsx';
 
+import UsersList from './pages/users/UsersList.jsx';
+import User from './pages/users/User.jsx';
+import AddOrEditUser from './pages/users/AddOrEditUser.jsx';
+
 const router = createBrowserRouter([
   {
     element: <PrivateRoute/>,
@@ -31,6 +35,26 @@ const router = createBrowserRouter([
           {
             path: '/',
             element: <Navigate replace to='/dashboard' />,
+          },
+          {
+            path: '/users',
+            children: [
+              {
+                index: true,
+                element: <UsersList />,
+              },
+              {
+                path: ':id',
+                element: <User />,
+              },
+              {
+                path: 'add',
+                element: <AddOrEditUser />,
+              },{
+                path: 'edit/:id',
+                element: <AddOrEditUser />,
+              },
+            ],
           },
           {
             path: '/dashboard',

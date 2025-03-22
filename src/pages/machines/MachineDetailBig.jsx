@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { MACHINE_DATA } from '../../api/mock_data';
-import { IoTrashOutline, IoPencilOutline } from 'react-icons/io5';
+import { IoPencilOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 
 const MachineDetailBig = () => {
