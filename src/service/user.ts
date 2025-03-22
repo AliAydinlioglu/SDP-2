@@ -4,6 +4,7 @@ import jwtUse from "../core/jwtUse";
 import { DBUser, PasswordlessUser, User } from "../types/types";
 import { ServiceError } from "../core/errorHandler";
 import data from "../data/index";
+import logging from "../core/logging";
 
 // USER
 
@@ -35,11 +36,13 @@ const create = async ({ voornaam, achternaam, email, password, geboorteDatum, st
                 },
             })
         ).id;
-    } catch (e) {
+    } catch (e) {        
         throw new ServiceError(textCodes.DUPLICATE, 400);
     }
 
     if (id === null || id == undefined) {
+        
+        
         throw new ServiceError(textCodes.INVALIDDATA, 400);
     }
 

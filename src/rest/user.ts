@@ -7,6 +7,7 @@ import endpoints from "../constants/endpoints";
 import { Rol } from "@prisma/client";
 import textCodes from "../constants/textCodes";
 
+
 const getSelf = async (ctx: Context) => {
     ctx.body = await userService.find(ctx.user_id);
     ctx.status = 200;
@@ -82,7 +83,7 @@ const updateUser = {
             land: Joi.string(),
             gsm_nr: Joi.string().optional(),
             actief: Joi.boolean(),
-            rol: Joi.object(),
+            rol: Joi.string(),
         }).min(1),
     },
 };
@@ -123,13 +124,13 @@ const updateSelf = {
             land: Joi.string(),
             gsm_nr: Joi.string().optional(),
             actief: Joi.boolean(),
-            rol: Joi.object(),
+            rol: Joi.string(),
         }).min(1),
     },
 };
 
 const deleteUser = async (ctx: Context) => {
-    await userService.deleteUser(ctx.user_id);
+    await userService.deleteUser(Number(ctx.params.id));
 
     ctx.status = 200;
     ctx.body = { message: "User deleted" };
@@ -149,7 +150,7 @@ const installRouter = (parentRouter: Router) => {
     router.put(endpoints.userSelfEndpoint, validation.validateSchema(updateSelf.schema), updateSelf.execute); // /users/me
     router.put(endpoints.userUserEndpoint + ":id", validation.validateSchema(updateUser.schema), updateUser.execute); // /users/:id
 
-    router.delete(endpoints.userUserEndpoint, deleteUser); // /users
+    router.delete(endpoints.userUserEndpoint + ":id", deleteUser); // /users
 
     parentRouter.use(router.routes()).use(router.allowedMethods());
 };
