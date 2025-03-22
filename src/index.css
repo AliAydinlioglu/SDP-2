@@ -63,7 +63,6 @@ button:focus-visible {
 
 .card {
   margin: 10px;
-  border: 1px solid rgb(187, 186, 186);
   transition: border-color 0.25s;
 }
 
@@ -396,9 +395,8 @@ button:focus-visible {
 
 /* Form */
 .form-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 50%;
+  margin: 2rem auto;
   min-height: 100vh;
 }
 
@@ -411,6 +409,44 @@ form {
   border-radius: 8px;
 }
 
+.user-form {
+  width: 100%;
+  max-width: 800px;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .mb-3 {
+  flex: 1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-group.radio-group {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  width: 25%;
+}
+
 form .form-label {
   font-weight: bold;
   margin-bottom: 5px;
@@ -420,7 +456,6 @@ form .form-text.text-danger {
   color: #dc3545;
   font-size: 0.875em;
 }
-
 
 .alert-info {
   width: 400px;
@@ -457,4 +492,69 @@ form .form-text.text-danger {
   height: auto;
   justify-self:left;
 
+}
+
+.user-details-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.user-details {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  width: 80%;
+  max-width: 800px;
+}
+
+.user-header {
+  margin-bottom: 20px;
+}
+
+.user-info p {
+  margin: 10px 0;
+}
+
+.user-not-found {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.action-buttons .btn {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.action-buttons .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.modal-content {
+  border-radius: 8px;
+}
+
+.modal-header {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.modal-footer .btn-danger {
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+
+.modal-footer .btn-danger:hover {
+  background-color: #c9302c;
+  border-color: #ac2925;
 }

@@ -13,7 +13,7 @@ export default function AddOrEditUser() {
     isLoading: userLoading,
   } = useSWR(id ? `users/${id}` : null, getById);
 
-  const { trigger: saveUser, error: saveError} = useSWRMutation('users', save);
+  const { trigger: saveUser, error: saveError} = useSWRMutation(id ? 'users' : 'auth/register', save);
 
   return (
     <div>

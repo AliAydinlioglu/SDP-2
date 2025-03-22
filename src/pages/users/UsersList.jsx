@@ -43,6 +43,9 @@ export default function UsersList() {
             <option key={role} value={role}>{role}</option>
           ))}
         </select>
+        <div>
+          <button className='btn btn-primary' onClick={() => navigate('/users/add')}>Add User</button>
+        </div>
       </div>
       <AsyncData loading={usersLoading} error={usersError}>
         <div className="">
