@@ -272,14 +272,16 @@ describe("/users", () => {
             let voornaam = (await userService.find(user_id))!.voornaam;
 
             expect(voornaam).toBe("Solomon");
-
-            const deleteResponse = await request.delete(userUserEndpoint).set({
+            
+            // wrong Authorization token, should return 401 
+            const deleteResponse = await request.delete(`${userUserEndpoint}/${user_id}`).set({
                 Authorization: `Bearer asdasd.asdasd.asdasd`,
             });
             expect(deleteResponse.status).toBe(401);
             expect(deleteResponse.body.message).toBe(errorCodes.INVALIDJWT);
-
-            await request.delete(userUserEndpoint).set({
+            
+            // correct Authorization token, should delete the user
+            await request.delete(`${userUserEndpoint}/${user_id}`).set({
                 Authorization: `Bearer ${jwts[0]}`,
             });
 
