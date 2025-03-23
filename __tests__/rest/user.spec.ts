@@ -266,22 +266,20 @@ describe("/users", () => {
         });
     });
     describe("DELETE", () => {
-        it("DELETE - Should delete Solomon's entry.", async () => {
+        it("DELETE - Should not delete Solomon's entry.", async () => {
             let initialAmountOfUsers = (await data.prisma.user.findMany())!;
             let user_id = jwtUse.getUserID(jwts[0]);
             let voornaam = (await userService.find(user_id))!.voornaam;
 
             expect(voornaam).toBe("Solomon");
-            
-            // wrong Authorization token, should return 401 
-            const deleteResponse = await request.delete(`${userUserEndpoint}/${user_id}`).set({
+
+            const deleteResponse = await request.delete(userUserEndpoint + "/" + user_id).set({
                 Authorization: `Bearer asdasd.asdasd.asdasd`,
             });
             expect(deleteResponse.status).toBe(401);
             expect(deleteResponse.body.message).toBe(errorCodes.INVALIDJWT);
-            
-            // correct Authorization token, should delete the user
-            await request.delete(`${userUserEndpoint}/${user_id}`).set({
+
+            await request.delete(userUserEndpoint + "/" + user_id).set({
                 Authorization: `Bearer ${jwts[0]}`,
             });
 
