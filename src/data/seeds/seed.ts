@@ -61,6 +61,50 @@ async function main() {
             },
         ],
     });
+
+    await prisma.site.createMany({
+        data: [
+            {
+                id: 1,
+                naam: "Kaer Morhen Workshop",
+                verantw_id: 1,
+            },
+            {
+                id: 2,
+                naam: "Vengerberg Laboratory",
+                verantw_id: 2,
+            },
+        ],
+    });
+
+    await prisma.machine.createMany({
+        data: [
+            {
+                id: 1,
+                site_id: 1,
+                locatie: "Main Hall",
+                info: "Forge Machine",
+                status: "Operational",
+                prod_status: "Active",
+                uptime: 1200,
+                technieker_id: 3,
+                dagenSindsOnderhoud: 30,
+                volgendOnderhoud: new Date("2025-12-01"),
+            },
+            {
+                id: 2,
+                site_id: 2,
+                locatie: "Alchemy Room",
+                info: "Potion Mixer",
+                status: "Operational",
+                prod_status: "Active",
+                uptime: 800,
+                technieker_id: 3,
+                dagenSindsOnderhoud: 15,
+                volgendOnderhoud: new Date("2025-11-15"),
+            },
+        ],
+    });
 }
 
 main()

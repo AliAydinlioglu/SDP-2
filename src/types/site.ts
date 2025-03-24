@@ -1,6 +1,6 @@
 import type { Entity, ListResponse } from "./common";
 import type { Prisma } from "@prisma/client";
-import type { User } from "./user.no";
+import type { User } from "./user";
 import type { Machine } from "./machine";
 
 export interface Site extends Entity {

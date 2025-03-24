@@ -1,5 +1,5 @@
 import type { Entity, ListResponse } from "./common";
-import type { User } from "./user.no";
+import type { User } from "./user";
 
 export interface Melding extends Entity {
     beschrijving: string;
