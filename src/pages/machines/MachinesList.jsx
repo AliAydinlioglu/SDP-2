@@ -41,8 +41,8 @@ const MachinesList = () => {
       
       return (
         m.id.toString().includes(text.toLowerCase()) &&
-        (stateFilter === '' || m.state === stateFilter) &&
-        (productionStateFilter === '' || m.prod_state === productionStateFilter)
+        (stateFilter === '' || m.status === stateFilter) &&
+        (productionStateFilter === '' || m.prod_status === productionStateFilter)
       );
     });
     setMachines(filteredMachines);

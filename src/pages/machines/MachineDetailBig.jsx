@@ -21,7 +21,7 @@ const MachineDetailBig = () => {
     return (
       <div>
         <h1>Machine not found</h1>
-        <p>There is no machine with id {id}.</p>
+        <p>There is no machine with ID {id}.</p>
       </div>
     );
   }
@@ -48,6 +48,7 @@ const MachineDetailBig = () => {
         <h2>Onderhoud</h2>
         <p>Details about onderhoud will be displayed here.</p>
       </div>
+
     </div>
   );
 };

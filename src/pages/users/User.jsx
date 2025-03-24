@@ -36,7 +36,7 @@ export default function User(){
     <>
       <div className="user-details-container">
         <AsyncData loading={userLoading} error={userError || deleteError}>
-          <div className="user-details card shadow-sm">
+          <div className="user-details">
             <div className="user-header">
               <h2>User Details</h2>
             </div>

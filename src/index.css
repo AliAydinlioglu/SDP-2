@@ -132,14 +132,16 @@ button:focus-visible {
 
 /* Site Grid Layout */
 .site-container {
-  display: block grid;
+  margin: auto 100px;
+  display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
     "side-details machine-details"
     "machine-list machine-details";
-  justify-items: center;
+  /* justify-items: center; */
   align-items: center;
+  gap: 20px; /* Gebruik deze eigenschap voor ruimte tussen items */
 }
 
 .site-details {
@@ -148,11 +150,24 @@ button:focus-visible {
 
 .machine-list {
   grid-area: machine-list;
+  max-width: 75%;
+  justify-self: center;
 }
 
 .machine-details {
   grid-area: machine-details;
 
+}
+
+/* Machine Detail Big */
+.machine-details-container {
+  justify-self: center;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  width: 80%;
+  max-width: 800px;
 }
 
 /* Small Table Machines */
@@ -396,8 +411,8 @@ button:focus-visible {
 /* Form */
 .form-container {
   width: 50%;
-  margin: 2rem auto;
-  min-height: 100vh;
+  margin: auto;
+  justify-items: center;
 }
 
 form {
@@ -461,6 +476,10 @@ form .form-text.text-danger {
   width: 400px;
   margin: 0 auto;
   margin-bottom: 30px;
+}
+
+.alert-container {
+  margin-top: 10%;
 }
 
 /* Users */
