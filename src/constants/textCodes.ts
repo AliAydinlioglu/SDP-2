@@ -14,6 +14,7 @@ enum textCodes {
     SHORTPASSWORD = '"password" length must be at least 8 characters long',
     SITENOTFOUND = "site not found",
     MELDINGNOTFOUND = "MELDINGNOTFOUND",
+    MACHINENOTFOUND = "MACHINENOTFOUND",
 }
 
 export = textCodes;
