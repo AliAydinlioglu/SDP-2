@@ -1,7 +1,8 @@
 let api = "api";
 let user = "users";
 let site = "sites";
-let melding = "meldingen"; 
+let machine = "machines";
+let melding = "meldingen";
 // index.ts
 let apiPrefix = "/" + api;
 
@@ -28,6 +29,11 @@ let sitePrefix = "/" + site;
 let siteSiteEndpoint = "/"; // Get all sites, create a new site
 let siteDetailEndpoint = "/:id"; // Get, update, or delete a specific site
 
+// machine.ts
+let machinePrefix = "/" + machine;
+let machineMachineEndpoint = "/";
+let machineDetailEndpoint = "/:id";
+
 // melding.ts
 //// Root
 let meldingPrefix = "/" + melding;
@@ -49,6 +55,10 @@ export default {
     meldingPrefix,
     meldingMeldingEndpoint,
     meldingDetailEndpoint,
+
+    machinePrefix,
+    machineMachineEndpoint,
+    machineDetailEndpoint,
 
     health,
     ping,
