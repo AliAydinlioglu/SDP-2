@@ -13,18 +13,25 @@ const MachineDetailBig = () => {
     return (
       <div>
         <h1>Machine not found</h1>
-        <p>There is no machine with id {id}.</p>
+        <p>There is no machine with ID {id}.</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <h1>Machine id: {machine.id}</h1>
+    <div className="machine-details-container">
+      <h1>Machine ID: {machine.id}</h1>
+      <Link to={`/sites/${machine.site_id}`}>Site ID: {machine.site_id}</Link>
       <p>Machine status: {machine.status}</p>
-      <p>Machine productie status: {machine.prod_status}</p>
-      <Link to={`/machines/edit/${machine.id}`} className='btn btn-light'>
-        <IoPencilOutline />
+      <p>Machine production status: {machine.prod_status}</p>
+      <p>Location: {machine.locatie}</p>
+      <p>Info: {machine.info}</p>
+      <p>Uptime: {machine.uptime} hours</p>
+      <p>Days since maintenance: {machine.dagenSindsOnderhoud}</p>
+      <p>Next maintenance: {new Date(machine.volgendOnderhoud).toLocaleDateString()}</p>
+      <p>Technician ID: {machine.technieker_id}</p>
+      <Link to={`/machines/edit/${machine.id}`} className="btn">
+        <IoPencilOutline /> Edit
       </Link>
     </div>
   );
