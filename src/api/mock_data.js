@@ -435,4 +435,31 @@ const KPI_DATA = [
     },
 ];
 
-export { SITE_DATA, MACHINE_DATA, MELDING_DATA, KPI_DATA };
+const ONDERHOUD_DATA = [
+    {
+      id: 1,
+      machine_id: 1,
+      datum: '2021-10-01',
+      onderhoud_type: 'Grote onderhoud',
+      status: 'Voltooid',
+      opmerking: 'Geen opmerkingen',
+    },
+    {
+      id: 2,
+      machine_id: 2,
+      datum: '2021-10-02',
+      onderhoud_type: 'Klein onderhoud',
+      status: 'Voltooid',
+      opmerking: 'Geen opmerkingen',
+    },
+    {
+      id: 3,
+      machine_id: 3,
+      datum: '2021-10-03',
+      onderhoud_type: 'Grote onderhoud',
+      status: 'Voltooid',
+      opmerking: 'Geen opmerkingen',
+    },
+  ];
+
+export { SITE_DATA, MACHINE_DATA, MELDING_DATA, KPI_DATA, ONDERHOUD_DATA };

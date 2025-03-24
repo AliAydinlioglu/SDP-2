@@ -1,11 +1,9 @@
 import { useNavigate, useParams } from 'react-router';
-import { deleteById, getById } from '../../api/index';
+import { getById, save } from '../../api/index';
 import useSWR from 'swr';
 import AsyncData from '../../components/AsyncData';
 
-import { Link } from 'react-router-dom';
 import useSWRMutation from 'swr/mutation';
-import { FaTrash, FaPencilAlt } from 'react-icons/fa';
 
 export default function User(){
 
@@ -13,10 +11,13 @@ export default function User(){
   
   const { id } = useParams();
   const { data: user, error: userError, isLoading: userLoading } = useSWR(id ? `users/${id}` : null, getById);
-  const {trigger: deleteUser, error: deleteError} = useSWRMutation('users', deleteById);
+  const {trigger: deleteUser, error: deleteError} = useSWRMutation('users', save);
 
   const handleDelete = async () => {
-    await deleteUser(id);
+    await deleteUser({
+      id: id,
+      actief: false,
+    });
 
     navigate('/users');
 
@@ -59,7 +60,8 @@ export default function User(){
           </div>  
         </AsyncData>
       </div>
-      <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal fade" id="exampleModal" tabIndex="-1" 
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
@@ -72,7 +74,8 @@ export default function User(){
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDelete}>Delete</button>
+              <button type="button" className="btn btn-danger" 
+                data-bs-dismiss="modal" onClick={handleDelete}>Delete</button>
             </div>
           </div>
         </div>

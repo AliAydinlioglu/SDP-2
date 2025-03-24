@@ -5,8 +5,8 @@ const NotFound = () => {
 
   return (
     <div>
-      <h1>Pagina niet gevonden</h1>
-      <p>Er is geen pagina met als url {pathname}, probeer iets anders.</p> 
+      <h1>Page not found</h1>
+      <p>There is no page with {pathname}, try something different.</p> 
     </div>
   );
 };

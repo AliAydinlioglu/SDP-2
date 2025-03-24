@@ -26,6 +26,9 @@ import UsersList from './pages/users/UsersList.jsx';
 import User from './pages/users/User.jsx';
 import AddOrEditUser from './pages/users/AddOrEditUser.jsx';
 
+import OnderhoudList from './pages/onderhoud/OnderhoudList.jsx';
+import Onderhoud from './pages/onderhoud/Onderhoud.jsx';
+
 const router = createBrowserRouter([
   {
     element: <PrivateRoute/>,
@@ -53,6 +56,19 @@ const router = createBrowserRouter([
               },{
                 path: 'edit/:id',
                 element: <AddOrEditUser />,
+              },
+            ],
+          },
+          {
+            path: '/maintenances',
+            children: [
+              {
+                index: true,
+                element: <OnderhoudList />,
+              },
+              {
+                path: ':id',
+                element: <Onderhoud />,
               },
             ],
           },
