@@ -56,9 +56,9 @@ export default function MachineForm({ sites = [], machine=EMPTY_MACHINE, saveMac
             <option value='' disabled>
               -- Select a site --
             </option>
-            {sites.map(({ id, name }) => (
+            {sites.map(({ id, naam }) => (
               <option key={id} value={id}>
-                {name}
+                {naam}
               </option>
             ))}
           </select>
