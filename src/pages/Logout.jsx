@@ -27,9 +27,9 @@ export default function Logout() {
   }
 
   return (
-    <>
+    <div className='alert-container'>
       <div className='alert alert-info'>U have been succesfully logged out</div>
       <button className='btn' onClick={handleOnClick}>Log in</button>
-    </>
+    </div>
   );
 }
