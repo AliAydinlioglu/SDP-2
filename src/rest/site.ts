@@ -32,11 +32,20 @@ const createSite = {
 // Get a specific site
 const getSite = async (ctx: Context) => {
     const site_id = parseInt(ctx.params.id, 10);
-    await siteService.find(site_id);
-    ctx.body = { message: `Found site with id: ${site_id}` };
+    let site = await siteService.find(site_id);
+    ctx.body = site;
     ctx.status = 200;
 };
-      
+
+const getAll = async (ctx: Context) => {
+    await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
+
+    const sites = await siteService.findAll();
+
+    ctx.body = sites;
+    ctx.status = 200;
+};
+
 // Update a site
 const updateSite = {
     execute: async (ctx: Context) => {
@@ -65,13 +74,11 @@ const deleteSite = async (ctx: Context) => {
 const installRouter = (parentRouter: Router) => {
     const router = new Router({
         prefix: endpoints.sitePrefix, // "/sites"
-
     });
 
     router.use(validation.validateSchema(validation.headerAuthorizationSchema));
 
-
-    router.get(endpoints.siteSiteEndpoint, getSite); // GET /sites
+    router.get(endpoints.siteSiteEndpoint, getAll); // GET /sites
     router.post(endpoints.siteSiteEndpoint, validation.validateSchema(createSite.schema), createSite.execute); // POST /sites
 
     router.get(endpoints.siteDetailEndpoint, getSite); // GET /sites/:id
