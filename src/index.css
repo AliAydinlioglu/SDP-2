@@ -115,37 +115,107 @@ button:focus-visible {
 }
 
 /* Sites List */
+.sites-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
 .site-search-bar {
-  width: 50%;
-  color: #050505;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fff;
-  display: inline;
+  width: 60%;
+  padding: 12px;
+  border: 3px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: white;
+  color: black;
+  transition: border-color 0.3s ease;
+}
+
+.site-search-bar:focus {
+  outline: none;
+  border-color: #646cff;
 }
 
 .site-cards-container {
-  display: flex;
-  justify-content: center;
-}
-
-/* Site Grid Layout */
-.site-container {
-  margin: auto 100px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  grid-template-areas:
-    "side-details machine-details"
-    "machine-list machine-details";
-  /* justify-items: center; */
-  align-items: center;
-  gap: 20px; /* Gebruik deze eigenschap voor ruimte tussen items */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  
 }
 
-.site-details {
-  grid-area: side-details;
+.site-card {
+   background-color: #f9f9f9;
+   border-style: solid;
+   border-color: #d0d0d0;
+   border-width: 20px; /* Expliciet de breedte instellen */
+   border-radius: 12px;
+   padding: 25px;
+   text-align: center;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  border-color: #646cff;
+}
+
+.site-card h3 {
+  margin-bottom: 15px;
+  font-size: 1.5em;
+  color: #333;
+  font-weight: bold;
+}
+
+.site-card p {
+  margin: 10px 0;
+  font-weight: bold;
+  color: #666;
+  font-size: 1.1em;
+}
+
+.add-site-btn {
+  background-color: #d56363;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-site-btn:hover {
+  background-color: #c04b4b;
+}
+
+@media (max-width: 768px) {
+  .site-cards-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-cards-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .input-group {
+    flex-direction: column;
+  }
+  
+  .site-search-bar {
+    width: 100%;
+  }
 }
 
 .machine-list {
