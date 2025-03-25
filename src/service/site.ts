@@ -31,10 +31,7 @@ const create = async ({ naam, verantw_id }: { naam: string; verantw_id: number }
 };
 
 // Update an existing site
-const update = async (
-    site_id: number,
-    { naam, verantw_id }: Partial<{ naam: string; verantw_id: number }>
-): Promise<1 | null> => {
+const update = async (site_id: number, { naam, verantw_id }: Partial<{ naam: string; verantw_id: number }>): Promise<1 | null> => {
     // Check if the site exists
     const existingSite = await data.prisma.site.findUnique({
         where: { id: site_id },
@@ -68,8 +65,6 @@ const update = async (
     return 1;
 };
 
-
-
 // Find a site by ID
 const find = async (site_id: number): Promise<Site | null> => {
     const result = await data.prisma.site.findUnique({ where: { id: site_id } });
@@ -81,20 +76,25 @@ const find = async (site_id: number): Promise<Site | null> => {
     return result;
 };
 
+const findAll = async (): Promise<Site[]> => {
+    return await data.prisma.site.findMany();
+};
+
 // Delete a site
 const deleteSite = async (site_id: number): Promise<number> => {
-     try {
-         await data.prisma.site.delete({ where: { id: site_id } });
-     } catch (e) {
-         throw new ServiceError(textCodes.SITENOTFOUND, 404);
-     }
+    try {
+        await data.prisma.site.delete({ where: { id: site_id } });
+    } catch (e) {
+        throw new ServiceError(textCodes.SITENOTFOUND, 404);
+    }
 
-     return 1;
+    return 1;
 };
 
 export default {
     create,
     update,
     find,
+    findAll,
     deleteSite,
 };

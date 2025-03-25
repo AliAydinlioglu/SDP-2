@@ -31,6 +31,62 @@ afterAll(async () => {
 });
 
 describe("/site", () => {
+    it("GET - Admin gets all sites", async () => {
+        let verantwJWT = await user.create({
+            voornaam: "Solomon",
+            achternaam: "Reed",
+            email: "verantwoordelijke@email.com",
+            password: "therealslimshady",
+            straat: "Corpo Plaza",
+            huis_nr: "505",
+            geboorteDatum: new Date("1990-01-01"),
+            stad: "Night City",
+            postcode: "77704",
+            land: "NUSA",
+            gsm_nr: "555-1701",
+            actief: true,
+            rol: Rol.VERANTWOORDELIJKE,
+        });
+
+        let verantw_id = jwtUse.getUserID(verantwJWT);
+
+        let site1 = await site.create({
+            naam: "Site 1",
+            verantw_id: verantw_id,
+        });
+
+        let site2 = await site.create({
+            naam: "Site 2",
+            verantw_id: verantw_id,
+        });
+
+        let adminJWT = await user.create({
+            voornaam: "Solomon",
+            achternaam: "Reed",
+            email: "solomonreede@email.com",
+            password: "therealslimshady",
+            straat: "Corpo Plaza",
+            huis_nr: "505",
+            geboorteDatum: new Date("1990-01-01"),
+            stad: "Night City",
+            postcode: "77704",
+            land: "NUSA",
+            gsm_nr: "555-1701",
+            actief: true,
+            rol: Rol.ADMINISTRATOR,
+        });
+
+        const response = await request.get(siteEndpoint).set({
+            Authorization: `Bearer ${adminJWT}`,
+        });
+
+        expect(response.status).toBe(200);
+        expect(response.body.length).toBe(2);
+
+        expect(response.body[0].naam).toBe("Site 1");
+        expect(response.body[0].verantw_id).toBe(verantw_id);
+    });
+
     it("POST - Admin assignes verantwoordelijke to a site", async () => {
         // first create a user that's a verantwoordelijke
         let adminJWT = await user.create({
