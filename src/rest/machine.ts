@@ -7,15 +7,12 @@ import { Rol } from "@prisma/client";
 import permissionCheck from "../core/CRUDPerms";
 import machineService from "../service/machine";
 
-// Create a new machine
+// Create a new machine (Allowed for ADMIN, MANAGER and TECHNIEKER)
 const createMachine = {
     execute: async (ctx: Context) => {
-        // Only administrators, managers and technicians can create machines
         await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.TECHNIEKER], ctx.user_id);
-
         const machine = ctx.request.body;
         const result = await machineService.create(machine);
-
         ctx.body = result;
         ctx.status = 200;
     },
@@ -34,34 +31,29 @@ const createMachine = {
     },
 };
 
-// Get all machines
+// Get all machines (Allowed for ADMIN, MANAGER and TECHNIEKER)
 const getAllMachines = async (ctx: Context) => {
     await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.TECHNIEKER], ctx.user_id);
-
     const machines = await machineService.findAll();
     ctx.body = machines;
     ctx.status = 200;
 };
 
-// Get a specific machine
+// Get a specific machine (Allowed for ADMIN, MANAGER and TECHNIEKER)
 const getMachine = async (ctx: Context) => {
     await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.TECHNIEKER], ctx.user_id);
-    
     const machine_id = parseInt(ctx.params.id, 10);
     const machine = await machineService.find(machine_id);
     ctx.body = machine;
     ctx.status = 200;
 };
 
-// Update a machine
+// Update a machine (Allowed for ADMIN, MANAGER and TECHNIEKER)
 const updateMachine = {
     execute: async (ctx: Context) => {
-        // Only administrators, managers and technicians can update machines
         await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.TECHNIEKER], ctx.user_id);
-
         const machine_id = parseInt(ctx.params.id, 10);
         const updateData = ctx.request.body;
-
         const result = await machineService.updateMachine(machine_id, updateData);
         ctx.body = result;
         ctx.status = 200;
@@ -77,18 +69,15 @@ const updateMachine = {
             technieker_id: Joi.number(),
             dagenSindsOnderhoud: Joi.number(),
             volgendOnderhoud: Joi.date(),
-        }).min(1), // At least one field must be provided
+        }).min(1),
     },
 };
 
-// Delete a machine
+// Delete a machine (Allowed for ADMIN only)
 const deleteMachine = async (ctx: Context) => {
-    // Only administrators can delete machines
     await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
-
     const machine_id = parseInt(ctx.params.id, 10);
     await machineService.deleteMachine(machine_id);
-
     ctx.body = { message: `Machine with id: ${machine_id} deleted successfully` };
     ctx.status = 200;
 };
@@ -96,7 +85,7 @@ const deleteMachine = async (ctx: Context) => {
 // Install the router
 const installRouter = (parentRouter: Router) => {
     const router = new Router({
-        prefix: endpoints.machinePrefix, // "/machines"
+        prefix: endpoints.machinePrefix,
     });
 
     router.use(validation.validateSchema(validation.headerAuthorizationSchema));

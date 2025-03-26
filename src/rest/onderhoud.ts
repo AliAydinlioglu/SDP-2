@@ -10,12 +10,10 @@ import onderhoudService from "../service/onderhoud";
 // Create a new onderhoud record
 const createOnderhoud = {
     execute: async (ctx: Context) => {
-        // Only administrators, managers and technicians can create onderhoud records
-        await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.TECHNIEKER], ctx.user_id);
-
+        // Only Administrators, Verantwoordelijken (VW) and Technici can create onderhoud records
+        await permissionCheck([Rol.ADMINISTRATOR, Rol.VERANTWOORDELIJKE, Rol.TECHNIEKER], ctx.user_id);
         const onderhoud = ctx.request.body;
         const result = await onderhoudService.create(onderhoud);
-
         ctx.body = result;
         ctx.status = 200;
     },
@@ -36,8 +34,8 @@ const createOnderhoud = {
 
 // Get all onderhoud records
 const getAllOnderhoud = async (ctx: Context) => {
-    await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.TECHNIEKER], ctx.user_id);
-
+    // Administrators, Managers, Verantwoordelijken and Technici can view all maintenance records
+    await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.VERANTWOORDELIJKE, Rol.TECHNIEKER], ctx.user_id);
     const onderhouds = await onderhoudService.findAll();
     ctx.body = onderhouds;
     ctx.status = 200;
@@ -45,8 +43,8 @@ const getAllOnderhoud = async (ctx: Context) => {
 
 // Get a specific onderhoud record
 const getOnderhoud = async (ctx: Context) => {
-    await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.TECHNIEKER], ctx.user_id);
-
+    // Administrators, Managers, Verantwoordelijken and Technici can view a maintenance record
+    await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.VERANTWOORDELIJKE, Rol.TECHNIEKER], ctx.user_id);
     const onderhoud_id = parseInt(ctx.params.id, 10);
     const onderhoud = await onderhoudService.find(onderhoud_id);
     ctx.body = onderhoud;
@@ -56,8 +54,8 @@ const getOnderhoud = async (ctx: Context) => {
 // Update an onderhoud record
 const updateOnderhoud = {
     execute: async (ctx: Context) => {
-        await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.TECHNIEKER], ctx.user_id);
-
+        // Administrators, Managers, Verantwoordelijken and Technici can update a maintenance record
+        await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.VERANTWOORDELIJKE, Rol.TECHNIEKER], ctx.user_id);
         const onderhoud_id = parseInt(ctx.params.id, 10);
         const updateData = ctx.request.body;
         const result = await onderhoudService.updateOnderhoud(onderhoud_id, updateData);
@@ -81,12 +79,10 @@ const updateOnderhoud = {
 
 // Delete an onderhoud record
 const deleteOnderhoud = async (ctx: Context) => {
-    // Only administrators can delete onderhoud records
+    // Only Administrators can delete onderhoud records
     await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
-
     const onderhoud_id = parseInt(ctx.params.id, 10);
     await onderhoudService.deleteOnderhoud(onderhoud_id);
-
     ctx.body = { message: `Onderhoud record with id: ${onderhoud_id} deleted successfully` };
     ctx.status = 200;
 };
