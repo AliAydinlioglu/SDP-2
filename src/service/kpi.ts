@@ -1,5 +1,6 @@
 import { Rol } from "@prisma/client";
 import data from "../data";
+import { logCreate } from "../core/auditLog";
 
 const workingStatus = "Draait"; // (Draait, Gestopt)
 const productieGezondStatus = "gezond"; // (Gezond, Nood aan onderhoud, falend)
@@ -29,14 +30,21 @@ const getMachineKPIs = async () => {
         where: { prod_status: productieGezondStatus },
     });
 
-    return {
+    const kpis = {
         totalMachines: totalMachinesCount,
         workingMachines: workingMachinesCount,
-
         machinesInGoodCondition: machinesInGoodConditionCount,
         machinesFailing: machinesInProblemCount,
         machinesInMaintenance: machinesInMaintenanceCount,
     };
+
+    // Log the machine KPIs retrieval
+    logCreate({
+        userId: 0, // System operation
+        details: { event: "Machine KPIs retrieved", summary: kpis },
+    });
+
+    return kpis;
 };
 
 // Get technician-related KPIs.
@@ -53,20 +61,36 @@ const getTechnicianKPIs = async () => {
     });
     const assignedTechnicians = assignedTechs.length;
 
-    return {
+    const kpis = {
         totalTechnicians,
         assignedTechnicians,
     };
+
+    // Log the technician KPIs retrieval
+    logCreate({
+        userId: 0, // System operation
+        details: { event: "Technician KPIs retrieved", summary: kpis },
+    });
+
+    return kpis;
 };
 
 export const getKPIs = async () => {
     const machineKPIs = await getMachineKPIs();
     const technicianKPIs = await getTechnicianKPIs();
 
-    return {
+    const combinedKPIs = {
         ...machineKPIs,
         ...technicianKPIs,
     };
+
+    // Log the combined KPIs retrieval
+    logCreate({
+        userId: 0, // System operation
+        details: { event: "Combined KPIs retrieved" },
+    });
+
+    return combinedKPIs;
 };
 
 export default { getKPIs };
