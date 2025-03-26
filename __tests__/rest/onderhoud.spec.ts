@@ -231,11 +231,11 @@ describe("/onderhoud", () => {
 
             await request
                 .post(onderhoudEndpoint)
-                .set({ Authorization: `Bearer ${managerToken}` })
+                .set({ Authorization: `Bearer ${technicianToken}` })
                 .send(onderhoudData1);
             await request
                 .post(onderhoudEndpoint)
-                .set({ Authorization: `Bearer ${managerToken}` })
+                .set({ Authorization: `Bearer ${technicianToken}` })
                 .send(onderhoudData2);
 
             const response = await request.get(onderhoudEndpoint).set({ Authorization: `Bearer ${adminToken}` });
@@ -299,7 +299,7 @@ describe("/onderhoud", () => {
 
             const createResponse = await request
                 .post(onderhoudEndpoint)
-                .set({ Authorization: `Bearer ${managerToken}` })
+                .set({ Authorization: `Bearer ${technicianToken}` })
                 .send(onderhoudData);
             const onderhoudId = createResponse.body.id;
 
@@ -347,7 +347,7 @@ describe("/onderhoud", () => {
 
             const createResponse = await request
                 .post(onderhoudEndpoint)
-                .set({ Authorization: `Bearer ${managerToken}` })
+                .set({ Authorization: `Bearer ${technicianToken}` })
                 .send(onderhoudData);
             const onderhoudId = createResponse.body.id;
 
