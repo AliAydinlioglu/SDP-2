@@ -44,7 +44,8 @@ const MachinesList = () => {
     const filterMachines = () => {
       const filtered = machines.filter((m) => {
         return (
-          m.id.toString().includes(text.toLowerCase()) &&
+          (m.id.toString().includes(text.toLowerCase()) || 
+           m.info.toLowerCase().includes(text.toLowerCase())) && // Zoek ook op 'info'
           (stateFilter === '' || m.status === stateFilter) &&
           (productionStateFilter === '' || m.prod_status === productionStateFilter)
         );
@@ -66,7 +67,7 @@ const MachinesList = () => {
           type='search'
           id='search'
           className='search-bar'
-          placeholder='Search'
+          placeholder='Search by ID or Info'
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
