@@ -33,13 +33,16 @@ export default function AddOrEditOnderhoud() {
       <h1>Add Maintenance</h1>
       <AsyncData error={saveError}>
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form onSubmit={methods.handleSubmit(onSubmit)} className='onderhoud-form'>
             <LabelInput label="Date" name="datum" type="date" validationRules={{ required: 'Date is required' }} />
-            <LabelInput label="Start Time" name="startTijd" type="time" validationRules={{ required: 'Start time is required' }} />
-            <LabelInput label="End Time" name="eindTijd" type="time" validationRules={{ required: 'End time is required' }} />
+            <LabelInput label="Start Time" name="startTijd" 
+              type="time" validationRules={{ required: 'Start time is required' }} />
+            <LabelInput label="End Time" name="eindTijd"
+              type="time" validationRules={{ required: 'End time is required' }} />
             <LabelInput label="Reason" name="reden" type="text" validationRules={{ required: 'Reason is required' }} />
             <LabelInput label="Status" name="status" type="text" validationRules={{ required: 'Status is required' }} />
-            <LabelInput label="Remarks" name="opmerkingen" type="text" validationRules={{ required: 'Remarks are required' }} />
+            <LabelInput label="Remarks" name="opmerkingen" 
+              type="text" validationRules={{ required: 'Remarks are required' }} />
             <button type="submit" className="btn btn-light">Save</button>
           </form>
         </FormProvider>

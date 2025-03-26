@@ -266,20 +266,23 @@ button:focus-visible {
 
 /* Big Table Machines */
 .machine-tabel-big {
-  align-self: center;
   margin: auto;
+  width: 90%;
 }
 
 .machine-tabel-big th,
 .machine-tabel-big td {
-  padding: 10px 100px;
+  padding: 10px;
   text-align: center;
   border: 1px solid #ddd;
+  
+
 }
 
 .machine-tabel-big thead tr {
   background-color: #d56363;
   color: #ffffff;
+  width: auto;
 }
 
 /* Search And Filter */
@@ -487,11 +490,12 @@ form .form-text.text-danger {
   align-self: center;
   margin: auto;
   width: 90%;
+  
 }
 
 .user-table th,
 .user-table td {
-  padding: 10px 100px;
+  padding: 10px ;
   text-align: center;
   border: 1px solid #ddd;
 }
@@ -499,6 +503,7 @@ form .form-text.text-danger {
 .user-table thead tr {
   background-color: #d56363;
   color: #ffffff;
+  width: auto;
 }
 
 .user-search-bar{
@@ -602,3 +607,7 @@ form .form-text.text-danger {
   white-space: pre-wrap;
 }
 
+.onderhoud-form{
+  margin: 20px auto;
+
+}

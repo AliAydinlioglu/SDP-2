@@ -10,7 +10,7 @@ function MachineTabelBig({ machines, sortMachines }) {
   }
 
   return (
-    <div className="machine-tabel-big-container">
+    <div className="">
       <table className='machine-tabel-big'>
         <thead>
           <tr>
