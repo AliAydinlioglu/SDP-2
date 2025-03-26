@@ -11,6 +11,8 @@ const MachineDetailBig = () => {
 
   const { data: machine, error: machineError, isLoading: machineLoading } = 
     useSWR(id ? `machines/${id}` : null, getById);
+  const { data: maintenance, error: maintenanceError, isLoading: maintenanceLoading } = 
+    useSWR(id ? `onderhoud/${id}` : null, getById);
   const { trigger: deleteMachine, error: deleteError } = useSWRMutation('machines', save);
 
   const handleDelete = async () => {
@@ -33,7 +35,7 @@ const MachineDetailBig = () => {
 
   return (
     <div className="machine-detail-container">
-      <AsyncData loading={machineLoading} error={machineError || deleteError}>
+      <AsyncData loading={machineLoading || maintenanceLoading} error={machineError || maintenanceError || deleteError}>
         <div className="machine-info">
           <h1>Machine id: {machine.id}</h1>
           <p>Machine status: {machine.status}</p>
@@ -62,7 +64,7 @@ const MachineDetailBig = () => {
               <div>
                 <label>Opmerking:</label>
                 <div className="maintenance-opmerking">
-                  {maintenance.opmerking}
+                  {maintenance.opmerkingen}
                 </div>
               </div>
             </div>
