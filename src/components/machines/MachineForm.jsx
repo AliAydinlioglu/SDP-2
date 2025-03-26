@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import { SITE_DATA } from '../../api/mock_data';
+import { useMemo } from 'react';
 
 const validationRules = {
   site_id: {
@@ -22,7 +22,7 @@ const EMPTY_MACHINE = {
 };
 
 export default function MachineForm({ sites = [], machine = EMPTY_MACHINE, saveMachine }) {
-  sites = SITE_DATA; // MOCK DATA!!, wegdoen als werkelijke data beschikbaar is
+  const memoizedSites = useMemo(() => sites, [sites]);
 
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isValid } } = useForm({
@@ -62,7 +62,7 @@ export default function MachineForm({ sites = [], machine = EMPTY_MACHINE, saveM
             <option value='' disabled>
               -- Select a site --
             </option>
-            {sites.map(({ id, naam }) => (
+            {memoizedSites.map(({ id, naam }) => (
               <option key={id} value={id}>
                 {naam}
               </option>

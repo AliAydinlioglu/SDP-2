@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-
 const validationRules = {
   naam: {
     required: 'Site name is required',
@@ -26,7 +25,6 @@ export default function SiteForm({ site = EMPTY_SITE, saveSite }) {
       address: site?.address,
     },
   });
-
   const onSubmit = async (values) => {
     if (!isValid) return;
 
@@ -57,7 +55,7 @@ export default function SiteForm({ site = EMPTY_SITE, saveSite }) {
 
         <div className='mb-3'>
           <label htmlFor='verantw_id' className='form-label'>
-            Manager
+            Verantwoordelijke
           </label>
           <input
             {...register('verantw_id', validationRules.verantw_id)}

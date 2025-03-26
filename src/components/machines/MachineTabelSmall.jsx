@@ -1,11 +1,23 @@
 import { useNavigate } from 'react-router-dom';
+import { useCallback, memo } from 'react';
+
+const MachineRow = memo(({ machine, onClick }) => (
+  <tr key={machine.id} onClick={() => onClick(machine.id, machine.site_id)} style={{ cursor: 'pointer' }}>
+    <td>{machine.id}</td>
+    <td>{machine.site_id}</td>
+    <td>{machine.status}</td>
+    <td>{machine.prod_status}</td>
+  </tr>
+));
+
+MachineRow.displayName = 'MachineRow';
 
 export default function MachineTabelSmall({ machines }) {
   const navigate = useNavigate();
 
-  const handleRowClick = (id, siteId) => {
+  const handleRowClick = useCallback((id, siteId) => {
     navigate(`/sites/${siteId}/machines/${id}`);
-  };
+  }, [navigate]);
 
   return (
     <div>
@@ -22,21 +34,7 @@ export default function MachineTabelSmall({ machines }) {
           </thead>
           <tbody>
             {machines.map((machine) => (
-              <tr key={machine.id} onClick={
-                () => handleRowClick(machine.id, machine.site_id)} style={{ cursor: 'pointer' }}>
-                <td>
-                  {machine.id}
-                </td>
-                <td>
-                  {machine.site_id}
-                </td>
-                <td>
-                  {machine.status}
-                </td>
-                <td>
-                  {machine.prod_status}
-                </td>
-              </tr>
+              <MachineRow key={machine.id} machine={machine} onClick={handleRowClick} />
             ))}
           </tbody>
         </table>
