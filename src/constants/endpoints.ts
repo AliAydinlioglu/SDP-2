@@ -3,6 +3,8 @@ let user = "users";
 let site = "sites";
 let machine = "machines";
 let melding = "meldingen";
+let onderhoud = "onderhoud"; // new onderhoud endpoints
+
 // index.ts
 let apiPrefix = "/" + api;
 
@@ -41,6 +43,11 @@ let meldingPrefix = "/" + melding;
 let meldingMeldingEndpoint = "/"; // Get all meldingen, create a new melding
 let meldingDetailEndpoint = "/:id"; // Get, update, or delete a specific melding
 
+// onderhoud.ts
+let onderhoudPrefix = "/" + onderhoud;
+let onderhoudOnderhoudEndpoint = "/"; // Get all onderhoud records, create a new maintenance record
+let onderhoudDetailEndpoint = "/:id"; // Get, update, or delete a specific onderhoud record
+
 export default {
     apiPrefix,
 
@@ -52,13 +59,17 @@ export default {
     siteSiteEndpoint,
     siteDetailEndpoint,
 
+    machinePrefix,
+    machineMachineEndpoint,
+    machineDetailEndpoint,
+
     meldingPrefix,
     meldingMeldingEndpoint,
     meldingDetailEndpoint,
 
-    machinePrefix,
-    machineMachineEndpoint,
-    machineDetailEndpoint,
+    onderhoudPrefix,
+    onderhoudOnderhoudEndpoint,
+    onderhoudDetailEndpoint,
 
     health,
     ping,
