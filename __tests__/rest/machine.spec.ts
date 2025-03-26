@@ -8,6 +8,7 @@ import site from "../../src/service/site";
 import { Rol } from "@prisma/client";
 import jwtUse from "../../src/core/jwtUse";
 import resetDatabase from "../../src/data/resetDatabase";
+import data from "../../src/data";
 
 // TEST DATA
 let machineEndpoint = endpoints.apiPrefix + endpoints.machinePrefix;
@@ -331,6 +332,8 @@ describe("/machine", () => {
 
         machineId = createResponse.body.id;
 
+        let machineCount1 = (await data.prisma.machine.findMany()).length;
+
         const response = await request.delete(`${machineEndpoint}/${machineId}`).set({
             Authorization: `Bearer ${adminToken}`,
         });
@@ -342,7 +345,10 @@ describe("/machine", () => {
             Authorization: `Bearer ${adminToken}`,
         });
 
+        let machineCount2 = (await data.prisma.machine.findMany()).length;
+
         expect(getResponse.status).toBe(404);
+        expect(machineCount1).toBe(machineCount2 + 1);
     });
 
     it("DELETE - Regular user cannot delete a machine", async () => {
