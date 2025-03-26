@@ -1,4 +1,4 @@
-import { createContext, useState, useCallback, useMemo } from 'react';
+import { createContext, useState, useCallback, useMemo, useContext } from 'react';
 import useSWRMutation from 'swr/mutation';
 import * as api from '../api/index';
 import useSWR from 'swr';
@@ -24,14 +24,13 @@ export const AuthProvider = ({children}) =>{
   const login = useCallback(
     async (email, password) =>{
       try {
-        const {token} = await doLogin({
+        const response = await doLogin({
           email,
           password,
         });
         
-        setToken(token);
-
-        localStorage.setItem(JWT_TOKEN_KEY, token);
+        setToken(response.token);
+        localStorage.setItem(JWT_TOKEN_KEY, response.token);
 
         return true;
       } catch (error) {
@@ -61,4 +60,12 @@ export const AuthProvider = ({children}) =>{
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
