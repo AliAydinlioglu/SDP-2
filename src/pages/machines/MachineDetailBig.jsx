@@ -8,7 +8,6 @@ import './MachineDetailBig.css';
 const MachineDetailBig = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const { data: machine, error: machineError, isLoading: machineLoading } = 
     useSWR(id ? `machines/${id}` : null, getById);
