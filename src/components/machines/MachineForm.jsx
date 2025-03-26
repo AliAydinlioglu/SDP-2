@@ -50,7 +50,8 @@ export default function MachineForm({ sites = [], technicians = [], machine = EM
 
   const onSubmit = async (values) => {
     if (!isValid) return;
-  
+    console.log(values);
+    
     await saveMachine({
       id: machine?.id,
       ...values,
