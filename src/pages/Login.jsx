@@ -31,8 +31,8 @@ export default function Login() {
   const methods = useForm({
     mode: 'onBlur',
     defaultValues: {
-      email: 'geralt@gmail.com',
-      password: '12345678',
+      email: '',
+      password: '',
     },
   });
 
