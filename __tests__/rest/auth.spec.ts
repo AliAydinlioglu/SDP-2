@@ -7,6 +7,7 @@ import textCodes from "../../src/constants/textCodes";
 import { Rol } from "@prisma/client";
 import data from "../../src/data";
 import resetDatabase from "../../src/data/resetDatabase";
+import user from "../../src/service/user";
 
 const IDFromResponse = (response: supertest.Response): number => {
     return jwtUse.getUserID(response.body.token);
@@ -28,16 +29,36 @@ afterAll(async () => {
 
 let id: number;
 let ids: number[] = [];
+let adminToken: string;
 
 beforeEach(async () => {
     id = -1; // making sure it's not set to a valid id before each test.
     await resetDatabase();
+
+    // create an ADMINISTRATOR
+    adminToken = await user.create({
+        voornaam: "Admin",
+        achternaam: "User",
+        email: "adadsadasdmin@example.com",
+        password: "Password123",
+        straat: "Admin Street",
+        huis_nr: "1",
+        geboorteDatum: new Date("1990-01-01"),
+        stad: "Admin City",
+        postcode: "12345",
+        land: "Test Country",
+        gsm_nr: "123456789",
+        actief: true,
+        rol: Rol.ADMINISTRATOR,
+    });
 });
 
 describe("/api/auth/register", () => {
     it("GET - Register - should 200 and create a user in the DB.", async () => {
         // Will try to access the user endpoint with a session_id
-        const response = await request.post("/api/auth/register").send({
+        const response = await request.post("/api/auth/register").set({
+            Authorization: `Bearer ${adminToken}`,
+        }).send({
             voornaam: "Vincent",
             achternaam: "Legend",
             email: "vincent@example.com",
@@ -59,7 +80,9 @@ describe("/api/auth/register", () => {
     });
     it("GET - Don't register due to the password being too short", async () => {
         // Will try to access the user endpoint with a session_id
-        const response = await request.post("/api/auth/register").send({
+        const response = await request.post("/api/auth/register").set({
+            Authorization: `Bearer ${adminToken}`,
+        }).send({
             voornaam: "Vincent",
             achternaam: "Deraad",
             email: "vincent@example.com",
@@ -79,7 +102,9 @@ describe("/api/auth/register", () => {
         expect(response.body.message).toEqual(textCodes.SHORTPASSWORD);
     });
     it("GET - Register twice -  Attempt to register twice with the same email", async () => {
-        let response = await request.post("/api/auth/register").send({
+        let response = await request.post("/api/auth/register").set({
+            Authorization: `Bearer ${adminToken}`,
+        }).send({
             voornaam: "Vincent",
             achternaam: "First",
             email: "vincent@example.com",
@@ -98,7 +123,9 @@ describe("/api/auth/register", () => {
         let id1 = IDFromResponse(response);
         ids.push(id1);
 
-        let errorResponse = await request.post("/api/auth/register").send({
+        let errorResponse = await request.post("/api/auth/register").set({
+            Authorization: `Bearer ${adminToken}`,
+        }).send({
             voornaam: "Vincent",
             achternaam: "Second",
             email: "vincent@example.com",
@@ -119,7 +146,9 @@ describe("/api/auth/register", () => {
     });
 
     it("GET - Attempt to register twice with the same email but different character capitalization", async () => {
-        let response = await request.post("/api/auth/register").send({
+        let response = await request.post("/api/auth/register").set({
+            Authorization: `Bearer ${adminToken}`,
+        }).send({
             voornaam: "Vincent",
             achternaam: "Lower",
             email: "vincent@example.com",
@@ -138,7 +167,9 @@ describe("/api/auth/register", () => {
         let id1 = IDFromResponse(response);
         ids.push(id1);
 
-        let errorResponse = await request.post("/api/auth/register").send({
+        let errorResponse = await request.post("/api/auth/register").set({
+            Authorization: `Bearer ${adminToken}`,
+        }).send({
             voornaam: "Vincent",
             achternaam: "Upper",
             email: "VINCENT@example.com",
@@ -162,7 +193,9 @@ describe("/api/auth/register", () => {
 describe("/api/auth/login", () => {
     it("GET - Should 200 and login to a user in the DB.", async () => {
         // Will try to access the user endpoint with a session_id
-        const response = await request.post("/api/auth/register").send({
+        const response = await request.post("/api/auth/register").set({
+            Authorization: `Bearer ${adminToken}`,
+        }).send({
             voornaam: "Valerie",
             achternaam: "Chrome",
             email: "Valerie@example.com",
