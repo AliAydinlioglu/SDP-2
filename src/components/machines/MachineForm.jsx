@@ -79,7 +79,7 @@ export default function MachineForm({ sites = [], technicians = [], machine = EM
             <option value='' disabled>
               -- Select a site --
             </option>
-            {memoizedSites.map(({ id, naam }) => (
+            {sites.map(({ id, naam }) => (
               <option key={id} value={id}>
                 {naam}
               </option>
