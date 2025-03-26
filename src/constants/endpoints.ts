@@ -4,6 +4,7 @@ let site = "sites";
 let machine = "machines";
 let melding = "meldingen";
 let onderhoud = "onderhoud"; // new onderhoud endpoints
+let kpi = "kpis"; // new KPI endpoints
 
 // index.ts
 let apiPrefix = "/" + api;
@@ -48,6 +49,9 @@ let onderhoudPrefix = "/" + onderhoud;
 let onderhoudOnderhoudEndpoint = "/"; // Get all onderhoud records, create a new maintenance record
 let onderhoudDetailEndpoint = "/:id"; // Get, update, or delete a specific onderhoud record
 
+// kpi.ts
+let kpiPrefix = "/" + kpi; // Get all calculated KPIs
+
 export default {
     apiPrefix,
 
@@ -74,4 +78,5 @@ export default {
     health,
     ping,
     version,
+    kpiPrefix, // added KPI endpoint
 };
