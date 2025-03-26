@@ -1,22 +1,29 @@
 import { useState, useEffect } from 'react';
-import { SITE_DATA } from '../../api/mock_data';
 import SiteCards from '../../components/sites/SiteCards';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/auth';
+import useSWR from 'swr';
+import { getAll } from '../../api';
+import AsyncData from '../../components/AsyncData';
 
 const SitesList = () => {
+  const {
+    data: data = [],
+    loading: sitesLoading,
+    error: sitesError,
+  } = useSWR('/sites', getAll);
   const [text, setText] = useState('');
-  const [sites, setSites] = useState(SITE_DATA);
+  const [sites, setSites] = useState(data);
 
   const {user} = useAuth();
   const isAdmin = user?.rol === 'ADMINISTRATOR';
 
   useEffect(() => {
-    const filteredSites = SITE_DATA.filter((s) => {
+    const filteredSites = data.filter((s) => {
       return s.naam.toLowerCase().includes(text.toLowerCase());
     });
     setSites(filteredSites);
-  }, [text]);
+  }, [text, data]);
 
   return (
     <div className='sites-list-container'>
@@ -36,7 +43,9 @@ const SitesList = () => {
         )}
       </div>
       <div className='sites-cards-container'>
-        <SiteCards sites={sites} />
+        <AsyncData loading={sitesLoading} error={sitesError}>
+          <SiteCards sites={sites} />
+        </AsyncData>
       </div>
     </div>
   );

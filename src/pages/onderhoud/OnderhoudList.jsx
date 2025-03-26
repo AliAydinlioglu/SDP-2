@@ -1,22 +1,38 @@
 import useSWR from 'swr';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getAll } from '../../api';
 import AsyncData from '../../components/AsyncData';
-import { ONDERHOUD_DATA } from '../../api/mock_data';
 import { FaSort } from 'react-icons/fa';
 
 export default function OnderhoudList() {
+  const {
+    data: data =[],
+    loading: onderhoudsLoading,
+    error: onderhoudsError,
+  } = useSWR('/onderhoud', getAll);
+  
   const navigate = useNavigate();
-  //   const { data: onderhouds = [], loading: onderhoudsLoading, error: onderhoudsError } = useSWR('/onderhouds', getAll);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [onderhouds, setOnderhouds] = useState(ONDERHOUD_DATA);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const machineIdFromQuery = queryParams.get('machine_id') || '';
+
+  const [searchTerm, setSearchTerm] = useState(machineIdFromQuery);
+  const [onderhouds, setOnderhouds] = useState(data);
   const [sortOrder, setSortOrder] = useState('asc');
 
+  useEffect(() => {
+    setOnderhouds(data);
+  }, [data]);
+
+  console.log('onderhouds', onderhouds);
+  
   const filteredOnderhouds = onderhouds.filter((onderhoud) =>
-    (onderhoud.id.toString().includes(searchTerm) ||
-    onderhoud.name.toLowerCase().includes(searchTerm.toLowerCase())),
+    (onderhoud.Machine.info.includes(searchTerm) ||
+      onderhoud.machine_id.toString().includes(searchTerm)),
   );
+  console.log(filteredOnderhouds);
+
   const sortMeldingenByDatum = () => {
     const sortedOnderhouds = [...onderhouds].sort((a, b) => {
       if (sortOrder === 'asc') {
@@ -33,47 +49,60 @@ export default function OnderhoudList() {
     navigate(`/maintenances/${id}`);
   };
 
+  const handleClearSearch = () => {
+    setSearchTerm('');
+  };
+
   return (
     <div>
       <div className='input-group'>
         <input
           className='user-search-bar'
           type="text"
-          placeholder="Search by ID or name"
+          placeholder="Search by Machine ID or Machine Name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        {searchTerm && (
+          <button className='btn btn-light' onClick={handleClearSearch}>
+            Done
+          </button>
+        )}
       </div>
-      {/* <AsyncData loading={onderhoudsLoading} error={onderhoudsError}> */}
-      <div className="">
-        <table className='user-table'>
-          <thead>
-            <tr>
-              <th>ID </th>
-              <th onClick={sortMeldingenByDatum} style={{ cursor: 'pointer' }}>
-                Date <FaSort />
-              </th>
-              <th>Machine</th>
-              <th>State</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredOnderhouds.map((onderhoud) => (
-              <tr
-                key={onderhoud.id}
-                style={{ cursor: 'pointer' }}
-                onClick={() => handleRowClick(onderhoud.id)}
-              >
-                <td>{onderhoud.id}</td>
-                <td>{onderhoud.datum}</td>
-                <td>{onderhoud.machine_id}</td>
-                <td>{onderhoud.status}</td>
+      <AsyncData loading={onderhoudsLoading} error={onderhoudsError}>
+        <div className="">
+          <table className='user-table'>
+            <thead>
+              <tr>
+                <th>ID </th>
+                <th onClick={sortMeldingenByDatum} style={{ cursor: 'pointer' }}>
+                  Date <FaSort />
+                </th>
+                <th>Machine ID</th>
+                <th>Machine Name</th>
+                <th>State</th>
+                <th>Technieker</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {/* </AsyncData> */}
+            </thead>
+            <tbody>
+              {filteredOnderhouds.map((onderhoud) => (
+                <tr
+                  key={onderhoud.id}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleRowClick(onderhoud.id)}
+                >
+                  <td>{onderhoud.id}</td>
+                  <td>{onderhoud.datum.split('T')[0]}</td>
+                  <td>{onderhoud.machine_id}</td>
+                  <td>{onderhoud.Machine.info}</td>
+                  <td>{onderhoud.status}</td>
+                  <td>{onderhoud.technieker.voornaam + ' ' + onderhoud.technieker.achternaam}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </AsyncData>
     </div>
   );
 }

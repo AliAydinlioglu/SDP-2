@@ -266,20 +266,23 @@ button:focus-visible {
 
 /* Big Table Machines */
 .machine-tabel-big {
-  align-self: center;
   margin: auto;
+  width: 90%;
 }
 
 .machine-tabel-big th,
 .machine-tabel-big td {
-  padding: 10px 100px;
+  padding: 10px;
   text-align: center;
   border: 1px solid #ddd;
+  
+
 }
 
 .machine-tabel-big thead tr {
   background-color: #d56363;
   color: #ffffff;
+  width: auto;
 }
 
 /* Search And Filter */
@@ -409,7 +412,7 @@ button:focus-visible {
 }
 
 /* Form */
-.form-container {
+.form-container form {
   width: 50%;
   margin: auto;
   justify-items: center;
@@ -487,11 +490,12 @@ form .form-text.text-danger {
   align-self: center;
   margin: auto;
   width: 90%;
+  
 }
 
 .user-table th,
 .user-table td {
-  padding: 10px 100px;
+  padding: 10px ;
   text-align: center;
   border: 1px solid #ddd;
 }
@@ -499,6 +503,7 @@ form .form-text.text-danger {
 .user-table thead tr {
   background-color: #d56363;
   color: #ffffff;
+  width: auto;
 }
 
 .user-search-bar{
@@ -578,3 +583,31 @@ form .form-text.text-danger {
   border-color: #ac2925;
 }
 
+.maintenance-card {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.maintenance-card-content h3 {
+  margin-top: 0;
+}
+
+.maintenance-opmerking {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.onderhoud-form{
+  margin: 20px auto;
+
+}

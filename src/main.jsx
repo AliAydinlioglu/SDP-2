@@ -28,6 +28,7 @@ import AddOrEditUser from './pages/users/AddOrEditUser.jsx';
 
 import OnderhoudList from './pages/onderhoud/OnderhoudList.jsx';
 import Onderhoud from './pages/onderhoud/Onderhoud.jsx';
+import AddOrEditOnderhoud from './components/AddOrEditOnderhoud.jsx';
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,9 @@ const router = createBrowserRouter([
               {
                 path: ':id',
                 element: <Onderhoud />,
+              },{
+                path: 'add',
+                element: <AddOrEditOnderhoud/>,
               },
             ],
           },
