@@ -5,7 +5,7 @@ const settings = {
         disabled: false,
     },
     cors: {
-        origins: ["http://localhost:5173"],
+        origins: [" https://two025-react-gent13.onrender.com/"],
         maxAge: 3 * 60 * 60,
     },
     database: {

@@ -10,7 +10,7 @@
         "test:coverage": "env-cmd -f .env jest --runInBand --coverage",
         "test:reset": "env-cmd -f .env prisma migrate reset --force && env-cmd -f .env.test jest --runInBand",
         "test:local": "env-cmd -f .env.test jest --runInBand",
-        "startJS": "env-cmd node ./out/src/index.js --custom-string",
+        "startJS": "tsc && env-cmd node ./out/src/index.js --custom-string",
         "serverJS": "node ./out/src/index.js",
         "serverJSReset": "node ./out/src/index.js --custom-string",
         "reset": "prisma migrate reset --force",
