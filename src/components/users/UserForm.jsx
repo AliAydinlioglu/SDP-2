@@ -53,12 +53,14 @@ export default function UserForm({ user = {}, saveUser }) {
               name="voornaam" 
               type="text" 
               validationRules={{ required: 'First name is required' }} 
+              data-cy="first-name-input"
             />
             <LabelInput 
               label="Last Name" 
               name="achternaam" 
               type="text" 
               validationRules={{ required: 'Last name is required' }} 
+              data-cy="last-name-input"
             />
           </div>
           <div className="form-row">
@@ -67,12 +69,14 @@ export default function UserForm({ user = {}, saveUser }) {
               name="email" 
               type="email" 
               validationRules={{ required: 'Email is required' }} 
+              data-cy="email-input"
             />
             <LabelInput 
               label="Phone" 
               name="gsm_nr" 
               type="text" 
               validationRules={{ required: 'Phone number is required' }} 
+              data-cy="phone-input"
             />
           </div>
           <div className="form-row">
@@ -81,12 +85,14 @@ export default function UserForm({ user = {}, saveUser }) {
               name="geboorteDatum" 
               type="date" 
               validationRules={{ required: 'Birth date is required' }} 
+              data-cy="birth-date-input"
             />
             <LabelInput 
               label="Street" 
               name="straat" 
               type="text" 
               validationRules={{ required: 'Street is required' }} 
+              data-cy="street-input"
             />
           </div>
           <div className="form-row">
@@ -95,12 +101,14 @@ export default function UserForm({ user = {}, saveUser }) {
               name="huis_nr" 
               type="text" 
               validationRules={{ required: 'House number is required' }} 
+              data-cy="house-number-input"
             />
             <LabelInput 
               label="City" 
               name="stad" 
               type="text" 
               validationRules={{ required: 'City is required' }} 
+              data-cy="city-input"
             />
           </div>
           <div className="form-row">
@@ -109,12 +117,14 @@ export default function UserForm({ user = {}, saveUser }) {
               name="postcode" 
               type="text" 
               validationRules={{ required: 'Postal code is required' }} 
+              data-cy="postal-code-input"
             />
             <LabelInput 
               label="Country" 
               name="land" 
               type="text" 
               validationRules={{ required: 'Country is required' }} 
+              data-cy="country-input"
             />
           </div>
           <div className="form-row">
@@ -124,16 +134,18 @@ export default function UserForm({ user = {}, saveUser }) {
                 {...methods.register('rol', { 
                   required: 'Role is required',
                   validate: (value) => ['TECHNIEKER', 'MANAGER', 'VERANTWOORDELIJKE'].includes(value) || 'Invalid role',
-                })}                id="rol"
+                })}                
+                id="rol"
                 className="form-control"
                 defaultValue={user.rol}
+                data-cy="role-select"
               >
                 <option value="TECHNIEKER">Technieker</option>
                 <option value="MANAGER">Manager</option>
                 <option value="VERANTWOORDELIJKE">Verantwoordelijke</option>
               </select>
               {methods.formState.errors.rol && (
-                <div className="form-text text-danger" data-cy="label_input_error">
+                <div className="form-text text-danger" data-cy="role-error">
                   {methods.formState.errors.rol.message}
                 </div>
               )}
@@ -148,6 +160,7 @@ export default function UserForm({ user = {}, saveUser }) {
                   value="true"
                   id="actiefTrue"
                   defaultChecked={user.actief === true}
+                  data-cy="active-true"
                 />
                 <label className="form-check-label" htmlFor="actiefTrue">
                   Yes
@@ -161,6 +174,7 @@ export default function UserForm({ user = {}, saveUser }) {
                   value="false"
                   id="actiefFalse"
                   defaultChecked={user.actief === false}
+                  data-cy="active-false"
                 />
                 <label className="form-check-label" htmlFor="actiefFalse">
                   No
@@ -176,10 +190,11 @@ export default function UserForm({ user = {}, saveUser }) {
                 name="password" 
                 type="password" 
                 validationRules={{ required: 'Password is required' }} 
+                data-cy="password-input"
               />
             )}
           </div>
-          <button type="submit" className="btn btn-primary" disabled={isSubmitting}>Save</button>
+          <button type="submit" className="btn btn-primary" disabled={isSubmitting} data-cy="save-btn">Save</button>
         </form>
       </FormProvider>
     </div>

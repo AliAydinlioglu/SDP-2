@@ -66,7 +66,7 @@ export default function MachineForm({ sites = [], technicians = [], machine = EM
 
   return (
     <div className='form-container'>
-      <form onSubmit={handleSubmit(onSubmit)} className='machine-form'>
+      <form onSubmit={handleSubmit(onSubmit)} className='machine-form' data-cy="machine-form">
         <div className='mb-3'>
           <label htmlFor='site_id' className='form-label'>
             Site
@@ -126,7 +126,7 @@ export default function MachineForm({ sites = [], technicians = [], machine = EM
         </div>
 
         <div className='mb-3'>
-          <label htmlFor='info' className='form-label'>
+          <label htmlFor='info' className='form-label' data-cy="info-label">
             Info
           </label>
           <textarea

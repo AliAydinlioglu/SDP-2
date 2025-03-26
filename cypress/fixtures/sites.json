@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "naam": "Site A",
+    "verantw_id": 1
+  },
+  {
+    "id": 2,
+    "naam": "Site B",
+    "verantw_id": 2
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "status": "active",
+    "prod_status": "running",
+    "locatie": "Factory A",
+    "info": "Machine A info",
+    "uptime": 100,
+    "dagenSindsOnderhoud": 10,
+    "volgendOnderhoud": "2023-12-01T00:00:00Z"
+  },
+  {
+    "id": 2,
+    "status": "inactive",
+    "prod_status": "idle",
+    "locatie": "Factory B",
+    "info": "Machine B info",
+    "uptime": 200,
+    "dagenSindsOnderhoud": 20,
+    "volgendOnderhoud": "2023-12-15T00:00:00Z"
+  }
+]
