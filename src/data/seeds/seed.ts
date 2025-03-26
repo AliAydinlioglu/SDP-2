@@ -105,6 +105,47 @@ async function main() {
             },
         ],
     });
+
+    await prisma.onderhoud.createMany({
+        data: [
+            {
+                id: 1,
+                datum: new Date("2025-10-01"),
+                startTijd: new Date("2025-10-01T08:00:00.000Z"),
+                eindTijd: new Date("2025-10-01T12:00:00.000Z"),
+                technieker_id: 3,
+                reden: "Routine Check",
+                rapport: { findings: "All systems operational" },
+                opmerkingen: "No issues detected",
+                status: "Completed",
+                machine_id: 1,
+            },
+            {
+                id: 2,
+                datum: new Date("2025-10-15"),
+                startTijd: new Date("2025-10-15T09:00:00.000Z"),
+                eindTijd: new Date("2025-10-15T13:00:00.000Z"),
+                technieker_id: 3,
+                reden: "Repair",
+                rapport: { findings: "Minor issues fixed" },
+                opmerkingen: "Follow-up required in 30 days",
+                status: "Completed",
+                machine_id: 2,
+            },
+            {
+                id: 3,
+                datum: new Date("2025-11-01"),
+                startTijd: new Date("2025-11-01T10:00:00.000Z"),
+                eindTijd: new Date("2025-11-01T14:00:00.000Z"),
+                technieker_id: 3,
+                reden: "Emergency Fix",
+                rapport: { findings: "Critical issues resolved" },
+                opmerkingen: "Monitor closely for the next week",
+                status: "Completed",
+                machine_id: 1,
+            },
+        ],
+    });
 }
 
 main()
