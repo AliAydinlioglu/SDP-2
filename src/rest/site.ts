@@ -7,48 +7,49 @@ import { Rol } from "@prisma/client";
 import permissionCheck from "../core/CRUDPerms";
 import siteService from "../service/site";
 
+// Create a site (Allowed for ADMIN and MANAGER)
 const createSite = {
     execute: async (ctx: Context) => {
-        await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
+        await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER], ctx.user_id);
 
         const site = ctx.request.body as {
             naam: string;
             verantw_id: number;
         };
 
-        let id = await siteService.create(site);
+        await siteService.create(site);
 
         ctx.status = 200;
     },
     schema: {
         body: Joi.object({
             naam: Joi.string().required(),
-
             verantw_id: Joi.number().required(),
         }),
     },
 };
 
-// Get a specific site
+// Get a specific site (Allowed for ADMIN, MANAGER, and VERANTWOORDELIJKE)
 const getSite = async (ctx: Context) => {
+    await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.VERANTWOORDELIJKE], ctx.user_id);
     const site_id = parseInt(ctx.params.id, 10);
-    let site = await siteService.find(site_id);
+    const site = await siteService.find(site_id);
     ctx.body = site;
     ctx.status = 200;
 };
 
+// Get all sites (Allowed for ADMIN, MANAGER, and VERANTWOORDELIJKE)
 const getAll = async (ctx: Context) => {
-    await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
-
+    await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.VERANTWOORDELIJKE], ctx.user_id);
     const sites = await siteService.findAll();
-
     ctx.body = sites;
     ctx.status = 200;
 };
 
-// Update a site
+// Update a site (Allowed for ADMIN, MANAGER, and VERANTWOORDELIJKE)
 const updateSite = {
     execute: async (ctx: Context) => {
+        await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER, Rol.VERANTWOORDELIJKE], ctx.user_id);
         const site_id = parseInt(ctx.params.id, 10);
         await siteService.update(site_id, ctx.request.body);
         ctx.status = 200;
@@ -56,14 +57,15 @@ const updateSite = {
     },
     schema: {
         body: Joi.object({
-            naam: Joi.string().min(1), // Ensure non-empty name
+            naam: Joi.string().min(1),
             verantw_id: Joi.number(),
         }).min(1),
     },
 };
 
-// Delete a site
+// Delete a site (Allowed for ADMIN and MANAGER)
 const deleteSite = async (ctx: Context) => {
+    await permissionCheck([Rol.ADMINISTRATOR, Rol.MANAGER], ctx.user_id);
     const site_id = parseInt(ctx.params.id, 10);
     await siteService.deleteSite(site_id);
     ctx.status = 200;
