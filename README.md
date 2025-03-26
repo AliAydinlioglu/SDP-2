@@ -104,25 +104,59 @@ yarn test
 
 De tests moeten worden uitgevoerd op een lege DB (sommige tests zijn zoektests die afhankelijk zijn van het aantal items). Om deze reden zal het testcommando een nieuw schema aanmaken voor testdoeleinden.
 
-## API calls
+## API Calls
 
 ### Authenticatie
 
--   `POST /api/auth/register`: Register een nieuwe gebruiker
--   `POST /api/auth/login`: Login een gebruiker.
-
-### Gebruikers:
-
-#### users
-
--   `GET    /api/users`: Haalt alle gebruikers op.
--   `GET    /api/users/me`: Haalt je accountinformatie op.
--   `GET    /api/users/:id`: Haalt de accountinformatie van een gebruiker op.
--   `PUT    /api/users/:id`: Werkt de accountinformatie van een gebruiker bij.
--   `PUT    /api/users/me`: Werkt je accountinformatie bij.
--   `DELETE /api/users`: Verwijdert je account.
+- `POST /api/auth/register`: Registreer een nieuwe gebruiker
+- `POST /api/auth/login`: Login een gebruiker
 
 ### Health
 
--   `GET /api/health/ping`: Haalt een bericht op dat "pong" zegt.
--   `GET /api/health/version`: Haalt de huidige versie van de API op.
+- `GET /api/health/ping`: Haalt een bericht op dat "pong" zegt
+- `GET /api/health/version`: Haalt de huidige versie van de API op
+
+### KPI's
+
+- `GET /api/kpis`: Haalt de Key Performance Indicators op
+
+### Machines
+
+- `POST /api/machines`: Maak een nieuwe machine aan
+- `GET /api/machines`: Haal alle machines op
+- `GET /api/machines/:id`: Haal details van een specifieke machine op
+- `PUT /api/machines/:id`: Werk de gegevens van een machine bij
+- `DELETE /api/machines/:id`: Verwijder een specifieke machine
+
+### Meldingen
+
+- `POST /api/meldingen`: Maak een nieuwe melding aan
+- `GET /api/meldingen`: Haal alle meldingen op
+- `GET /api/meldingen/:id`: Haal details van een specifieke melding op
+- `PUT /api/meldingen/:id`: Werk de gegevens van een melding bij
+- `DELETE /api/meldingen/:id`: Verwijder een specifieke melding
+
+### Onderhoud
+
+- `POST /api/onderhoud`: Maak een nieuwe onderhoudsregistratie aan
+- `GET /api/onderhoud`: Haal alle onderhoudsregistraties op
+- `GET /api/onderhoud/:id`: Haal details van een specifieke onderhoudsregistratie op
+- `PUT /api/onderhoud/:id`: Werk de gegevens van een onderhoudsregistratie bij
+- `DELETE /api/onderhoud/:id`: Verwijder een specifieke onderhoudsregistratie
+
+### Sites
+
+- `POST /api/sites`: Maak een nieuwe site aan
+- `GET /api/sites`: Haal alle sites op
+- `GET /api/sites/:id`: Haal details van een specifieke site op
+- `PUT /api/sites/:id`: Werk de gegevens van een site bij
+- `DELETE /api/sites/:id`: Verwijder een specifieke site
+
+### Gebruikers
+
+- `GET /api/users/me`: Haal je accountinformatie op
+- `GET /api/users`: Haal alle gebruikers op
+- `GET /api/users/:id`: Haal de accountinformatie van een specifieke gebruiker op
+- `PUT /api/users/me`: Werk je eigen accountinformatie bij
+- `PUT /api/users/:id`: Werk de accountinformatie van een specifieke gebruiker bij
+- `DELETE /api/users/:id`: Verwijder een specifieke gebruikersaccount
