@@ -5,9 +5,6 @@ import { getAll } from '../../api';
 import MachineTabelBig from '../../components/machines/MachineTabelBig';
 import AsyncData from '../../components/AsyncData';
 import { useAuth } from '../../context/auth';
-import useSWR from 'swr';
-import { getAll } from '../../api';
-import AsyncData from '../../components/AsyncData';
 
 const MachinesList = () => {
   const { data: machines = [], loading: machinesLoading, error: machinesError } = useSWR('/machines', getAll);
