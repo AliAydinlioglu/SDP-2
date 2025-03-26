@@ -1,9 +1,9 @@
-// filepath: /home/oguz/repos/NOTES/TI2425/SDP2/2025-nodejs-gent13/src/service/site.ts
 import { ServiceError } from "../core/errorHandler";
 import textCodes from "../constants/textCodes";
 import data from "../data/index";
-import { Rol, Site } from "@prisma/client";
+import { Action, Rol, Site } from "@prisma/client";
 import userService from "./user";
+import { logCreate } from "../core/auditLog";
 
 // Create a new site
 const create = async ({ naam, verantw_id }: { naam: string; verantw_id: number }): Promise<number> => {
@@ -23,6 +23,12 @@ const create = async ({ naam, verantw_id }: { naam: string; verantw_id: number }
                 },
             })
         ).id;
+
+        // Log the creation action
+        logCreate({
+            userId: verantw_id,
+            details: { event: "Site created", siteId: id, siteName: naam },
+        });
     } catch (e) {
         throw new ServiceError(textCodes.INVALIDDATA, 400);
     }
@@ -62,6 +68,12 @@ const update = async (site_id: number, { naam, verantw_id }: Partial<{ naam: str
         },
     });
 
+    // Log the update action
+    logCreate({
+        userId: verantw_id || existingSite.verantw_id,
+        details: { event: "Site updated", siteId: site_id, updatedFields: { naam, verantw_id } },
+    });
+
     return 1;
 };
 
@@ -73,17 +85,44 @@ const find = async (site_id: number): Promise<Site | null> => {
         throw new ServiceError(textCodes.SITENOTFOUND, 404);
     }
 
+    // Log the read action
+    logCreate({
+        userId: result.verantw_id,
+        details: { event: "Site read", siteId: site_id },
+    });
+
     return result;
 };
 
 const findAll = async (): Promise<Site[]> => {
-    return await data.prisma.site.findMany();
+    const result = await data.prisma.site.findMany();
+
+    // Log the read all action (using 0 as system user ID for global operations)
+    logCreate({
+        userId: 0,
+        details: { event: "All sites retrieved", count: result.length },
+    });
+
+    return result;
 };
 
 // Delete a site
 const deleteSite = async (site_id: number): Promise<number> => {
+    let siteToDelete;
     try {
+        // Get the site first to have verantw_id for logging
+        siteToDelete = await data.prisma.site.findUnique({ where: { id: site_id } });
+        if (!siteToDelete) {
+            throw new ServiceError(textCodes.SITENOTFOUND, 404);
+        }
+
         await data.prisma.site.delete({ where: { id: site_id } });
+
+        // Log the delete action
+        logCreate({
+            userId: siteToDelete.verantw_id,
+            details: { event: "Site deleted", siteId: site_id, siteName: siteToDelete.naam },
+        });
     } catch (e) {
         throw new ServiceError(textCodes.SITENOTFOUND, 404);
     }
