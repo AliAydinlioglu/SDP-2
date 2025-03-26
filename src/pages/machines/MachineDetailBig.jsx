@@ -1,46 +1,26 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import useSWR, { mutate } from 'swr';
-import { deleteById, getById, save } from '../../api';
-import AsyncData from '../../components/AsyncData';
-import './MachineDetailBig.css'; // Import the new CSS file
+import useSWR from 'swr';
 import useSWRMutation from 'swr/mutation';
-import { ONDERHOUD_DATA } from '../../api/mock_data';
+import { getById, save } from '../../api';
+import AsyncData from '../../components/AsyncData';
+import './MachineDetailBig.css';
 
 const MachineDetailBig = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const idAsNumber = Number(id);
+  const navigate = useNavigate();
 
-  // const machine = MACHINE_DATA.find((m) => m.id === idAsNumber);
-  const maintenance = ONDERHOUD_DATA.find((m) => m.machine_id === idAsNumber);
-  const {
-    data: machine,
-    error: machineError,
-    loading: machineLoading,
-  } = useSWR(idAsNumber ? `machines/${idAsNumber}` : null, getById );
+  const { data: machine, error: machineError, isLoading: machineLoading } = 
+    useSWR(id ? `machines/${id}` : null, getById);
+  const { trigger: deleteMachine, error: deleteError } = useSWRMutation('machines', save);
 
-  const {
-    trigger: deleteMachine,
-    error: deleteError,
-  } = useSWRMutation('machines', deleteById);
-  const {
-    trigger: saveMachine,
-    error: saveError,
-  } = useSWRMutation('machines', save);
+  const handleDelete = async () => {
+    await deleteMachine({
+      id: id,
+      actief: false,
+    });
 
-  const handleDelete = async () =>{
-    await deleteMachine(idAsNumber);
     navigate('/machines');
-  };
-
-  const handleStatusChange = async () => {
-    const updatedMachine = {
-      id: machine.id,
-      prod_status: machine.prod_status === 'Active' ? 'Deactivated (manually)' : 'Active',
-    };
-    await saveMachine(updatedMachine);
-    mutate(`machines/${idAsNumber}`); // Revalidate the SWR data
   };
 
   if (!machine) {
@@ -54,29 +34,24 @@ const MachineDetailBig = () => {
 
   return (
     <div className="machine-detail-container">
-      <div className="machine-info">
-        <AsyncData loading={machineLoading} error={machineError || deleteError || saveError}>
+      <AsyncData loading={machineLoading} error={machineError || deleteError}>
+        <div className="machine-info">
           <h1>Machine id: {machine.id}</h1>
-          <p>Machine state: {machine.status}</p>
-          <p>Machine production state: {machine.prod_status}</p>
-          <p>Location: {machine.locatie}</p>
+          <p>Machine status: {machine.status}</p>
+          <p>Machine productie status: {machine.prod_status}</p>
+          <p>Locatie: {machine.locatie}</p>
           <p>Info: {machine.info}</p>
           <p>Uptime: {machine.uptime} hours</p>
-          <p>Days since last maintenance: {machine.dagenSindsOnderhoud}</p>
-          <p>Next maintenance: {new Date(machine.volgendOnderhoud).toLocaleDateString()}</p>
-          <div>
-            <Link to={`/machines/edit/${machine.id}`} className='btn btn-light'>
-              Edit
-            </Link>
-            <button className='btn btn-light' onClick={handleDelete}>
-              Delete
-            </button>
-            <button className='btn btn-light' onClick={handleStatusChange}>
-              {machine.prod_status === 'Active' ? 'Stop' : 'Start'}
-            </button>
-          </div>
-        </AsyncData>
-      </div>
+          <p>Dagen sinds onderhoud: {machine.dagenSindsOnderhoud}</p>
+          <p>Volgend onderhoud: {new Date(machine.volgendOnderhoud).toLocaleDateString()}</p>
+          <button type="button" className="btn btn-light" onClick={() => navigate(`/machines/edit/${machine.id}`)}>
+            Edit
+          </button>
+          <button type="button" className="btn btn-light" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            Delete
+          </button>
+        </div>
+      </AsyncData>
       <div className="machine-onderhoud">
         <h2>Last Maintenance</h2>
         {maintenance ? (
@@ -104,6 +79,26 @@ const MachineDetailBig = () => {
             onClick={() => navigate(`/maintenances/add?machine_id=${machine.id}`, {replace: true})}>
             Add Maintenance
           </button>
+        </div>
+      </div>
+
+      <div className="modal fade" id="deleteModal" tabIndex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="deleteModalLabel">Delete Machine {id}</h1>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              Are you sure you want to delete this machine?
+              {deleteError && <div className="alert alert-danger">{deleteError.message}</div>}
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

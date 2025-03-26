@@ -1,26 +1,26 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
+import { getAll } from '../../api';
 import MachineTabelBig from '../../components/machines/MachineTabelBig';
-import { Link } from 'react-router-dom';
+import AsyncData from '../../components/AsyncData';
 import { useAuth } from '../../context/auth';
 import useSWR from 'swr';
 import { getAll } from '../../api';
 import AsyncData from '../../components/AsyncData';
 
 const MachinesList = () => {
-  const {
-    data: data = [],
-    loading: machinesLoading,
-    error: machinesError,
-  } = useSWR('/machines', getAll);
-  const [machines, setMachines] = useState(data);
-  const [sortOrderId, setSortOrderId] = useState('desc');
-  const [sortOrderSiteId, setSortOrderSiteId] = useState('asc');
+  const { data: machines = [], loading: machinesLoading, error: machinesError } = useSWR('/machines', getAll);
   const [text, setText] = useState('');
   const [stateFilter, setStateFilter] = useState('');
   const [productionStateFilter, setProductionStateFilter] = useState('');
+  const [filteredMachines, setFilteredMachines] = useState([]);
+  const [sortOrderId, setSortOrderId] = useState('asc');
+  const [sortOrderSiteId, setSortOrderSiteId] = useState('asc');
+  const navigate = useNavigate();
 
-  const {user} = useAuth();
-  const isAdmin = user?.rol === 'ADMINISTRATOR';  
+  const { user } = useAuth();
+  const isAdmin = user?.rol === 'ADMINISTRATOR';
 
   const sortMachinesByProp = (prop) => {
     let sortOrder, setSortOrder;
@@ -32,28 +32,36 @@ const MachinesList = () => {
       setSortOrder = setSortOrderSiteId;
     }
 
-    const sortedMachines = [...machines].sort((a, b) => {
+    const sortedMachines = [...filteredMachines].sort((a, b) => {
       if (sortOrder === 'asc') {
         return a[prop] - b[prop];
       } else {
         return b[prop] - a[prop];
       }
     });
-    setMachines(sortedMachines);
+    setFilteredMachines(sortedMachines);
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
   useEffect(() => {
-    const filteredMachines = data.filter((m) => {
-      
-      return (
-        m.id.toString().includes(text.toLowerCase()) &&
-        (stateFilter === '' || m.status === stateFilter) &&
-        (productionStateFilter === '' || m.prod_status === productionStateFilter)
-      );
-    });
-    setMachines(filteredMachines);
-  }, [text, stateFilter, productionStateFilter, data]);
+    const filterMachines = () => {
+      const filtered = machines.filter((m) => {
+        return (
+          (m.id.toString().includes(text.toLowerCase()) || 
+           m.info.toLowerCase().includes(text.toLowerCase())) && // Zoek ook op 'info'
+          (stateFilter === '' || m.status === stateFilter) &&
+          (productionStateFilter === '' || m.prod_status === productionStateFilter)
+        );
+      });
+      setFilteredMachines(filtered);
+    };
+
+    filterMachines();
+  }, [machines, text, stateFilter, productionStateFilter]);
+
+  const handleRowClick = (id) => {
+    navigate(`/machines/${id}`);
+  };
 
   return (
     <div className='machine-tabel-big-container'>
@@ -62,7 +70,7 @@ const MachinesList = () => {
           type='search'
           id='search'
           className='search-bar'
-          placeholder='Search'
+          placeholder='Search by ID or Info'
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -88,14 +96,17 @@ const MachinesList = () => {
 
         <div className='clearfix'>
           {isAdmin && (
-            <Link to='/machines/add' className='btn btn-primary float-end'>
-              Add machine
-            </Link>
+            <button
+              className='btn btn-primary float-end'
+              onClick={() => navigate('/machines/add')}
+            >
+              Add Machine
+            </button>
           )}
         </div>
       </div>
       <AsyncData loading={machinesLoading} error={machinesError}>
-        <MachineTabelBig machines={machines} sortMachines={sortMachinesByProp} />
+        <MachineTabelBig machines={filteredMachines} sortMachines={sortMachinesByProp} onRowClick={handleRowClick} />
       </AsyncData>
     </div>
   );

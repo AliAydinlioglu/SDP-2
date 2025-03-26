@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import { useMemo } from 'react';
 
 const validationRules = {
   site_id: {
@@ -12,6 +11,9 @@ const validationRules = {
   info: {
     required: 'Info is required',
   },
+  technieker_id: {
+    required: 'Technician is required',
+  },
 };
 
 const EMPTY_MACHINE = {
@@ -19,11 +21,16 @@ const EMPTY_MACHINE = {
   site_id: '',
   locatie: '',
   info: '',
+  status: 'inactive',
+  prod_status: 'idle',
+  uptime: 0,
+  technieker_id: null,
+  onderhouden: [],
+  dagenSindsOnderhoud: 0,
+  volgendOnderhoud: new Date(),
 };
 
-export default function MachineForm({ sites = [], machine = EMPTY_MACHINE, saveMachine }) {
-  const memoizedSites = useMemo(() => sites, [sites]);
-
+export default function MachineForm({ sites = [], technicians = [], machine = EMPTY_MACHINE, saveMachine }) {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isValid } } = useForm({
     mode: 'onBlur',
@@ -31,15 +38,25 @@ export default function MachineForm({ sites = [], machine = EMPTY_MACHINE, saveM
       site_id: machine?.site_id,
       locatie: machine?.locatie,
       info: machine?.info,
+      status: machine?.status,
+      prod_status: machine?.prod_status,
+      uptime: machine?.uptime,
+      technieker_id: machine?.technieker_id,
+      // onderhouden: machine?.onderhouden,
+      dagenSindsOnderhoud: machine?.dagenSindsOnderhoud,
+      volgendOnderhoud: machine?.volgendOnderhoud,
     },
   });
 
   const onSubmit = async (values) => {
     if (!isValid) return;
-
+  
     await saveMachine({
       id: machine?.id,
       ...values,
+      site_id: parseInt(values.site_id, 10),
+      technieker_id: parseInt(values.technieker_id, 10),
+      volgendOnderhoud: new Date(values.volgendOnderhoud).toISOString(),
     }, {
       throwOnError: false,
       onSuccess: () => navigate('/machines'),
@@ -51,7 +68,7 @@ export default function MachineForm({ sites = [], machine = EMPTY_MACHINE, saveM
       <form onSubmit={handleSubmit(onSubmit)} className='machine-form'>
         <div className='mb-3'>
           <label htmlFor='site_id' className='form-label'>
-            Site ID
+            Site
           </label>
           <select
             {...register('site_id', validationRules.site_id)}
@@ -69,6 +86,28 @@ export default function MachineForm({ sites = [], machine = EMPTY_MACHINE, saveM
             ))}
           </select>
           {errors.site_id && <p className="form-text text-danger">{errors.site_id.message}</p>}
+        </div>
+
+        <div className='mb-3'>
+          <label htmlFor='technieker_id' className='form-label'>
+            Technician
+          </label>
+          <select
+            {...register('technieker_id', validationRules.technieker_id)}
+            id='technieker_id'
+            name='technieker_id'
+            className='form-select'
+          >
+            <option value='' disabled>
+              -- Select a technician --
+            </option>
+            {technicians.map(({ id, voornaam, achternaam }) => (
+              <option key={id} value={id}>
+                {voornaam} {achternaam}
+              </option>
+            ))}
+          </select>
+          {errors.technieker_id && <p className="form-text text-danger">{errors.technieker_id.message}</p>}
         </div>
 
         <div className='mb-3'>

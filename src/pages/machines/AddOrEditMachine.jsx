@@ -23,20 +23,30 @@ export default function AddOrEditMachine() {
     data: sites = [],
     error: sitesError,
     isLoading: sitesLoading,
-  } = useSWR('sites', getAll);
+  } = useSWR('/sites', getAll);
 
+  const {
+    data: users = [],
+    error: usersError,
+    isLoading: usersLoading,
+  } = useSWR('/users', getAll);  
+
+  const technicians = users.filter((user) => user.rol === 'TECHNIEKER');
+  console.log(technicians);
+  
   return (
     <>
       <h1>{ id ? 'Edit machine' : 'Add machine'}</h1>
 
       <AsyncData 
-        error={saveError || sitesError || machineError} 
-        loading={sitesLoading || machineLoading}
+        error={saveError || sitesError || machineError || usersError} 
+        loading={sitesLoading || machineLoading || usersLoading}
       >
         <MachineForm 
           sites={sites}
           machine={machine} 
           saveMachine={saveMachine}
+          technicians={technicians}
         />
       </AsyncData>
     </>
