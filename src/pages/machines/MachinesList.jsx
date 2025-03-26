@@ -70,11 +70,13 @@ const MachinesList = () => {
           placeholder='Search by ID or Info'
           value={text}
           onChange={(e) => setText(e.target.value)}
+          data-cy="machine-search-bar"
         />
         <select
           value={stateFilter}
           onChange={(e) => setStateFilter(e.target.value)}
           className='states'
+          data-cy="state-select"
         >
           <option value=''>All States</option>
           <option value='active'>Active</option>
@@ -84,6 +86,7 @@ const MachinesList = () => {
           value={productionStateFilter}
           onChange={(e) => setProductionStateFilter(e.target.value)}
           className='production-states'
+          data-cy="production-state-select"
         >
           <option value=''>All Production States</option>
           <option value='running'>Running</option>
@@ -96,6 +99,7 @@ const MachinesList = () => {
             <button
               className='btn btn-primary float-end'
               onClick={() => navigate('/machines/add')}
+              data-cy="add-machine-btn"
             >
               Add Machine
             </button>
@@ -103,7 +107,8 @@ const MachinesList = () => {
         </div>
       </div>
       <AsyncData loading={machinesLoading} error={machinesError}>
-        <MachineTabelBig machines={filteredMachines} sortMachines={sortMachinesByProp} onRowClick={handleRowClick} />
+        <MachineTabelBig machines={filteredMachines} 
+          sortMachines={sortMachinesByProp} onRowClick={handleRowClick} data-cy="machine-table" />
       </AsyncData>
     </div>
   );

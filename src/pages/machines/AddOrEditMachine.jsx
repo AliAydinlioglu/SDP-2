@@ -36,7 +36,7 @@ export default function AddOrEditMachine() {
   
   return (
     <>
-      <h1>{ id ? 'Edit machine' : 'Add machine'}</h1>
+      <h1 data-cy="add-edit-machine-title">{ id ? 'Edit machine' : 'Add machine'}</h1>
 
       <AsyncData 
         error={saveError || sitesError || machineError || usersError} 
@@ -47,6 +47,7 @@ export default function AddOrEditMachine() {
           machine={machine} 
           saveMachine={saveMachine}
           technicians={technicians}
+          data-cy="machine-form"
         />
       </AsyncData>
     </>

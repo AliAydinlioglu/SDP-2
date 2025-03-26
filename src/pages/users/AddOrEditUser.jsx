@@ -17,7 +17,7 @@ export default function AddOrEditUser() {
 
   return (
     <div>
-      <h1>{id ? 'Edit' : 'Add' } User</h1>
+      <h1 data-cy="add-edit-user-title">{id ? 'Edit' : 'Add' } User</h1>
       <AsyncData loading={userLoading} error={userError || saveError}>
         <UserForm saveUser={saveUser} user={user}/>
       </AsyncData>

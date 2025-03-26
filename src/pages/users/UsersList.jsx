@@ -32,11 +32,13 @@ export default function UsersList() {
           placeholder="Search by ID, name, or email"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          data-cy="user-search-bar"
         />
         <select
           className='states'
           value={selectedRole}
           onChange={(e) => setSelectedRole(e.target.value)}
+          data-cy="role-select"
         >
           <option value=''>All Roles</option>
           {roles.map((role) => (
@@ -44,7 +46,8 @@ export default function UsersList() {
           ))}
         </select>
         <div>
-          <button className='btn btn-primary' onClick={() => navigate('/users/add')}>Add User</button>
+          <button className='btn btn-primary' onClick={() => navigate('/users/add')} 
+            data-cy="add-user-btn">Add User</button>
         </div>
       </div>
       <AsyncData loading={usersLoading} error={usersError}>
@@ -64,6 +67,7 @@ export default function UsersList() {
                   key={user.id}
                   style={{ color: user.actief ? 'inherit' : '#b6b8b8', cursor: 'pointer' }}
                   onClick={() => handleRowClick(user.id)}
+                  data-cy="user-row"
                 >
                   <td>{user.id}</td>
                   <td>{user.voornaam + ' ' + user.achternaam}</td>
