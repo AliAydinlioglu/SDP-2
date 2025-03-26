@@ -22,7 +22,7 @@ const EMPTY_MACHINE = {
   locatie: '',
   info: '',
   status: 'inactive',
-  prod_status: 'not_started',
+  prod_status: 'idle',
   uptime: 0,
   technieker_id: null,
   onderhouden: [],

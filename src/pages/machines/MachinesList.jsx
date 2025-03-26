@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { getAll } from '../../api';
@@ -11,20 +11,48 @@ const MachinesList = () => {
   const [text, setText] = useState('');
   const [stateFilter, setStateFilter] = useState('');
   const [productionStateFilter, setProductionStateFilter] = useState('');
+  const [filteredMachines, setFilteredMachines] = useState([]);
+  const [sortOrderId, setSortOrderId] = useState('asc');
+  const [sortOrderSiteId, setSortOrderSiteId] = useState('asc');
   const navigate = useNavigate();
 
   const { user } = useAuth();
   const isAdmin = user?.rol === 'ADMINISTRATOR';
 
-  // Gebruik useMemo om de filtering te optimaliseren
-  const filteredMachines = useMemo(() => {
-    return machines.filter((m) => {
-      return (
-        m.id.toString().includes(text.toLowerCase()) &&
-        (stateFilter === '' || m.status === stateFilter) &&
-        (productionStateFilter === '' || m.prod_status === productionStateFilter)
-      );
+  const sortMachinesByProp = (prop) => {
+    let sortOrder, setSortOrder;
+    if (prop === 'id') {
+      sortOrder = sortOrderId;
+      setSortOrder = setSortOrderId;
+    } else if (prop === 'site_id') {
+      sortOrder = sortOrderSiteId;
+      setSortOrder = setSortOrderSiteId;
+    }
+
+    const sortedMachines = [...filteredMachines].sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a[prop] - b[prop];
+      } else {
+        return b[prop] - a[prop];
+      }
     });
+    setFilteredMachines(sortedMachines);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
+
+  useEffect(() => {
+    const filterMachines = () => {
+      const filtered = machines.filter((m) => {
+        return (
+          m.id.toString().includes(text.toLowerCase()) &&
+          (stateFilter === '' || m.status === stateFilter) &&
+          (productionStateFilter === '' || m.prod_status === productionStateFilter)
+        );
+      });
+      setFilteredMachines(filtered);
+    };
+
+    filterMachines();
   }, [machines, text, stateFilter, productionStateFilter]);
 
   const handleRowClick = (id) => {
@@ -74,10 +102,7 @@ const MachinesList = () => {
         </div>
       </div>
       <AsyncData loading={machinesLoading} error={machinesError}>
-        <MachineTabelBig
-          machines={filteredMachines}
-          onRowClick={handleRowClick}
-        />
+        <MachineTabelBig machines={filteredMachines} sortMachines={sortMachinesByProp} onRowClick={handleRowClick} />
       </AsyncData>
     </div>
   );
