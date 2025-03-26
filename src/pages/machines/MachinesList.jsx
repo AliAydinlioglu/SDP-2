@@ -1,52 +1,35 @@
-import { useState, useEffect } from 'react';
-import { MACHINE_DATA } from '../../api/mock_data';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
+import { getAll } from '../../api';
 import MachineTabelBig from '../../components/machines/MachineTabelBig';
-import { Link } from 'react-router-dom';
+import AsyncData from '../../components/AsyncData';
 import { useAuth } from '../../context/auth';
 
 const MachinesList = () => {
-  const [machines, setMachines] = useState(MACHINE_DATA);
-  const [sortOrderId, setSortOrderId] = useState('desc');
-  const [sortOrderSiteId, setSortOrderSiteId] = useState('asc');
+  const { data: machines = [], loading: machinesLoading, error: machinesError } = useSWR('/machines', getAll);
   const [text, setText] = useState('');
   const [stateFilter, setStateFilter] = useState('');
   const [productionStateFilter, setProductionStateFilter] = useState('');
+  const navigate = useNavigate();
 
-  const {user} = useAuth();
-  const isAdmin = user?.rol === 'ADMINISTRATOR';  
+  const { user } = useAuth();
+  const isAdmin = user?.rol === 'ADMINISTRATOR';
 
-  const sortMachinesByProp = (prop) => {
-    let sortOrder, setSortOrder;
-    if (prop === 'id') {
-      sortOrder = sortOrderId;
-      setSortOrder = setSortOrderId;
-    } else if (prop === 'site_id') {
-      sortOrder = sortOrderSiteId;
-      setSortOrder = setSortOrderSiteId;
-    }
-
-    const sortedMachines = [...machines].sort((a, b) => {
-      if (sortOrder === 'asc') {
-        return a[prop] - b[prop];
-      } else {
-        return b[prop] - a[prop];
-      }
-    });
-    setMachines(sortedMachines);
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-  };
-
-  useEffect(() => {
-    const filteredMachines = MACHINE_DATA.filter((m) => {
-      
+  // Gebruik useMemo om de filtering te optimaliseren
+  const filteredMachines = useMemo(() => {
+    return machines.filter((m) => {
       return (
         m.id.toString().includes(text.toLowerCase()) &&
         (stateFilter === '' || m.status === stateFilter) &&
         (productionStateFilter === '' || m.prod_status === productionStateFilter)
       );
     });
-    setMachines(filteredMachines);
-  }, [text, stateFilter, productionStateFilter]);
+  }, [machines, text, stateFilter, productionStateFilter]);
+
+  const handleRowClick = (id) => {
+    navigate(`/machines/${id}`);
+  };
 
   return (
     <div className='machine-tabel-big-container'>
@@ -81,13 +64,21 @@ const MachinesList = () => {
 
         <div className='clearfix'>
           {isAdmin && (
-            <Link to='/machines/add' className='btn btn-primary float-end'>
-              Add machine
-            </Link>
+            <button
+              className='btn btn-primary float-end'
+              onClick={() => navigate('/machines/add')}
+            >
+              Add Machine
+            </button>
           )}
         </div>
       </div>
-      <MachineTabelBig machines={machines} sortMachines={sortMachinesByProp} />
+      <AsyncData loading={machinesLoading} error={machinesError}>
+        <MachineTabelBig
+          machines={filteredMachines}
+          onRowClick={handleRowClick}
+        />
+      </AsyncData>
     </div>
   );
 };
