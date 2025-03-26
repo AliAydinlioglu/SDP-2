@@ -82,7 +82,7 @@ describe("Machine Service", () => {
             expect(machine.id).toBeDefined();
             expect(machine.locatie).toBe(machineData.locatie);
             expect(machine.info).toBe(machineData.info);
-            expect(machine.status).toBe(machineData.status);
+            expect(machine.status).toBe(machineData.status.toLocaleLowerCase());
             expect(machine.site_id).toBe(siteId);
             expect(machine.technieker_id).toBe(techniekerId);
 
