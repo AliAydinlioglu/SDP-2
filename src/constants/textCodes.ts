@@ -15,6 +15,7 @@ enum textCodes {
     SITENOTFOUND = "site not found",
     MELDINGNOTFOUND = "MELDINGNOTFOUND",
     MACHINENOTFOUND = "MACHINENOTFOUND",
+    NOTFOUND = "NOTFOUND",
 }
 
 export = textCodes;
