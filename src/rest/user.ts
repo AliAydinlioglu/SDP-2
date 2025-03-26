@@ -6,7 +6,7 @@ import validation from "../core/validation";
 import endpoints from "../constants/endpoints";
 import { Rol } from "@prisma/client";
 import textCodes from "../constants/textCodes";
-
+import permissionCheck from "../core/CRUDPerms";
 
 const getSelf = async (ctx: Context) => {
     ctx.body = await userService.find(ctx.user_id);
@@ -14,41 +14,23 @@ const getSelf = async (ctx: Context) => {
 };
 
 const findAnyUser = async (ctx: Context) => {
-    let currnetUser = await userService.find(ctx.user_id);
-
-    if (currnetUser.rol !== Rol.ADMINISTRATOR) {
-        ctx.status = 403;
-        ctx.body = { message: textCodes.NOACCESS };
-        return;
-    }
-
+    // Only Administrators can view details of any user
+    await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
     ctx.body = await userService.find(Number(ctx.params.id));
     ctx.status = 200;
 };
 
 const findAllUsers = async (ctx: Context) => {
-    let currnetUser = await userService.find(ctx.user_id);
-
-    if (currnetUser.rol !== Rol.ADMINISTRATOR) {
-        ctx.status = 403;
-        ctx.body = { message: textCodes.NOACCESS };
-        return;
-    }
-
+    // Only Administrators allowed to view all users
+    await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
     ctx.body = await userService.findAll();
     ctx.status = 200;
 };
 
 const updateUser = {
     execute: async (ctx: Context) => {
-        let currnetUser = await userService.find(ctx.user_id);
-
-        if (currnetUser.rol !== Rol.ADMINISTRATOR) {
-            ctx.status = 403;
-            ctx.body = { message: textCodes.NOACCESS };
-            return;
-        }
-
+        // Only Administrators can update any user
+        await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
         const user = ctx.request.body as {
             voornaam: string;
             achternaam: string;
@@ -64,9 +46,7 @@ const updateUser = {
             actief: boolean;
             rol: Rol;
         };
-
         await userService.updateUser(Number(ctx.params.id), user);
-
         ctx.status = 200;
     },
     schema: {
@@ -90,6 +70,7 @@ const updateUser = {
 
 const updateSelf = {
     execute: async (ctx: Context) => {
+        // All logged-in users can update their own profiles
         const user = ctx.request.body as {
             voornaam: string;
             achternaam: string;
@@ -105,9 +86,7 @@ const updateSelf = {
             actief: boolean;
             rol: Rol;
         };
-
         await userService.updateUser(ctx.user_id, user);
-
         ctx.status = 200;
     },
     schema: {
@@ -130,8 +109,9 @@ const updateSelf = {
 };
 
 const deleteUser = async (ctx: Context) => {
+    // Only Administrators can delete users
+    await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
     await userService.deleteUser(Number(ctx.params.id));
-
     ctx.status = 200;
     ctx.body = { message: "User deleted" };
 };
