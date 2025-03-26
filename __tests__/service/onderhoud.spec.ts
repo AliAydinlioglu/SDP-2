@@ -1,4 +1,4 @@
-import onderhoudService from "../../src/service/Onderhoud";
+import onderhoudService from "../../src/service/onderhoud";
 import machineService from "../../src/service/machine";
 import userService from "../../src/service/user";
 import siteService from "../../src/service/site";
