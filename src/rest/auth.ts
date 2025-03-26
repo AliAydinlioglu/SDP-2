@@ -4,9 +4,16 @@ import { Context } from "koa";
 import Joi from "joi";
 import validation from "../core/validation";
 import { Rol } from "@prisma/client";
+import permissionCheck from "../core/CRUDPerms";
+import jwtUse from "../core/jwtUse";
 
 const createUser = {
     execute: async (ctx: Context) => {
+        let adminToken = ctx.request.headers.authorization!.split(" ")[1];
+        let admintID = jwtUse.getUserID(adminToken);
+
+        permissionCheck([Rol.ADMINISTRATOR], admintID);
+
         const user = ctx.request.body as {
             voornaam: string;
             achternaam: string;
