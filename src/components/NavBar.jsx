@@ -20,7 +20,7 @@ export default function NavBar() {
         <a className="navbar-brand" href="/">Delaware</a>
         {isAuthed && user?.rol && (
           <span className="navbar-text ms-auto me-3">
-            {user.rol}
+            {user.rol.toLowerCase()}
           </span>
         )}
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
@@ -41,7 +41,9 @@ export default function NavBar() {
             </li>
             <li className='nav-item'>
               {isAdmin && <a className='nav-link' href='/users'>Users</a>}
-
+            </li>
+            <li className='nav-item'>
+              <a className='nav-link' href='/maintenances'>Maintenances</a>
             </li>
           </ul>
           <ul className="navbar-nav ms-auto">

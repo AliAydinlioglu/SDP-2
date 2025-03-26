@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react';
-import { MACHINE_DATA } from '../../api/mock_data';
 import MachineTabelBig from '../../components/machines/MachineTabelBig';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/auth';
+import useSWR from 'swr';
+import { getAll } from '../../api';
+import AsyncData from '../../components/AsyncData';
 
 const MachinesList = () => {
-  const [machines, setMachines] = useState(MACHINE_DATA);
+  const {
+    data: data = [],
+    loading: machinesLoading,
+    error: machinesError,
+  } = useSWR('/machines', getAll);
+  const [machines, setMachines] = useState(data);
   const [sortOrderId, setSortOrderId] = useState('desc');
   const [sortOrderSiteId, setSortOrderSiteId] = useState('asc');
   const [text, setText] = useState('');
@@ -37,7 +44,7 @@ const MachinesList = () => {
   };
 
   useEffect(() => {
-    const filteredMachines = MACHINE_DATA.filter((m) => {
+    const filteredMachines = data.filter((m) => {
       
       return (
         m.id.toString().includes(text.toLowerCase()) &&
@@ -46,7 +53,7 @@ const MachinesList = () => {
       );
     });
     setMachines(filteredMachines);
-  }, [text, stateFilter, productionStateFilter]);
+  }, [text, stateFilter, productionStateFilter, data]);
 
   return (
     <div className='machine-tabel-big-container'>
@@ -87,7 +94,9 @@ const MachinesList = () => {
           )}
         </div>
       </div>
-      <MachineTabelBig machines={machines} sortMachines={sortMachinesByProp} />
+      <AsyncData loading={machinesLoading} error={machinesError}>
+        <MachineTabelBig machines={machines} sortMachines={sortMachinesByProp} />
+      </AsyncData>
     </div>
   );
 };

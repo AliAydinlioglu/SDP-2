@@ -409,7 +409,7 @@ button:focus-visible {
 }
 
 /* Form */
-.form-container {
+.form-container form {
   width: 50%;
   margin: auto;
   justify-items: center;
@@ -576,5 +576,29 @@ form .form-text.text-danger {
 .modal-footer .btn-danger:hover {
   background-color: #c9302c;
   border-color: #ac2925;
+}
+
+.maintenance-card {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.maintenance-card-content h3 {
+  margin-top: 0;
+}
+
+.maintenance-opmerking {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
 }
 
