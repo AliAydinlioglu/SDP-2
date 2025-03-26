@@ -4,27 +4,33 @@ import { SITE_DATA } from '../../api/mock_data';
 
 const validationRules = {
   site_id: {
-    required: 'site id is required',
+    required: 'Site ID is required',
+  },
+  locatie: {
+    required: 'Location is required',
+  },
+  info: {
+    required: 'Info is required',
   },
 };
 
 const EMPTY_MACHINE = {
   id: undefined,
   site_id: '',
-  state: '',
-  prod_state: '',
+  locatie: '',
+  info: '',
 };
 
-export default function MachineForm({ sites = [], machine=EMPTY_MACHINE, saveMachine }) {
-  sites = SITE_DATA; //MOCK DATA!!, wegdoen als werkelijke data beschikbaar is
+export default function MachineForm({ sites = [], machine = EMPTY_MACHINE, saveMachine }) {
+  sites = SITE_DATA; // MOCK DATA!!, wegdoen als werkelijke data beschikbaar is
 
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isValid } } = useForm({
     mode: 'onBlur',
     defaultValues: {
       site_id: machine?.site_id,
-      state: machine?.state,
-      prod_state: machine?.prod_state,
+      locatie: machine?.locatie,
+      info: machine?.info,
     },
   });
 
@@ -62,52 +68,40 @@ export default function MachineForm({ sites = [], machine=EMPTY_MACHINE, saveMac
               </option>
             ))}
           </select>
-          {errors.site_id ? <p className="form-text text-danger">{errors.site_id.message}</p> : null}
+          {errors.site_id && <p className="form-text text-danger">{errors.site_id.message}</p>}
         </div>
 
         <div className='mb-3'>
-          <label htmlFor='state' className='form-label'>
-            State
+          <label htmlFor='locatie' className='form-label'>
+            Location
           </label>
-          <select
-            {...register('state')}
-            id='state'
-            name='state'
-            className='form-select'
-          >
-            <option value='' disabled>
-              -- Select a state --
-            </option>
-            <option value='active'>Active</option>
-            <option value='inactive'>Inactive</option>
-          </select>
+          <input
+            {...register('locatie', validationRules.locatie)}
+            id='locatie'
+            name='locatie'
+            type='text'
+            className='form-control'
+          />
+          {errors.locatie && <p className="form-text text-danger">{errors.locatie.message}</p>}
         </div>
 
         <div className='mb-3'>
-          <label htmlFor='prod_state' className='form-label'>
-            Production State
+          <label htmlFor='info' className='form-label'>
+            Info
           </label>
-          <select
-            {...register('prod_state')}
-            id='prod_state'
-            name='prod_state'
-            className='form-select'
-          >
-            <option value='' disabled>
-              -- Select a production state --
-            </option>
-            <option value='running'>Running</option>
-            <option value='maintenance'>Maintenance</option>
-            <option value='idle'>Idle</option>
-          </select>
+          <textarea
+            {...register('info', validationRules.info)}
+            id='info'
+            name='info'
+            className='form-control'
+          />
+          {errors.info && <p className="form-text text-danger">{errors.info.message}</p>}
         </div>
 
         <div className='clearfix'>
           <div className='btn-group float-end'>
             <button type='submit' className='btn btn-primary'>
-              {machine?.id
-                ? 'Save machine'
-                : 'Add machine'}
+              {machine?.id ? 'Save Machine' : 'Add Machine'}
             </button>
           </div>
         </div>
