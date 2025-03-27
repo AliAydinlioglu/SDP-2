@@ -3,16 +3,18 @@ package gebruikers;
 import java.time.LocalDate;
 
 import enums.Rol;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Gebruiker {
-    private String naam;
-    private String voornaam;
-    private LocalDate geboortedatum;
-    private String adres;
-    private String email;
-    private String gsm; // Optioneel, behalve voor Technieker
-    private Rol rol;
-    private boolean Status;
+    @Setter @Getter private String naam;
+    @Setter @Getter private String voornaam;
+    @Setter @Getter private LocalDate geboortedatum;
+    @Setter @Getter private String adres;
+    @Getter private String email;
+    @Getter private String gsm; // Optioneel, behalve voor Technieker
+    @Getter private Rol rol;
+    @Setter @Getter private boolean Status;
 
     public Gebruiker(String naam, String voornaam, LocalDate geboortedatum, String adres, String email, String gsm, Rol rol, boolean Status) {
         if (naam.isBlank() || voornaam.isBlank() || geboortedatum == null || adres.isBlank() || email.isBlank()) {
@@ -21,14 +23,14 @@ public class Gebruiker {
         if (rol.equals(Rol.TECHNIEKER) && (gsm == null || gsm.isBlank())) {
             throw new IllegalArgumentException("Gsm is verplicht voor Techniekers.");
         }
-        this.naam = naam;
-        this.voornaam = voornaam;
-        this.geboortedatum = geboortedatum;
-        this.adres = adres;
-        this.email = email;
-        this.gsm = gsm;
-        this.rol = rol;
-        this.Status = Status;
+        setNaam(naam);
+        setVoornaam(voornaam);
+        setGeboortedatum(geboortedatum);
+        setAdres(adres);
+        setEmail(email);
+        setGsm(gsm);
+        setRol(rol);
+        setStatus(Status);
     }
 
     public void setEmail(String email) {
@@ -38,12 +40,9 @@ public class Gebruiker {
         this.email = email;
     }
 
-    public void setStatus(boolean actief) {
-        this.Status = actief;
-    }
 
     public void setGsm(String gsm) {
-        if (rol.equalsIgnoreCase("Technieker") && (gsm == null || gsm.isBlank())) {
+        if (rol.equals(Rol.TECHNIEKER) && (gsm == null || gsm.isBlank())) {
             throw new IllegalArgumentException("Technieker moet een gsm-nummer hebben.");
         }
         this.gsm = gsm;
@@ -51,6 +50,9 @@ public class Gebruiker {
 
     public boolean getStatus() {
         return Status;
+    }
+    private void setRol(Rol rol) {
+    	this.rol = rol;
     }
 
     @Override
