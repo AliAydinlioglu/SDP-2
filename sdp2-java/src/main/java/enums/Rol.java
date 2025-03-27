@@ -1,0 +1,8 @@
+package enums;
+
+public enum Rol {
+	ADMINISTRATOR,
+	MANAGER,
+	VERANTWOORDELIJKE,
+	TECHNIEKER
+}
