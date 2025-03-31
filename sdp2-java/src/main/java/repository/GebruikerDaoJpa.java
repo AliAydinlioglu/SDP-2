@@ -14,13 +14,13 @@ public class GebruikerDaoJpa extends GenericDaoJpa<Gebruiker> implements Gebruik
 	}
 	
 	@Override
-	public Gebruiker get(int id) {
+	public Gebruiker getGebruikerByEmail(String email) {
 		try {
-            return em.createNamedQuery("Gebruiker.findById", Gebruiker.class)
-                 .setParameter("gebruikerId", id)
+            return em.createNamedQuery("Gebruiker.findByEmail", Gebruiker.class)
+                 .setParameter("gebruikerEmail", email)
                  .getSingleResult();
         } catch (NoResultException ex) {
-        	throw new EntityNotFoundException("Geen gebruiker gevonden met id: %d".formatted(id));
+        	throw new EntityNotFoundException("Geen gebruiker gevonden met email: %s".formatted(email));
         }
 	}
 

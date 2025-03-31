@@ -1,17 +1,19 @@
 package main;
 
-import domain.DomeinController;
+import domain.GebruikerController;
 
 public class StartUp {
 
 	public static void main(String[] args) {
-		DomeinController dc = new DomeinController();
+//		GebruikerController dc = new GebruikerController();
+//		
+//		System.out.println(dc.getGebruiker(1).toString());
+//		
+//		System.out.println(dc.getAll().toString());
+//		
+//		System.out.println(dc.getGebruiker("geralt@gmail.com"));
 		
-		System.out.println(dc.getGebruiker(1).toString());
-		
-		System.out.println(dc.getAll().toString());
-		
-		
+		StartUpGui.start(args);
 
 	}
 

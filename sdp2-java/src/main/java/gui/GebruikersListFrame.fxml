@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<fx:root type="VBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="62.0" prefWidth="600.0" text="Gebruikers" textAlignment="JUSTIFY">
+         <font>
+            <Font size="34.0" />
+         </font>
+      </Label>
+      <HBox prefHeight="19.0" prefWidth="600.0">
+         <children>
+            <Label text="Filter" />
+            <TextField fx:id="txtFilter" onKeyReleased="#filter" prefHeight="26.0" prefWidth="221.0">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+      <TableView fx:id="gebruikersTable" prefHeight="200.0" prefWidth="200.0">
+        <columns>
+          <TableColumn fx:id="voornaamCol" prefWidth="170.0" text="Voornaam" />
+          <TableColumn fx:id="achternaamCol" prefWidth="195.0" text="Achternaam" />
+            <TableColumn fx:id="emailCol" prefWidth="234.0" text="email" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </children>
+</fx:root>
