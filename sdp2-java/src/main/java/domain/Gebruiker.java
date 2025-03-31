@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import javafx.beans.property.SimpleStringProperty;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,11 +24,11 @@ import lombok.Setter;
 
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Gebruiker.findById",
+    @NamedQuery(name = "Gebruiker.findByEmail",
                 query = """
                         SELECT g
                         FROM Gebruiker g
-                        WHERE g.gebruikerID = :gebruikerId
+                        WHERE g.email = :gebruikerEmail
 
                         """),
     @NamedQuery(name = "Gebruiker.findAll",
@@ -88,6 +89,17 @@ public class Gebruiker implements Serializable {
         }
         this.email = email;
     }
+    
+    public SimpleStringProperty voornaamProperty() {
+        return new SimpleStringProperty(voornaam);
+    }
+    
+    public SimpleStringProperty achternaamProperty() {
+		return new SimpleStringProperty(achternaam);
+	}
+    public SimpleStringProperty emailProperty() {
+		return new SimpleStringProperty(email);
+	}
 
 
     public void setGsm(String gsm) {
