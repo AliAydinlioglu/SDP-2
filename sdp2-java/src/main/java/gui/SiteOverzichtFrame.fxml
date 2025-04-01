@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.SiteOverzichtFrameController">
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+   <children>
+      <Label text="Overzicht Sites">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <TableView fx:id="siteTable" prefHeight="300.0" VBox.vgrow="ALWAYS">
+        <columns>
+          <TableColumn fx:id="naamCol" prefWidth="200.0" text="Naam Site" />
+          <TableColumn fx:id="verantwoordelijkeCol" prefWidth="200.0" text="Naam Verantwoordelijke" />
+          <TableColumn fx:id="aantalMachinesCol" prefWidth="150.0" text="Aantal Machines" style="-fx-alignment: CENTER-RIGHT;"/>
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+       <Label fx:id="lblStatus" text="" />
+   </children>
+</VBox>
