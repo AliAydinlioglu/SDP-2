@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import repository.MachineDaoJpa;
+import enums.MachineStatus;
 
 public class MachineController {
 
@@ -19,8 +20,8 @@ public class MachineController {
     private SortedList<Machine> sortedMachineList;
 
     private final Comparator<Machine> byName = (m1, m2) -> m1.getName().compareToIgnoreCase(m2.getName());
-    private final Comparator<Machine> byID = (m1, m2) -> m1.getMachineID();
-    private final Comparator<Machine> byStatus = (m1, m2) -> m1.getStatus().compareToIgnoreCase(m2.getStatus());
+    private final Comparator<Machine> byID = Comparator.comparingInt(Machine::getMachineID);
+    private final Comparator<Machine> byStatus = Comparator.comparing(Machine::getStatus);
 
     private final Comparator<Machine> sortOrder = byName.thenComparing(byID).thenComparing(byStatus);
 
@@ -67,7 +68,12 @@ public class MachineController {
     }
 
     public void deactivateMachine(Machine machine) {
-        machine.setStatus("Gestopt");
+        machine.setStatus(MachineStatus.GESTOPT_AUTO);
         machineDaoJpa.update(machine);
+    }
+
+    public ObservableList<Machine> getMachinesByStatus(MachineStatus status) {
+        FilteredList<Machine> filteredByStatus = new FilteredList<>(machineList, m -> m.getStatus().equals(status));
+        return new SortedList<>(filteredByStatus, sortOrder);
     }
 }

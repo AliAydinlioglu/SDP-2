@@ -1,7 +1,8 @@
 package repository;
 
 import domain.Site;
-import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
@@ -13,9 +14,13 @@ public class SiteDaoJpa extends GenericDaoJpa<Site> implements SiteDao {
     }
 
     @Override
-    public List<Site> findAll() {
-        return em.createQuery("SELECT s FROM Site s LEFT JOIN FETCH s.verantwoordelijke", Site.class)
-                .getResultList();
+    public List<Site> findAll() throws EntityNotFoundException {
+        try {
+            return em.createQuery("SELECT s FROM Site s LEFT JOIN FETCH s.verantwoordelijke", Site.class)
+                    .getResultList();
+        } catch (NoResultException e) {
+            throw new EntityNotFoundException(("Geen sites gevonden"));
+        }
     }
 
     public long countMachinesForSite(int siteId) {

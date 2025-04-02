@@ -25,6 +25,7 @@ public class SiteController {
 
     /**
      * Geeft de lijst van sites terug, klaar voor gebruik in een TableView.
+     *
      * @return ObservableList van Site objecten.
      */
     public ObservableList<Site> getAllSites() {
