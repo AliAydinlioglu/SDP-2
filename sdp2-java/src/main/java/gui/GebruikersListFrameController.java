@@ -4,8 +4,12 @@ import java.io.IOException;
 
 import domain.Gebruiker;
 import domain.GebruikerController;
+import enums.Rol;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -29,6 +33,40 @@ public class GebruikersListFrameController extends VBox {
 	@FXML
 	private TextField txtFilter;
 	
+	@FXML
+	private TextField voornaamField;
+	
+	@FXML
+	private TextField achternaamField;
+	
+	@FXML
+	private TextField emailField;
+	
+	@FXML
+	private TextField gsmNrField;
+	
+	@FXML
+	private TextField straatField;
+	
+	@FXML
+	private TextField huisNrField;
+	
+	@FXML
+	private TextField postcodeField;
+	
+	@FXML
+	private TextField stadField;
+	
+	@FXML
+	private TextField landField;
+	
+	@FXML
+	private DatePicker geboorteDatumPicker;
+	
+	@FXML
+	private ChoiceBox<Rol> rolBox = new ChoiceBox<Rol>(
+			FXCollections.observableArrayList(Rol.values()));
+
 	private GebruikerController dc;
 	
 
