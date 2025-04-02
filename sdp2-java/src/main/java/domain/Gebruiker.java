@@ -64,6 +64,11 @@ public class Gebruiker implements Serializable {
     @Enumerated(EnumType.STRING)
     private Rol rol;
     private boolean actief;
+    
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @Column(name = "hashed_password")
+    private String wachtwoord;
 
     public Gebruiker(String naam, String voornaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol) {
         if (naam.isBlank() || voornaam.isBlank() || geboortedatum == null || email.isBlank()) {
@@ -77,9 +82,12 @@ public class Gebruiker implements Serializable {
         setGeboorteDatum(geboortedatum);
         setAdres(adres);
         setEmail(email);
-        setGsm(gsm);
         setRol(rol);
+        setGsm(gsm);
         setActief(true);
+        
+
+        wachtwoord = "default"; // Placeholder, wachtwoord moet nog goed worden ingesteld
 
     }
 
