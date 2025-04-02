@@ -65,7 +65,7 @@ public class Gebruiker implements Serializable {
     private Rol rol;
     private boolean actief;
 
-    public Gebruiker(String naam, String voornaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol, boolean Status) {
+    public Gebruiker(String naam, String voornaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol) {
         if (naam.isBlank() || voornaam.isBlank() || geboortedatum == null || email.isBlank()) {
             throw new IllegalArgumentException("Alle velden (behalve gsm) moeten ingevuld zijn.");
         }
@@ -79,7 +79,7 @@ public class Gebruiker implements Serializable {
         setEmail(email);
         setGsm(gsm);
         setRol(rol);
-        setActief(Status);
+        setActief(true);
 
     }
 
