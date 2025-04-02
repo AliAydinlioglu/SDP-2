@@ -1,8 +1,10 @@
 package domain;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
+import enums.Rol;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -52,9 +54,19 @@ public class GebruikerController {
 		return sortedGebruikerList;
 	}
 	
-	public Gebruiker getGebruiker(String email)
+	public Gebruiker getGebruikerByEmail(String email)
 	{
 		return gebruikerDaoJpa.getGebruikerByEmail(email);
+	}
+	
+	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol) {
+		
+		Gebruiker gebruiker = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
+		
+		gebruikerDaoJpa.startTransaction();
+		gebruikerDaoJpa.insert(gebruiker);
+		gebruikerDaoJpa.commitTransaction();
+		gebruikerList.add(gebruiker);
 	}
 	
 	public void changeFilter(String filterValue) {
@@ -71,4 +83,11 @@ public class GebruikerController {
         }
         );
     }
+	
+	public void removeGebruiker(Gebruiker gebruiker) {
+		gebruikerDaoJpa.startTransaction();
+		gebruikerDaoJpa.delete(gebruiker);
+		gebruikerDaoJpa.commitTransaction();
+		gebruikerList.remove(gebruiker);
+	}
 }
