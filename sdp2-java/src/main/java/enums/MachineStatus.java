@@ -2,8 +2,8 @@ package enums;
 
 public enum MachineStatus {
     DRAAIT,
-    GESTOP_AUTO, // Gestopt automatisch
-    GESTOP_MANUEEL, // Gestopt manueel
+    GESTOPT_AUTO,
+    GESTOPT_MANUEEL,
     IN_ONDERHOUD
 
 }
