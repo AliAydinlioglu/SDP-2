@@ -35,7 +35,7 @@ public class GebruikersListFrameController extends VBox {
 	
 	public GebruikersListFrameController(GebruikerController controller) {
 		dc = controller;
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("GebruikersListFrame.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GebruikersListFrame.fxml"));
         loader.setRoot(this);
         loader.setController(this);
         try {
