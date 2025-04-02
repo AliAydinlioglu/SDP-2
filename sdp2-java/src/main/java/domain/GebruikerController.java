@@ -83,4 +83,11 @@ public class GebruikerController {
         }
         );
     }
+	
+	public void removeGebruiker(Gebruiker gebruiker) {
+		gebruikerDaoJpa.startTransaction();
+		gebruikerDaoJpa.delete(gebruiker);
+		gebruikerDaoJpa.commitTransaction();
+		gebruikerList.remove(gebruiker);
+	}
 }

@@ -33,7 +33,7 @@ public class StartUpGui extends Application {
 
         tabPane.getTabs().addAll(gebruikersTab, sitesTab);
         Scene scene = new Scene(tabPane, 800, 600);
-        scene.getStylesheets().add("application.css");
+        //scene.getStylesheets().add("application.css");
 
         primaryStage.setTitle("Beheer Applicatie");
 

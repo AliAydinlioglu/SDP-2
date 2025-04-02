@@ -34,7 +34,8 @@
         <columns>
           <TableColumn fx:id="voornaamCol" prefWidth="170.0" text="Voornaam" />
           <TableColumn fx:id="achternaamCol" prefWidth="195.0" text="Achternaam" />
-            <TableColumn fx:id="emailCol" prefWidth="234.0" text="email" />
+          <TableColumn fx:id="emailCol" prefWidth="234.0" text="email" />
+          <TableColumn fx:id="actionCol" prefWidth="100.0" text="Action" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
