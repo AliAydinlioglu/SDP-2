@@ -19,25 +19,23 @@ public class Site {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int siteId;
 
     private String naam;
 
-    @Embedded
-    private Adres adres;
-
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "verantwoordelijke_id")
+    @JoinColumn(name = "verantw_id")
     private Gebruiker verantwoordelijke;
 
     @OneToMany(mappedBy = "site", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Machine> machines = new HashSet<>();
 
-    public Site(String naam, Adres adres, Gebruiker verantwoordelijke) {
+    public Site(String naam, Gebruiker verantwoordelijke) {
         setNaam(naam);
-        setAdres(adres);
         setVerantwoordelijke(verantwoordelijke);
     }
+
 
     public StringProperty naamProperty() {
         return new SimpleStringProperty(naam);

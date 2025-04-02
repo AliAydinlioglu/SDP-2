@@ -7,8 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField; // Voor filter
-import javafx.scene.input.KeyEvent; // Voor filter
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -18,7 +16,7 @@ public class SiteOverzichtFrameController extends VBox {
     @FXML private TableView<Site> siteTable;
     @FXML private TableColumn<Site, String> naamCol;
     @FXML private TableColumn<Site, String> verantwoordelijkeCol;
-    @FXML private TableColumn<Site, Number> aantalMachinesCol; // Gebruik Number voor IntegerProperty
+    @FXML private TableColumn<Site, Number> aantalMachinesCol;
     @FXML private Label lblStatus;
 
     private SiteController siteController;
@@ -26,7 +24,7 @@ public class SiteOverzichtFrameController extends VBox {
     public SiteOverzichtFrameController(SiteController siteController) {
         this.siteController = siteController;
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("SiteOverzichtFrame.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteOverzichtFrame.fxml"));
         loader.setRoot(this);
         loader.setController(this);
         try {

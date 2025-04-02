@@ -79,12 +79,28 @@
 
 	</dependencies>
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.fxml</include>
+					<include>**/*.css</include>
+					<include>**/*.properties</include>
+					<include>META-INF/persistence.xml</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.8</version> <configuration>
 				<mainClass>main.StartUpGui</mainClass>
+				<executable>${java.home}/bin/java</executable>
+				<options>
+					<option>--add-opens</option>
+					<option>java.base/java.lang=ALL-UNNAMED</option>
+				</options>
 			</configuration>
 			</plugin>
 
