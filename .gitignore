@@ -4,3 +4,7 @@
 .classpath
 .project
 .idea/
+META-INF/persistence.xml
+.DS_Store
+
+sdp2-java/src/main/resources/META-INF/persistence.xml
