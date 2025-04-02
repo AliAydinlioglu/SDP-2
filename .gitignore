@@ -6,5 +6,6 @@
 .idea/
 META-INF/persistence.xml
 .DS_Store
+.vscode
 
 sdp2-java/src/main/resources/META-INF/persistence.xml
