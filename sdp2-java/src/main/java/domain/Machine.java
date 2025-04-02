@@ -4,14 +4,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
+import enums.MachineStatus;
+import enums.ProductionStatus;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,13 +39,13 @@ public class Machine implements Serializable {
     private String productInfo;
 
     @Column(name = "status")
-    private String status;  // E.g., Draait, Gestopt [auto or manual]
+    private MachineStatus status;
 
     @Column(name = "production_status")
-    private String productionStatus;  // E.g., Gezond, Nood aan onderhoud, falend
+    private ProductionStatus productionStatus;
 
     @Column(name = "uptime")
-    private int uptime;  // Uptime in hours or another metric
+    private int uptime;  // Uptime in uren of een andere eenheid
 
     private String technicianName;
 
@@ -63,12 +58,16 @@ public class Machine implements Serializable {
     @Column(name = "next_maintenance_date")
     private LocalDate nextMaintenanceDate;
 
-    public Machine(String name, String location, String productInfo, String status,
-                   String productionStatus, int uptime, String technicianName, LocalDate lastMaintenanceDate,
+    @ManyToOne
+    @JoinColumn(name = "site_id")
+    private Site site;
+
+    public Machine(String name, String location, String productInfo, MachineStatus status,
+                   ProductionStatus productionStatus, int uptime, String technicianName, LocalDate lastMaintenanceDate,
                    int daysSinceLastMaintenance, LocalDate nextMaintenanceDate) {
 
         // Controleer of verplichte velden leeg zijn
-        if (name.isBlank() || location.isBlank() || productInfo.isBlank() || status.isBlank() || productionStatus.isBlank()) {
+        if (name.isBlank() || location.isBlank() || productInfo.isBlank()) {
             throw new IllegalArgumentException("Alle velden moeten ingevuld zijn.");
         }
 
@@ -97,7 +96,6 @@ public class Machine implements Serializable {
             throw new IllegalArgumentException("De laatste onderhoudsdatum mag niet in de toekomst liggen.");
         }
 
-        // Als alle controles geslaagd zijn, stel de velden in
         this.name = name;
         this.location = location;
         this.productInfo = productInfo;
@@ -109,7 +107,6 @@ public class Machine implements Serializable {
         this.daysSinceLastMaintenance = daysSinceLastMaintenance;
         this.nextMaintenanceDate = nextMaintenanceDate;
     }
-
 
     @Override
     public String toString() {

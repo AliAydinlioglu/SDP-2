@@ -13,13 +13,13 @@ public class MachineDaoJpa extends GenericDaoJpa<Machine> implements MachineDao 
     }
 
     @Override
-    public Machine getMachineByID(String id) throws EntityNotFoundException {
+    public Machine getMachineByID(String machineId) throws EntityNotFoundException {
         try {
             return em.createNamedQuery("Machine.findByID", Machine.class)
-                    .setParameter("machineID", id)
+                    .setParameter("machineID", machineId)
                     .getSingleResult();
         } catch (NoResultException ex) {
-            throw new EntityNotFoundException("Geen machine gevonden met ID: %s".formatted(id));
+            throw new EntityNotFoundException("Geen machine gevonden met ID: %s".formatted(machineId));
 
         }
     }
