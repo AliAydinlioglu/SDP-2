@@ -5,4 +5,4 @@
 .project
 .idea
 
-../sdp2-java/resources/meta-inf/permissions.xml
+../sdp2-java/src/main/resources/META.INF/persistence.xml
