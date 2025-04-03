@@ -45,9 +45,6 @@ public class MachineController {
         return sortedMachineList;
     }
 
-    public Machine getMachine(String id) {
-        return machineDaoJpa.getMachineByID(id);
-    }
 
     public void changeFilter(String filterValue) {
         filteredMachineList.setPredicate(machine -> {

@@ -13,15 +13,6 @@ public class SiteDaoJpa extends GenericDaoJpa<Site> implements SiteDao {
         super(Site.class);
     }
 
-    @Override
-    public List<Site> findAll() throws EntityNotFoundException {
-        try {
-            return em.createQuery("SELECT s FROM Site s LEFT JOIN FETCH s.verantwoordelijke", Site.class)
-                    .getResultList();
-        } catch (NoResultException e) {
-            throw new EntityNotFoundException(("Geen sites gevonden"));
-        }
-    }
 
     public long countMachinesForSite(int siteId) {
         TypedQuery<Long> query = em.createQuery(

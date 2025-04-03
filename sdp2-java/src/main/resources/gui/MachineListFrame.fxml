@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="gui.MachineListFrameController" spacing="10" alignment="TOP_CENTER">
+
+    <TableView fx:id="machineTable" prefHeight="400" prefWidth="600">
+        <columns>
+            <TableColumn fx:id="nameCol" text="Naam" minWidth="150"/>
+            <TableColumn fx:id="locationCol" text="Locatie" minWidth="150"/>
+            <TableColumn fx:id="statusCol" text="Status" minWidth="120"/>
+            <TableColumn fx:id="uptimeCol" text="Uptime (uren)" minWidth="100"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="lblStatus" text="Geen machine geselecteerd." style="-fx-font-size: 14px; -fx-text-fill: #555;" />
+
+</VBox>
