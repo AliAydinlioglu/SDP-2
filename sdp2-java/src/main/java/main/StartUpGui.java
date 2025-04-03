@@ -1,8 +1,10 @@
 package main;
 
 import domain.GebruikerController;
+import domain.MachineController;
 import domain.SiteController;
 import gui.GebruikersListFrameController;
+import gui.MachineListFrameController;
 import gui.SiteOverzichtFrameController;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -15,13 +17,14 @@ import javafx.stage.WindowEvent;
 public class StartUpGui extends Application {
 
     @Override
-    public void start(Stage primaryStage)
-    {
+    public void start(Stage primaryStage) {
         GebruikerController gebruikerController = new GebruikerController();
         SiteController siteController = new SiteController();
+        MachineController machineController = new MachineController();
 
         GebruikersListFrameController gebruikersView = new GebruikersListFrameController(gebruikerController);
         SiteOverzichtFrameController siteOverzichtView = new SiteOverzichtFrameController(siteController);
+        MachineListFrameController machineView = new MachineListFrameController(machineController);
 
         TabPane tabPane = new TabPane();
 
@@ -31,7 +34,10 @@ public class StartUpGui extends Application {
         Tab sitesTab = new Tab("Sites", siteOverzichtView);
         sitesTab.setClosable(false);
 
-        tabPane.getTabs().addAll(gebruikersTab, sitesTab);
+        Tab machineTab = new Tab("Machines", machineView);
+        sitesTab.setClosable(false);
+
+        tabPane.getTabs().addAll(gebruikersTab, sitesTab, machineTab);
         Scene scene = new Scene(tabPane, 800, 600);
         //scene.getStylesheets().add("application.css");
 
@@ -46,8 +52,7 @@ public class StartUpGui extends Application {
         primaryStage.show();
     }
 
-    public static void start(String[] args)
-    {
+    public static void start(String[] args) {
         launch(args);
     }
 }

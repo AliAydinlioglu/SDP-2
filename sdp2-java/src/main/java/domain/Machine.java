@@ -7,6 +7,10 @@ import java.time.LocalDate;
 import enums.MachineStatus;
 import enums.ProductionStatus;
 import jakarta.persistence.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -67,7 +71,7 @@ public class Machine implements Serializable {
                    int daysSinceLastMaintenance, LocalDate nextMaintenanceDate) {
 
         // Controleer of verplichte velden leeg zijn
-        if (name.isBlank() || location.isBlank() || productInfo.isBlank()) {
+        if (name == null || name.isBlank() || location == null || location.isBlank() || productInfo == null || productInfo.isBlank()) {
             throw new IllegalArgumentException("Alle velden moeten ingevuld zijn.");
         }
 
@@ -87,7 +91,7 @@ public class Machine implements Serializable {
         }
 
         // Controleer of de naam van de technieker niet leeg is
-        if (technicianName.isBlank()) {
+        if (technicianName == null || technicianName.isBlank()) {
             throw new IllegalArgumentException("Naam van de technieker mag niet leeg zijn.");
         }
 
@@ -95,17 +99,34 @@ public class Machine implements Serializable {
         if (lastMaintenanceDate == null || lastMaintenanceDate.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("De laatste onderhoudsdatum mag niet in de toekomst liggen.");
         }
+        setName(name);
+        setLocation(location);
+        setProductInfo(productInfo);
+        setStatus(status);
+        setProductionStatus(productionStatus);
+        setUptime(uptime);
+        setTechnicianName(technicianName);
+        setLastMaintenanceDate(lastMaintenanceDate);
+        setDaysSinceLastMaintenance(daysSinceLastMaintenance);
+        setNextMaintenanceDate(nextMaintenanceDate);
+    }
 
-        this.name = name;
-        this.location = location;
-        this.productInfo = productInfo;
-        this.status = status;
-        this.productionStatus = productionStatus;
-        this.uptime = uptime;
-        this.technicianName = technicianName;
-        this.lastMaintenanceDate = lastMaintenanceDate;
-        this.daysSinceLastMaintenance = daysSinceLastMaintenance;
-        this.nextMaintenanceDate = nextMaintenanceDate;
+    public SimpleStringProperty nameProperty() {
+        return new SimpleStringProperty(name);
+
+    }
+
+    public SimpleStringProperty technicianNameProperty() {
+        return new SimpleStringProperty(technicianName);
+
+    }
+
+    public ObjectProperty<MachineStatus> statusProperty() {
+        return new SimpleObjectProperty<>(status);
+    }
+
+    public SimpleIntegerProperty uptimeProperty() {
+        return new SimpleIntegerProperty(uptime);
     }
 
     @Override
