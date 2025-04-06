@@ -31,11 +31,9 @@ public class Machine implements Serializable {
     @Column(name = "id")
     private int machineID;
 
-    // Java 'naam' veld gemapt aan database 'info' kolom
     @Column(name = "info")
     private String naam;
 
-    // ProductInfo niet gemapt aan database (geen aparte kolom in afbeelding)
     @Transient
     private String productInfo;
 
@@ -56,7 +54,7 @@ public class Machine implements Serializable {
     @Column(name = "dagenSindsOnderhoud")
     private int dagenSindsOnderhoud;
 
-    @Column(name = "volgendOnderhoud") // Aanname: DB type is DATE
+    @Column(name = "volgendOnderhoud")
     private LocalDate volgendOnderhoud;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -67,19 +65,14 @@ public class Machine implements Serializable {
     @JoinColumn(name = "site_id")
     private Site site;
 
-    // Constructor aangepast: 'naam' toegevoegd (gemapt aan DB 'info'), 'productInfo' toegevoegd (als @Transient), 'lastMaintenanceDate' verwijderd, 'technicianName' vervangen door 'technieker' (Gebruiker)
     public Machine(String naam, String productInfo, String locatie, MachineStatus status,
                    ProductionStatus productieStatus, int uptime, Gebruiker technieker,
                    int dagenSindsOnderhoud, LocalDate volgendOnderhoud, Site site) {
 
-        // Validatie aangepast
         if (naam == null || naam.isBlank() || locatie == null || locatie.isBlank()) {
             throw new IllegalArgumentException("Naam en locatie moeten ingevuld zijn.");
         }
-        // productInfo is @Transient, validatie misschien niet nodig, of anders:
-        // if (productInfo == null || productInfo.isBlank()){
-        //     throw new IllegalArgumentException("Product Info mag niet leeg zijn.");
-        // }
+
         if (technieker == null) {
             throw new IllegalArgumentException("Technieker moet opgegeven zijn.");
         }
@@ -97,7 +90,7 @@ public class Machine implements Serializable {
         }
 
         setNaam(naam);
-        setProductInfo(productInfo); // Setter voor @Transient veld
+        setProductInfo(productInfo);
         setLocatie(locatie);
         setStatus(status);
         setProductieStatus(productieStatus);
@@ -108,7 +101,6 @@ public class Machine implements Serializable {
         setSite(site);
     }
 
-    // --- JavaFX Properties (voorbeelden, pas aan/voeg toe indien nodig) ---
 
     public StringProperty naamProperty() {
         return new SimpleStringProperty(naam);
@@ -145,14 +137,12 @@ public class Machine implements Serializable {
     }
 
 
-    // --- toString Aangepast ---
     @Override
     public String toString() {
-        // Inclusief @Transient productInfo
         return String.format("Machine[ID=%d]: Naam: %s (Info: %s) - Status: %s | Uptime: %d | Tech: %s | Site: %s",
                 machineID,
                 naam,
-                productInfo, // Weergegeven maar niet persistent
+                productInfo,
                 status,
                 uptime,
                 (technieker != null ? technieker.getEmail() : "null"),
