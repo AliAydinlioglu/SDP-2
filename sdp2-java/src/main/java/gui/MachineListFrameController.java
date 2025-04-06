@@ -37,8 +37,8 @@ public class MachineListFrameController extends VBox {
             throw new RuntimeException(ex);
         }
 
-        nameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
-        locationCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocation()));
+        nameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNaam()));
+        locationCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocatie()));
         statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().name()));
         uptimeCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getUptime()));
 
@@ -47,7 +47,7 @@ public class MachineListFrameController extends VBox {
         machineTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 Machine selectedMachine = machineController.getMachine(newSelection.getMachineID());
-                lblStatus.setText("Geselecteerd: " + selectedMachine.getName() + " - Status: " + selectedMachine.getStatus());
+                lblStatus.setText("Geselecteerd: " + selectedMachine.getNaam() + " - Status: " + selectedMachine.getStatus());
             } else {
                 lblStatus.setText("");
             }
