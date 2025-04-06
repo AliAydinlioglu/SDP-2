@@ -1,21 +1,14 @@
 package domain;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDate;
-
 import enums.MachineStatus;
 import enums.ProductionStatus;
 import jakarta.persistence.*;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javafx.beans.property.*;
+import lombok.*;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 @Entity
 @NamedQueries({
@@ -26,7 +19,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "machines")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(exclude = "machineID")
+@EqualsAndHashCode(exclude = {"machineID", "site", "technieker"})
 public class Machine implements Serializable {
 
     @Serial
@@ -38,100 +31,121 @@ public class Machine implements Serializable {
     @Column(name = "id")
     private int machineID;
 
-    private String name;
-    private String location;
+    @Column(name = "info")
+    private String naam;
+
+    @Transient
     private String productInfo;
 
+    @Column(name = "locatie")
+    private String locatie;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private MachineStatus status;
 
-    @Column(name = "production_status")
-    private ProductionStatus productionStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "prod_status")
+    private ProductionStatus productieStatus;
 
     @Column(name = "uptime")
-    private int uptime;  // Uptime in uren of een andere eenheid
+    private int uptime;
 
-    private String technicianName;
+    @Column(name = "dagenSindsOnderhoud")
+    private int dagenSindsOnderhoud;
 
-    @Column(name = "last_maintenance_date")
-    private LocalDate lastMaintenanceDate;
+    @Column(name = "volgendOnderhoud")
+    private LocalDate volgendOnderhoud;
 
-    @Column(name = "days_since_last_maintenance")
-    private int daysSinceLastMaintenance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "technieker_id")
+    private Gebruiker technieker;
 
-    @Column(name = "next_maintenance_date")
-    private LocalDate nextMaintenanceDate;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "site_id")
     private Site site;
 
-    public Machine(String name, String location, String productInfo, MachineStatus status,
-                   ProductionStatus productionStatus, int uptime, String technicianName, LocalDate lastMaintenanceDate,
-                   int daysSinceLastMaintenance, LocalDate nextMaintenanceDate) {
+    public Machine(String naam, String productInfo, String locatie, MachineStatus status,
+                   ProductionStatus productieStatus, int uptime, Gebruiker technieker,
+                   int dagenSindsOnderhoud, LocalDate volgendOnderhoud, Site site) {
 
-        // Controleer of verplichte velden leeg zijn
-        if (name == null || name.isBlank() || location == null || location.isBlank() || productInfo == null || productInfo.isBlank()) {
-            throw new IllegalArgumentException("Alle velden moeten ingevuld zijn.");
+        if (naam == null || naam.isBlank() || locatie == null || locatie.isBlank()) {
+            throw new IllegalArgumentException("Naam en locatie moeten ingevuld zijn.");
         }
 
-        // Controleer of uptime een geldig positief getal is
+        if (technieker == null) {
+            throw new IllegalArgumentException("Technieker moet opgegeven zijn.");
+        }
+        if (site == null) {
+            throw new IllegalArgumentException("Site moet opgegeven zijn.");
+        }
         if (uptime < 0) {
             throw new IllegalArgumentException("Uptime mag niet negatief zijn.");
         }
-
-        // Controleer of het aantal dagen sinds het laatste onderhoud een geldig positief getal is
-        if (daysSinceLastMaintenance < 0) {
+        if (dagenSindsOnderhoud < 0) {
             throw new IllegalArgumentException("Aantal dagen sinds het laatste onderhoud mag niet negatief zijn.");
         }
-
-        // Controleer of de datum van het volgende onderhoud geldig is en niet in het verleden ligt
-        if (nextMaintenanceDate == null || nextMaintenanceDate.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("De datum voor het volgende onderhoud mag niet in het verleden liggen.");
+        if (volgendOnderhoud == null) {
+            throw new IllegalArgumentException("De datum voor het volgende onderhoud mag niet leeg zijn.");
         }
 
-        // Controleer of de naam van de technieker niet leeg is
-        if (technicianName == null || technicianName.isBlank()) {
-            throw new IllegalArgumentException("Naam van de technieker mag niet leeg zijn.");
-        }
-
-        // Controleer of de laatste onderhoudsdatum niet in de toekomst ligt
-        if (lastMaintenanceDate == null || lastMaintenanceDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("De laatste onderhoudsdatum mag niet in de toekomst liggen.");
-        }
-        setName(name);
-        setLocation(location);
+        setNaam(naam);
         setProductInfo(productInfo);
+        setLocatie(locatie);
         setStatus(status);
-        setProductionStatus(productionStatus);
+        setProductieStatus(productieStatus);
         setUptime(uptime);
-        setTechnicianName(technicianName);
-        setLastMaintenanceDate(lastMaintenanceDate);
-        setDaysSinceLastMaintenance(daysSinceLastMaintenance);
-        setNextMaintenanceDate(nextMaintenanceDate);
+        setTechnieker(technieker);
+        setDagenSindsOnderhoud(dagenSindsOnderhoud);
+        setVolgendOnderhoud(volgendOnderhoud);
+        setSite(site);
     }
 
-    public SimpleStringProperty nameProperty() {
-        return new SimpleStringProperty(name);
 
+    public StringProperty naamProperty() {
+        return new SimpleStringProperty(naam);
     }
 
-    public SimpleStringProperty technicianNameProperty() {
-        return new SimpleStringProperty(technicianName);
+    public StringProperty productInfoProperty() {
+        return new SimpleStringProperty(productInfo); // Voor @Transient veld
+    }
 
+    public StringProperty locatieProperty() {
+        return new SimpleStringProperty(locatie);
     }
 
     public ObjectProperty<MachineStatus> statusProperty() {
         return new SimpleObjectProperty<>(status);
     }
 
-    public SimpleIntegerProperty uptimeProperty() {
+    public ObjectProperty<ProductionStatus> productieStatusProperty() {
+        return new SimpleObjectProperty<>(productieStatus);
+    }
+
+    public IntegerProperty uptimeProperty() {
         return new SimpleIntegerProperty(uptime);
     }
 
+    public StringProperty techniekerNaamProperty() {
+        String naamTech = (technieker != null) ? technieker.getVoornaam() + " " + technieker.getAchternaam() : "N/A";
+        return new SimpleStringProperty(naamTech);
+    }
+
+    public StringProperty siteNaamProperty() {
+        String naamSite = (site != null) ? site.getNaam() : "N/A";
+        return new SimpleStringProperty(naamSite);
+    }
+
+
     @Override
     public String toString() {
-        return String.format("Machine: %s - Status: %s | Uptime: %d | Technician: %s",
-                name, status, uptime, technicianName);
+        return String.format("Machine[ID=%d]: Naam: %s (Info: %s) - Status: %s | Uptime: %d | Tech: %s | Site: %s",
+                machineID,
+                naam,
+                productInfo,
+                status,
+                uptime,
+                (technieker != null ? technieker.getEmail() : "null"),
+                (site != null ? site.getNaam() : "null"));
     }
 }
