@@ -19,7 +19,7 @@ public class MachineController {
 
     private SortedList<Machine> sortedMachineList;
 
-    private final Comparator<Machine> byName = (m1, m2) -> m1.getName().compareToIgnoreCase(m2.getName());
+    private final Comparator<Machine> byName = (m1, m2) -> m1.getNaam().compareToIgnoreCase(m2.getNaam());
     private final Comparator<Machine> byID = Comparator.comparingInt(Machine::getMachineID);
     private final Comparator<Machine> byStatus = Comparator.comparing(Machine::getStatus);
 
@@ -52,7 +52,7 @@ public class MachineController {
                 return true;
             }
             String lowerCaseValue = filterValue.toLowerCase();
-            return machine.getName().toLowerCase().contains(lowerCaseValue);
+            return machine.getNaam().toLowerCase().contains(lowerCaseValue);
         });
     }
 
