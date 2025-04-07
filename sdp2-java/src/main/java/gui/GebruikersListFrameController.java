@@ -5,6 +5,7 @@ import java.io.IOException;
 import domain.Gebruiker;
 import domain.GebruikerController;
 import enums.Rol;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -87,11 +88,11 @@ public class GebruikersListFrameController extends VBox {
             throw new RuntimeException(ex);
         }
         
-        voornaamCol.setCellValueFactory(cellData -> cellData.getValue().voornaamProperty());
-        achternaamCol.setCellValueFactory(cellData -> cellData.getValue().achternaamProperty());
-        emailCol.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
+        voornaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVoornaam()));
+        achternaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAchternaam()));
+        emailCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
         
-        gebruikersTable.setItems(dc.getAll());
+        gebruikersTable.setItems(dc.findAll());
         
         rolBox.setItems(FXCollections.observableArrayList(Rol.values()));
         
