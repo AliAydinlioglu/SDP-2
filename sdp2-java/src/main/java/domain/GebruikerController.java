@@ -2,18 +2,18 @@ package domain;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.List;
 
 import enums.Rol;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import repository.GebruikerDaoJpa;
+import repository.GebruikerDoaJpa;
+import repository.GebruikerDoa;
 
 public class GebruikerController {
 
-	private GebruikerDaoJpa gebruikerDaoJpa;
+	private GebruikerDoa gebruikerRepo;
 	
 	private ObservableList<Gebruiker> gebruikerList;
 	private FilteredList<Gebruiker> filteredGebruikerList;
@@ -32,40 +32,45 @@ public class GebruikerController {
     private final Comparator<Gebruiker> sortOrder = byFirstName.thenComparing(byLastName).
             thenComparing(byEmail);
     
-    private static List<Gebruiker> data;
 	
 	public GebruikerController() {
 		//new PopulateDB().run();
-		gebruikerDaoJpa = new GebruikerDaoJpa();
-		data = gebruikerDaoJpa.findAll();
-		
-		gebruikerList = FXCollections.observableArrayList(data);
+		gebruikerRepo = new GebruikerDoaJpa();		
+	}
+	
+	public GebruikerController(GebruikerDoa gebruikerRepo) { //voor mockito
+		//new PopulateDB().run();
+		this.gebruikerRepo = gebruikerRepo;		
+	}
+	
+	private void initData() {
+		gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
 		filteredGebruikerList = new FilteredList<>(gebruikerList, p -> true);
 		sortedGebruikerList = new SortedList<>(filteredGebruikerList, sortOrder);
-		
 	}
 	
 	
 	public Gebruiker getGebruiker(int id) {
-		return gebruikerDaoJpa.get(id);
+		return gebruikerRepo.get(id);
 	}
 	
-	public ObservableList<Gebruiker> getAll(){
+	public ObservableList<Gebruiker> findAll(){
+		if(gebruikerList == null) initData();
 		return sortedGebruikerList;
 	}
 	
 	public Gebruiker getGebruikerByEmail(String email)
 	{
-		return gebruikerDaoJpa.getGebruikerByEmail(email);
+		return gebruikerRepo.getGebruikerByEmail(email);
 	}
 	
 	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol) {
 		
 		Gebruiker gebruiker = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
 		
-		gebruikerDaoJpa.startTransaction();
-		gebruikerDaoJpa.insert(gebruiker);
-		gebruikerDaoJpa.commitTransaction();
+		gebruikerRepo.startTransaction();
+		gebruikerRepo.insert(gebruiker);
+		gebruikerRepo.commitTransaction();
 		gebruikerList.add(gebruiker);
 	}
 	
@@ -85,9 +90,9 @@ public class GebruikerController {
     }
 	
 	public void removeGebruiker(Gebruiker gebruiker) {
-		gebruikerDaoJpa.startTransaction();
-		gebruikerDaoJpa.delete(gebruiker);
-		gebruikerDaoJpa.commitTransaction();
+		gebruikerRepo.startTransaction();
+		gebruikerRepo.delete(gebruiker);
+		gebruikerRepo.commitTransaction();
 		gebruikerList.remove(gebruiker);
 	}
 }

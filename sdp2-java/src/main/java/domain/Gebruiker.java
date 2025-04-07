@@ -2,20 +2,27 @@ package domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import enums.Rol;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import javafx.beans.property.SimpleStringProperty;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -30,19 +37,13 @@ import lombok.Setter;
                         FROM Gebruiker g
                         WHERE g.email = :gebruikerEmail
 
-                        """),
-    @NamedQuery(name = "Gebruiker.findAll",
-                query = """
-                        SELECT g
-                        FROM Gebruiker g
                         """)
 })
 @Getter
 @Setter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(exclude = "gebruikerID")
-
+@EqualsAndHashCode(exclude = {"gebruikerID", "sites"})
 public class Gebruiker implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -69,6 +70,10 @@ public class Gebruiker implements Serializable {
     @Getter(AccessLevel.NONE)
     @Column(name = "hashed_password")
     private String wachtwoord;
+    
+    @OneToMany(mappedBy = "verantwoordelijke", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @Setter(AccessLevel.NONE)
+    private Set<Site> sites = new HashSet<Site>();
 
     public Gebruiker(String naam, String voornaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol) {
         if (naam.isBlank() || voornaam.isBlank() || geboortedatum == null || email.isBlank()) {
@@ -85,9 +90,9 @@ public class Gebruiker implements Serializable {
         setRol(rol);
         setGsm(gsm);
         setActief(true);
-        
 
-        wachtwoord = "default"; // Placeholder, wachtwoord moet nog goed worden ingesteld
+       // wachtwoord = "default"; // Placeholder, wachtwoord moet nog goed worden ingesteld
+        setWachtwoord("012345678");
 
     }
 
@@ -97,17 +102,6 @@ public class Gebruiker implements Serializable {
         }
         this.email = email;
     }
-    
-    public SimpleStringProperty voornaamProperty() {
-        return new SimpleStringProperty(voornaam);
-    }
-    
-    public SimpleStringProperty achternaamProperty() {
-		return new SimpleStringProperty(achternaam);
-	}
-    public SimpleStringProperty emailProperty() {
-		return new SimpleStringProperty(email);
-	}
 
 
     public void setGsm(String gsm) {
@@ -119,6 +113,31 @@ public class Gebruiker implements Serializable {
 
     private void setRol(Rol rol) {
     	this.rol = rol;
+    }
+    
+    private void setWachtwoord(String wachtwoord) {
+    	if (wachtwoord == null || wachtwoord.isBlank() || wachtwoord.length() < 8) {
+			throw new IllegalArgumentException("Wachtwoord mag niet leeg zijn.");
+		}
+		String hashedPassword = BCrypt.hashpw(wachtwoord, BCrypt.gensalt());
+		this.wachtwoord = hashedPassword;
+		
+    }
+    
+    public boolean checkWachtwoord(String email, String wachtwoord) {
+		return BCrypt.checkpw(wachtwoord, this.wachtwoord) && this.email.equals(email);
+	}
+    
+    public void addSite(Site site) {
+    	sites.add(site);
+    }
+    
+    public void removeSite(Site site) {
+    	sites.remove(site);
+    }
+    
+    public Set<Site> getSitesSet(){
+    	return Collections.unmodifiableSet(sites);
     }
 
     @Override
