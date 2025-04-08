@@ -19,10 +19,10 @@ public class Adres implements Serializable {
 	
 	private String straat;
 	private String huis_nr;
+	private String postcode;
 	private String stad;
 	private String land;
-	private String postcode;
-	
+
 	@Override
 	public String toString() {
 		return "%s %s, %s %s %s".formatted(straat, huis_nr, postcode, stad, land);
