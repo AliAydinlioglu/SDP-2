@@ -57,7 +57,7 @@ public class Machine implements Serializable {
     @Column(name = "volgendOnderhoud")
     private LocalDate volgendOnderhoud;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "technieker_id")
     private Gebruiker technieker;
 
@@ -99,41 +99,6 @@ public class Machine implements Serializable {
         setDagenSindsOnderhoud(dagenSindsOnderhoud);
         setVolgendOnderhoud(volgendOnderhoud);
         setSite(site);
-    }
-
-
-    public StringProperty naamProperty() {
-        return new SimpleStringProperty(naam);
-    }
-
-    public StringProperty productInfoProperty() {
-        return new SimpleStringProperty(productInfo); // Voor @Transient veld
-    }
-
-    public StringProperty locatieProperty() {
-        return new SimpleStringProperty(locatie);
-    }
-
-    public ObjectProperty<MachineStatus> statusProperty() {
-        return new SimpleObjectProperty<>(status);
-    }
-
-    public ObjectProperty<ProductionStatus> productieStatusProperty() {
-        return new SimpleObjectProperty<>(productieStatus);
-    }
-
-    public IntegerProperty uptimeProperty() {
-        return new SimpleIntegerProperty(uptime);
-    }
-
-    public StringProperty techniekerNaamProperty() {
-        String naamTech = (technieker != null) ? technieker.getVoornaam() + " " + technieker.getAchternaam() : "N/A";
-        return new SimpleStringProperty(naamTech);
-    }
-
-    public StringProperty siteNaamProperty() {
-        String naamSite = (site != null) ? site.getNaam() : "N/A";
-        return new SimpleStringProperty(naamSite);
     }
 
 

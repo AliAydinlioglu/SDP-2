@@ -2,6 +2,8 @@ package gui;
 
 import domain.Site;
 import domain.SiteController;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -33,9 +35,9 @@ public class SiteOverzichtFrameController extends VBox {
             throw new RuntimeException(ex);
         }
 
-        naamCol.setCellValueFactory(cellData -> cellData.getValue().naamProperty());
-        verantwoordelijkeCol.setCellValueFactory(cellData -> cellData.getValue().verantwoordelijkeNaamProperty());
-        aantalMachinesCol.setCellValueFactory(cellData -> cellData.getValue().aantalMachinesProperty());
+        naamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNaam()));
+        verantwoordelijkeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVerantwoordelijke().getVoornaam() + " " + cellData.getValue().getVerantwoordelijke().getAchternaam()));
+        aantalMachinesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getMachines().size()));
 
         siteTable.setItems(siteController.getAllSites());
 
