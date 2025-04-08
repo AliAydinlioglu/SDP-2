@@ -36,20 +36,6 @@ public class Site {
         setVerantwoordelijke(verantwoordelijke);
     }
 
-
-    public StringProperty naamProperty() {
-        return new SimpleStringProperty(naam);
-    }
-
-    public StringProperty verantwoordelijkeNaamProperty() {
-        String naamVerantwoordelijke = (verantwoordelijke != null) ? verantwoordelijke.getVoornaam() + " " + verantwoordelijke.getAchternaam() : "Niet toegewezen";
-        return new SimpleStringProperty(naamVerantwoordelijke);
-    }
-
-    public IntegerProperty aantalMachinesProperty() {
-        return new SimpleIntegerProperty(machines.size());
-    }
-
     @Override
     public String toString() {
         return String.format("Site[id=%d, naam='%s', Verantwoordelijke=%s, #Machines=%d]",
