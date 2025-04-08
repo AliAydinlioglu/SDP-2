@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import enums.OnderhoudStatus;
+import enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,11 @@ import lombok.*;
     @NamedQuery(name = "Onderhoud.findByMachineId",
                 query = "SELECT o FROM Onderhoud o WHERE o.machineId = :machineId"),
     @NamedQuery(name = "Onderhoud.findVoltooideLaatste3Maanden",
-                query = "SELECT o FROM Onderhoud o WHERE o.status = enums.OnderhoudStatus.VOLTOOID AND o.datum >= CURRENT_DATE - 90")
+                query = "SELECT o FROM Onderhoud o WHERE o.status = enums.OnderhoudStatus.VOLTOOID AND o.datum >= CURRENT_DATE - 90"),
+    @NamedQuery(name = "Onderhoud.findLaatsteVoltooidePerMachine",
+    query = "SELECT o FROM Onderhoud o WHERE o.status = enums.OnderhoudStatus.VOLTOOID " +
+            "AND o.datum = (SELECT MAX(o2.datum) FROM Onderhoud o2 WHERE o2.machineId = o.machineId)")
+    
 })
 @Getter
 @Setter
@@ -40,8 +45,9 @@ public class Onderhoud implements Serializable {
     @Column(name = "eindtijd")
     private LocalDateTime eindTijd;
 
-    @Column(name = "technieker_id")
-    private int techniekerId;
+    @ManyToOne
+    @JoinColumn(name = "technieker_id", insertable = false, updatable = false)
+    private Gebruiker technieker;
 
     @Column(name = "reden")
     private String reden;
@@ -88,18 +94,34 @@ public class Onderhoud implements Serializable {
 		setDatum(datum);
 	    setStartTijd(startTijd);
 	    setEindTijd(eindTijd);
-	    setTechniekerId(techniekerId);
+	    setTechnieker(techniekerId);
 	    setReden(reden);
 	    setRapport(rapport);
 	    setOpmerkingen(opmerkingen);
 	    setStatus(status);
 	    setMachineId(machineId);
 	}
+    
+    public void setTechnieker(int techniekerId) {
+        GebruikerController gebruikerController = new GebruikerController();
+        Gebruiker technieker = gebruikerController.getGebruiker(techniekerId);
+
+        if (technieker == null) {
+            throw new IllegalArgumentException("Technieker met ID " + techniekerId + " bestaat niet.");
+        }
+
+        if (technieker.getRol() != Rol.TECHNIEKER) {
+            throw new IllegalArgumentException("Gebruiker met ID " + techniekerId + " is geen technieker.");
+        }
+
+        this.technieker = technieker;
+    }
 
 
     @Override
     public String toString() {
-        return String.format("Onderhoud op %s (%s - %s) door technieker %d | Status: %s",
-                datum.toLocalDate(), startTijd.toLocalTime(), eindTijd.toLocalTime(), techniekerId, status);
+        return String.format("Onderhoud op %s (%s - %s) door technieker %s | Status: %s",
+                datum.toLocalDate(), startTijd.toLocalTime(), eindTijd.toLocalTime(),
+                technieker != null ? technieker.getVoornaam() + " " + technieker.getAchternaam() : "Onbekend", status);
     }
 }
