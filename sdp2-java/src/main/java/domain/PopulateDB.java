@@ -5,12 +5,12 @@ import java.time.LocalDate;
 import enums.MachineStatus;
 import enums.ProductionStatus;
 import enums.Rol;
-import repository.GebruikerDoaJpa;
+import repository.GebruikerDaoJpa;
 import repository.MachineDaoJpa;
 
 public class PopulateDB {
 	public void run() {
-		GebruikerDoaJpa gebruikerdao = new GebruikerDoaJpa();
+		GebruikerDaoJpa gebruikerdao = new GebruikerDaoJpa();
 		MachineDaoJpa machinedao = new MachineDaoJpa();
 
 		machinedao.startTransaction();
