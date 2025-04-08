@@ -20,7 +20,7 @@ import enums.Rol;
 import repository.GebruikerDoa;
 
 @ExtendWith(MockitoExtension.class)
-public class Gebruikertest {
+public class GebruikerControllertest {
 	
 	
 	@Mock

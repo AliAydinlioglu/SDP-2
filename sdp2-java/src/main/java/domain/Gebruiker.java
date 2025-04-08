@@ -130,6 +130,7 @@ public class Gebruiker implements Serializable {
     
     public void addSite(Site site) {
     	sites.add(site);
+    	site.setVerantwoordelijke(this);
     }
     
     public void removeSite(Site site) {
