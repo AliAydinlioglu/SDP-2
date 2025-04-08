@@ -95,4 +95,16 @@ public class GebruikerController {
 		gebruikerRepo.commitTransaction();
 		gebruikerList.remove(gebruiker);
 	}
+	
+	public Gebruiker login(String email, String wachtwoord) {
+		Gebruiker gebruiker = getGebruikerByEmail(email);
+		
+		if(gebruiker != null) {
+			if(gebruiker.checkWachtwoord(email, wachtwoord)) {
+				return gebruiker;
+			}
+		}
+		return null;
+		
+	}
 }
