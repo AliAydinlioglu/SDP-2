@@ -4,6 +4,7 @@ import domain.GebruikerController;
 import domain.MachineController;
 import domain.SiteController;
 import gui.GebruikersListFrameController;
+import gui.LoginFrameController;
 import gui.MachineListFrameController;
 import gui.SiteOverzichtFrameController;
 import javafx.application.Application;
@@ -18,37 +19,13 @@ public class StartUpGui extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        GebruikerController gebruikerController = new GebruikerController();
-        SiteController siteController = new SiteController();
-        MachineController machineController = new MachineController();
+    	GebruikerController gebruikerController = new GebruikerController();
 
-        GebruikersListFrameController gebruikersView = new GebruikersListFrameController(gebruikerController);
-        SiteOverzichtFrameController siteOverzichtView = new SiteOverzichtFrameController(siteController);
-        MachineListFrameController machineView = new MachineListFrameController(machineController);
+        LoginFrameController loginView = new LoginFrameController(gebruikerController, primaryStage);
 
-        TabPane tabPane = new TabPane();
-
-        Tab gebruikersTab = new Tab("Gebruikers", gebruikersView);
-        gebruikersTab.setClosable(false);
-
-        Tab sitesTab = new Tab("Sites", siteOverzichtView);
-        sitesTab.setClosable(false);
-
-        Tab machineTab = new Tab("Machines", machineView);
-        sitesTab.setClosable(false);
-
-        tabPane.getTabs().addAll(gebruikersTab, sitesTab, machineTab);
-        Scene scene = new Scene(tabPane, 800, 600);
-        //scene.getStylesheets().add("application.css");
-
-        primaryStage.setTitle("Beheer Applicatie");
-
-        primaryStage.setOnShown((WindowEvent t) -> {
-            primaryStage.setMinWidth(primaryStage.getWidth());
-            primaryStage.setMinHeight(primaryStage.getHeight());
-        });
-
-        primaryStage.setScene(scene);
+        Scene loginScene = new Scene(loginView, 400, 300); // You can change width/height as needed
+        primaryStage.setTitle("Login");
+        primaryStage.setScene(loginScene);
         primaryStage.show();
     }
 

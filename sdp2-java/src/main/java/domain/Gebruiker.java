@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
 import enums.Rol;
 import jakarta.persistence.CascadeType;
@@ -74,6 +74,8 @@ public class Gebruiker implements Serializable {
     @OneToMany(mappedBy = "verantwoordelijke", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @Setter(AccessLevel.NONE)
     private Set<Site> sites = new HashSet<Site>();
+    
+    private static final Argon2PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 131072, 6);
 
     public Gebruiker(String naam, String voornaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol) {
         if (naam.isBlank() || voornaam.isBlank() || geboortedatum == null || email.isBlank()) {
@@ -116,20 +118,19 @@ public class Gebruiker implements Serializable {
     }
     
     private void setWachtwoord(String wachtwoord) {
-    	if (wachtwoord == null || wachtwoord.isBlank() || wachtwoord.length() < 8) {
-			throw new IllegalArgumentException("Wachtwoord mag niet leeg zijn.");
-		}
-		String hashedPassword = BCrypt.hashpw(wachtwoord, BCrypt.gensalt());
-		this.wachtwoord = hashedPassword;
-		
+        if (wachtwoord == null || wachtwoord.isBlank() || wachtwoord.length() < 8) {
+            throw new IllegalArgumentException("Wachtwoord mag niet leeg zijn.");
+        }
+        this.wachtwoord = encoder.encode(wachtwoord);
     }
     
     public boolean checkWachtwoord(String email, String wachtwoord) {
-		return BCrypt.checkpw(wachtwoord, this.wachtwoord) && this.email.equals(email);
-	}
+        return encoder.matches(wachtwoord, this.wachtwoord) && this.email.equals(email);
+    }
     
     public void addSite(Site site) {
     	sites.add(site);
+    	site.setVerantwoordelijke(this);
     }
     
     public void removeSite(Site site) {

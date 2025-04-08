@@ -31,23 +31,8 @@ public class Site {
     @OneToMany(mappedBy = "site", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Machine> machines = new HashSet<>();
 
-    public Site(String naam, Gebruiker verantwoordelijke) {
+    public Site(String naam) {
         setNaam(naam);
-        setVerantwoordelijke(verantwoordelijke);
-    }
-
-
-    public StringProperty naamProperty() {
-        return new SimpleStringProperty(naam);
-    }
-
-    public StringProperty verantwoordelijkeNaamProperty() {
-        String naamVerantwoordelijke = (verantwoordelijke != null) ? verantwoordelijke.getVoornaam() + " " + verantwoordelijke.getAchternaam() : "Niet toegewezen";
-        return new SimpleStringProperty(naamVerantwoordelijke);
-    }
-
-    public IntegerProperty aantalMachinesProperty() {
-        return new SimpleIntegerProperty(machines.size());
     }
 
     @Override
