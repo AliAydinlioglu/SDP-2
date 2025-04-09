@@ -18,6 +18,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import utils.AlertHelper;
 
 public class LoginFrameController extends AnchorPane {
 	
@@ -38,6 +39,13 @@ public class LoginFrameController extends AnchorPane {
 
     @FXML
     private Label wachtwoordLabel;
+    
+    @FXML
+    private Label emailError;
+    
+    @FXML
+    private Label wachtwoordError;
+
     
     private GebruikerController dc;
     private Stage stage;
@@ -60,26 +68,39 @@ public class LoginFrameController extends AnchorPane {
 
     @FXML
     void LogIn(ActionEvent event) {
-    	
-    	String email = emailField.getText();
-		String wachtwoord = wachtwoordField.getText();
-		Gebruiker gebruiker = dc.login(email, wachtwoord);
-		
-		if (gebruiker != null) {
-			// Login succesvol, ga naar de volgende view
-			// Hier kan je de code toevoegen om de volgende view te laden
-			System.out.println("Login succesvol");
-			openMainView();
-			
-			// Sluit het login venster
-			//stage.close();
-			
-		} else {
-			// Login mislukt, geef een foutmelding weer
-			System.out.println("Login mislukt");
-		}
+        String email = emailField.getText();
+        String wachtwoord = wachtwoordField.getText();
 
+        // Clear old errors
+        emailError.setText("");
+        wachtwoordError.setText("");
+
+        if (email == null || email.isBlank()) {
+            emailError.setText("Vul een email in");
+            return;
+        } else if (!email.matches("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")) {
+            emailError.setText("Ongeldige email");
+            return;
+        }
+
+        if (wachtwoord == null || wachtwoord.isBlank()) {
+            wachtwoordError.setText("Vul een wachtwoord in");
+            return;
+        }
+
+        try {
+            Gebruiker gebruiker = dc.login(email, wachtwoord);
+            if (gebruiker != null) {
+                System.out.println("Login succesvol");
+                openMainView();
+            } else {
+                System.out.println("Login mislukt");
+            }
+        } catch (Exception e) {
+        	AlertHelper.showError("Login mislukt", "Controleer uw email en wachtwoord.");
+        }
     }
+
     
     private void openMainView() {
         SiteController siteController = new SiteController();
