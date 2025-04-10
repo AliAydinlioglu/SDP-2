@@ -73,4 +73,25 @@ public class MachineController {
         FilteredList<Machine> filteredByStatus = new FilteredList<>(machineList, m -> m.getStatus().equals(status));
         return new SortedList<>(filteredByStatus, sortOrder);
     }
+    
+    public ObservableList<Machine> getMachinesForTechnieker(int techniekerId) {
+        FilteredList<Machine> filteredByTechnieker = new FilteredList<>(machineList, 
+            machine -> machine.getTechnieker() != null && machine.getTechnieker().getGebruikerID() == techniekerId);
+        return new SortedList<>(filteredByTechnieker, sortOrder);
+    }
+    
+    public void validateMachineStatus(Machine machine) {
+        if (machine.getStatus() != MachineStatus.GESTOPT_AUTO 
+                && machine.getStatus() != MachineStatus.GESTOPT_MANUEEL 
+                && machine.getStatus() != MachineStatus.IN_ONDERHOUD) {
+            throw new IllegalArgumentException("De machine moet gestopt (automatisch of manueel) of in onderhoud zijn.");
+        }
+    }
+
+    public void startOnderhoud(Machine machine) {
+        validateMachineStatus(machine);
+        machine.setStatus(MachineStatus.IN_ONDERHOUD);
+        updateMachine(machine);
+    }
+
 }

@@ -105,11 +105,13 @@ public class LoginFrameController extends AnchorPane {
     private void openMainView() {
         SiteController siteController = new SiteController();
         MachineController machineController = new MachineController();
-
+        OnderhoudController onderhoudController = new OnderhoudController();
+        
         GebruikersListFrameController gebruikersView = new GebruikersListFrameController(dc);
         SiteOverzichtFrameController siteView = new SiteOverzichtFrameController(siteController);
         MachineListFrameController machineView = new MachineListFrameController(machineController);
-
+        OnderhoudFrameController onderhoudView = new OnderhoudFrameController(onderhoudController);
+        
         TabPane tabPane = new TabPane();
 
         Tab gebruikersTab = new Tab("Gebruikers", gebruikersView);
@@ -120,8 +122,11 @@ public class LoginFrameController extends AnchorPane {
 
         Tab machineTab = new Tab("Machines", machineView);
         machineTab.setClosable(false);
+        
+        Tab onderhoudTab = new Tab("Onderhoud", onderhoudView);
+        onderhoudTab.setClosable(false);
 
-        tabPane.getTabs().addAll(gebruikersTab, sitesTab, machineTab);
+        tabPane.getTabs().addAll(gebruikersTab, sitesTab, machineTab, onderhoudTab);
 
         Scene mainScene = new Scene(tabPane, 800, 600);
         stage.setTitle("Beheer Applicatie");
