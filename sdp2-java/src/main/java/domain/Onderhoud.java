@@ -9,17 +9,17 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "onderhoud")
+@Table(name = "onderhouden")
 @NamedQueries({
-    @NamedQuery(name = "Onderhoud.findByTechniekerId",
-                query = "SELECT o FROM Onderhoud o WHERE o.techniekerId = :techniekerId"),
+	@NamedQuery(name = "Onderhoud.findByTechniekerId",
+            	query = "SELECT o FROM Onderhoud o WHERE o.technieker.gebruikerID = :techniekerId"),
     @NamedQuery(name = "Onderhoud.findByMachineId",
                 query = "SELECT o FROM Onderhoud o WHERE o.machineId = :machineId"),
     @NamedQuery(name = "Onderhoud.findVoltooideLaatste3Maanden",
-                query = "SELECT o FROM Onderhoud o WHERE o.status = enums.OnderhoudStatus.VOLTOOID AND o.datum >= CURRENT_DATE - 90"),
+    			query = "SELECT o FROM Onderhoud o WHERE o.status = :status AND o.datum >= :date"),
     @NamedQuery(name = "Onderhoud.findLaatsteVoltooidePerMachine",
-    query = "SELECT o FROM Onderhoud o WHERE o.status = enums.OnderhoudStatus.VOLTOOID " +
-            "AND o.datum = (SELECT MAX(o2.datum) FROM Onderhoud o2 WHERE o2.machineId = o.machineId)")
+    			query = "SELECT o FROM Onderhoud o WHERE o.status = enums.OnderhoudStatus.VOLTOOID " +
+            			"AND o.datum = (SELECT MAX(o2.datum) FROM Onderhoud o2 WHERE o2.machineId = o.machineId)")
     
 })
 @Getter

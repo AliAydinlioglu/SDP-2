@@ -1,13 +1,23 @@
 package repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import domain.Onderhoud;
+import enums.OnderhoudStatus;
 
 public class OnderhoudDaoJpa extends GenericDaoJpa<Onderhoud> implements OnderhoudDao {
 
     public OnderhoudDaoJpa() {
         super(Onderhoud.class);
+    }
+    
+    public List<Onderhoud> findVoltooideLaatste3Maanden() {
+        LocalDateTime ninetyDaysAgo = LocalDateTime.now().minusDays(90);
+        return em.createNamedQuery("Onderhoud.findVoltooideLaatste3Maanden", Onderhoud.class)
+                 .setParameter("status", OnderhoudStatus.VOLTOOID)
+                 .setParameter("date", ninetyDaysAgo)
+                 .getResultList();
     }
     
     public List<Onderhoud> findLaatsteVoltooidePerMachine() {
