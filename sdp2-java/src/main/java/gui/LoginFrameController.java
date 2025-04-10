@@ -106,7 +106,7 @@ public class LoginFrameController extends AnchorPane {
         Tab onderhoudTab = new Tab("Onderhoud", onderhoudView);
         onderhoudTab.setClosable(false);
 
-        tabPane.getTabs().addAll(gebruikersTab, sitesTab, machineTab);
+        tabPane.getTabs().addAll(gebruikersTab, sitesTab, machineTab, onderhoudTab);
 
         Scene mainScene = new Scene(tabPane, 800, 600);
         stage.setTitle("Beheer Applicatie");
