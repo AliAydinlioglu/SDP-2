@@ -13,13 +13,13 @@
         <class>domain.Site</class>
 
         <properties>
-            <property name="jakarta.persistence.jdbc.url" value="${jdbc.url}"/>
+            <property name="jakarta.persistence.jdbc.url" value="${jdbc.url}&amp;createDatabaseIfNotExist=true"/>
             <property name="jakarta.persistence.jdbc.user" value="${jdbc.user}"/>
             <property name="jakarta.persistence.jdbc.password" value="${jdbc.password}"/>
-            <property name="jakarta.persistence.jdbc.driver" value="${jdbc.driver}"/>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
 
             <!-- Schema generation - this enables automatic table creation -->
-            <property name="jakarta.persistence.schema-generation.database.action" value="${schema.action}"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
         </properties>
     </persistence-unit>
 </persistence>
