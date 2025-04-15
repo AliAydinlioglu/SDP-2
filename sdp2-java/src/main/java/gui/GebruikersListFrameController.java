@@ -9,6 +9,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
@@ -18,7 +20,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
+import utils.AlertHelper;
 
 public class GebruikersListFrameController extends VBox {
 	
@@ -72,6 +77,9 @@ public class GebruikersListFrameController extends VBox {
 	
 	@FXML
 	private ChoiceBox<Rol> rolBox;
+	
+    @FXML
+    private Button addBtn;
 
 	private GebruikerController dc;
 	
@@ -133,24 +141,22 @@ public class GebruikersListFrameController extends VBox {
 	
 	@FXML
 	private void addGebruiker() {
-		String naam = achternaamField.getText();
-		String voornaam = voornaamField.getText();
-		String email = emailField.getText();
-		String gsm = gsmNrField.getText();
-		String straat = straatField.getText();
-		String huisNr = huisNrField.getText();
-		String postcode = postcodeField.getText();
-		String stad = stadField.getText();
-		String land = landField.getText();
-		Rol rol = rolBox.getValue();
-		
-	   if (rol == null) {
-	        // Handle the case where rol is not selected
-	        System.out.println("Please select a role.");
-	        return;
+		try {
+	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddGebruikerFrame.fxml"));
+	        Parent root = loader.load();
+
+	        AddGebruikerFrameController controller = loader.getController();
+	        controller.initData(this.dc); // pass the existing controller
+
+	        Stage dialogStage = new Stage();
+	        dialogStage.setTitle("Nieuwe Gebruiker");
+	        dialogStage.initModality(Modality.APPLICATION_MODAL); // modal window
+	        dialogStage.setScene(new Scene(root));
+	        dialogStage.showAndWait(); // waits until window closes
+
+	    } catch (IOException e) {
+	        e.printStackTrace();
 	    }
-		
-		dc.addGebruiker(naam, voornaam, geboorteDatumPicker.getValue(), straat, huisNr, postcode, stad, land, email, gsm, rol);
 		
 	}
 

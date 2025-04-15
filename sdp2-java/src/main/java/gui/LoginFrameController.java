@@ -7,6 +7,7 @@ import domain.GebruikerController;
 import domain.MachineController;
 import domain.OnderhoudController;
 import domain.SiteController;
+import enums.Rol;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -91,22 +92,18 @@ public class LoginFrameController extends AnchorPane {
 
         try {
             Gebruiker gebruiker = dc.login(email, wachtwoord);
-            if (gebruiker != null) {
-                System.out.println("Login succesvol");
-                openMainView();
-            } else {
-                System.out.println("Login mislukt");
-            }
+            openMainView(gebruiker);
         } catch (Exception e) {
-        	AlertHelper.showError("Login mislukt", "Controleer uw email en wachtwoord.");
+        	AlertHelper.showError("Login mislukt", e.getMessage());
         }
     }
 
     
-    private void openMainView() {
+    private void openMainView(Gebruiker gebruiker) { 
         SiteController siteController = new SiteController();
         MachineController machineController = new MachineController();
         OnderhoudController onderhoudController = new OnderhoudController();
+        
         
         GebruikersListFrameController gebruikersView = new GebruikersListFrameController(dc);
         SiteOverzichtFrameController siteView = new SiteOverzichtFrameController(siteController);
@@ -114,10 +111,12 @@ public class LoginFrameController extends AnchorPane {
         OnderhoudFrameController onderhoudView = new OnderhoudFrameController(onderhoudController);
         
         TabPane tabPane = new TabPane();
-
-        Tab gebruikersTab = new Tab("Gebruikers", gebruikersView);
-        gebruikersTab.setClosable(false);
-
+        
+        if(gebruiker.getRol().equals(Rol.ADMINISTRATOR)) {
+        	Tab gebruikersTab = new Tab("Gebruikers", gebruikersView);
+            gebruikersTab.setClosable(false);
+            tabPane.getTabs().add(gebruikersTab);
+        }
         Tab sitesTab = new Tab("Sites", siteView);
         sitesTab.setClosable(false);
 
@@ -127,7 +126,7 @@ public class LoginFrameController extends AnchorPane {
         Tab onderhoudTab = new Tab("Onderhoud", onderhoudView);
         onderhoudTab.setClosable(false);
 
-        tabPane.getTabs().addAll(gebruikersTab, sitesTab, machineTab, onderhoudTab);
+        tabPane.getTabs().addAll( sitesTab, machineTab, onderhoudTab);
 
         Scene mainScene = new Scene(tabPane, 800, 600);
         stage.setTitle("Beheer Applicatie");

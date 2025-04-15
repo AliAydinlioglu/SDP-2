@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
-                                 http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
-             version="2.0">
-    <persistence-unit name="sdp2" transaction-type="RESOURCE_LOCAL">
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-
-        <!-- Entity classes -->
-        <class>domain.Gebruiker</class>
-        <class>domain.Machine</class>
-        <class>domain.Site</class>
-
-        <properties>
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+<persistence-unit name="sdp2" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>domain.Gebruiker</class>
+    <class>domain.Machine</class>
+    <class>domain.Site</class>
+    <class>domain.Onderhoud</class>
+    <properties>
             <property name="jakarta.persistence.jdbc.url" value="${jdbc.url}&amp;createDatabaseIfNotExist=true"/>
             <property name="jakarta.persistence.jdbc.user" value="${jdbc.user}"/>
             <property name="jakarta.persistence.jdbc.password" value="${jdbc.password}"/>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-
-            <!-- Schema generation - this enables automatic table creation -->
             <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+            <!-- Schema generation - this enables automatic table creation -->
+
         </properties>
     </persistence-unit>
 </persistence>

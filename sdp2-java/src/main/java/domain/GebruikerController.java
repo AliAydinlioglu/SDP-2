@@ -2,6 +2,7 @@ package domain;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.List;
 
 import enums.Rol;
 import javafx.collections.FXCollections;
@@ -44,7 +45,14 @@ public class GebruikerController {
 	}
 	
 	private void initData() {
-		gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
+		try {
+            
+            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
+        } catch (Exception e) {
+            e.printStackTrace();
+            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
+        }
+		//gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
 		filteredGebruikerList = new FilteredList<>(gebruikerList, p -> true);
 		sortedGebruikerList = new SortedList<>(filteredGebruikerList, sortOrder);
 	}
@@ -99,12 +107,11 @@ public class GebruikerController {
 	public Gebruiker login(String email, String wachtwoord) {
 		Gebruiker gebruiker = getGebruikerByEmail(email);
 		
-		if(gebruiker != null) {
-			if(gebruiker.checkWachtwoord(email, wachtwoord)) {
-				return gebruiker;
-			}
+		if(gebruiker == null || !gebruiker.checkWachtwoord(email, wachtwoord)) {
+			throw new IllegalArgumentException("Ongeldige email of wachtwoord");
 		}
-		return null;
+		return gebruiker;
+		
 		
 	}
 }

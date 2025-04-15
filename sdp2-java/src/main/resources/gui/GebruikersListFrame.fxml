@@ -28,6 +28,11 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </TextField>
+            <Button fx:id="addBtn" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="3.0" mnemonicParsing="false" onAction="#addGebruiker" prefHeight="26.0" prefWidth="37.0" text="+" textAlignment="CENTER">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
          </children>
       </HBox>
       <TableView fx:id="gebruikersTable" prefHeight="200.0" prefWidth="200.0">
