@@ -43,7 +43,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(exclude = {"gebruikerID", "sites"})
+@EqualsAndHashCode(exclude = {"gebruikerID", "sites", "onderhouden", "machines"})
 public class Gebruiker implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -75,14 +75,20 @@ public class Gebruiker implements Serializable {
     @Setter(AccessLevel.NONE)
     private Set<Site> sites = new HashSet<Site>();
     
+    @OneToMany(mappedBy = "technieker", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @Setter(AccessLevel.NONE)
+    private Set<Onderhoud> onderhouden = new HashSet<Onderhoud>();
+    
+    @OneToMany(mappedBy = "technieker", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @Setter(AccessLevel.NONE)
+    private Set<Machine> machines = new HashSet<Machine>();
+    
+    
     private static final Argon2PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 131072, 6);
 
     public Gebruiker(String naam, String voornaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol) {
-        if (naam.isBlank() || voornaam.isBlank() || geboortedatum == null || email.isBlank()) {
+        if (naam.isBlank() || voornaam.isBlank() || geboortedatum == null || adres == null) {
             throw new IllegalArgumentException("Alle velden (behalve gsm) moeten ingevuld zijn.");
-        }
-        if (rol.equals(Rol.TECHNIEKER) && (gsm == null || gsm.isBlank())) {
-            throw new IllegalArgumentException("Gsm is verplicht voor Techniekers.");
         }
         setAchternaam(naam);
         setVoornaam(voornaam);
@@ -93,7 +99,7 @@ public class Gebruiker implements Serializable {
         setGsm(gsm);
         setActief(true);
 
-       // wachtwoord = "default"; // Placeholder, wachtwoord moet nog goed worden ingesteld
+       // wachtwoord = "012345678"; // Placeholder, wachtwoord moet nog goed worden ingesteld
         setWachtwoord("012345678");
 
     }
@@ -114,12 +120,16 @@ public class Gebruiker implements Serializable {
     }
 
     private void setRol(Rol rol) {
+    	if(rol == null) {
+			throw new IllegalArgumentException("Rol moet ingevuld zijn.");
+		}
+
     	this.rol = rol;
     }
     
     private void setWachtwoord(String wachtwoord) {
         if (wachtwoord == null || wachtwoord.isBlank() || wachtwoord.length() < 8) {
-            throw new IllegalArgumentException("Wachtwoord mag niet leeg zijn.");
+            throw new IllegalArgumentException("Wachtwoord mag niet leeg zijn en moet minstens 8 karakters lang zijn.");
         }
         this.wachtwoord = encoder.encode(wachtwoord);
     }

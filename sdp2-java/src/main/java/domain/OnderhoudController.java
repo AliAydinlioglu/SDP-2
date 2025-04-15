@@ -25,9 +25,15 @@ public class OnderhoudController {
 
     public OnderhoudController() {
         onderhoudDaoJpa = new OnderhoudDaoJpa();
-        List<Onderhoud> data = onderhoudDaoJpa.findAll();
+        try {
+            List<Onderhoud> data = onderhoudDaoJpa.findAll();
+            onderhoudList = FXCollections.observableArrayList(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            onderhoudList = FXCollections.observableArrayList(); // Fallback
+        }
 
-        onderhoudList = FXCollections.observableArrayList(data);
+        
         filteredOnderhoudList = new FilteredList<>(onderhoudList, p -> true);
         sortedOnderhoudList = new SortedList<>(filteredOnderhoudList, sortOrder);
     }
@@ -100,9 +106,11 @@ public class OnderhoudController {
 
         // Als het onderhoud voltooid is, wijzig de status van de machine naar STARTBAAR
         if (onderhoud.getStatus() == OnderhoudStatus.VOLTOOID) {
-            Machine machine = new MachineController().getMachine(onderhoud.getMachineId());
+        	//weet niet zeker of je controller van machine meot gebruiken of de JPA
+        	MachineController machineController = new MachineController();
+            Machine machine = machineController.getMachine(onderhoud.getMachineId());
             machine.setStatus(MachineStatus.DRAAIT);
-            new MachineController().updateMachine(machine);
+            machineController.updateMachine(machine);
         }
     }
     
