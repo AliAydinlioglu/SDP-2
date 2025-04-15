@@ -2,6 +2,3 @@
 jdbc.url=jdbc:mysql://localhost:3306/sdp2?serverTimezone=UTC
 jdbc.user=YOUR_USERNAME
 jdbc.password=YOUR_PASSWORD
-# you don't have to change whats below
-jdbc.driver=com.mysql.cj.jdbc.Driver
-schema.action=create
