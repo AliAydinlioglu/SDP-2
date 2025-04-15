@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root alignment="CENTER" prefHeight="491.0" prefWidth="600" spacing="20" type="VBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" prefHeight="491.0" prefWidth="600" spacing="20" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AddGebruikerFrameController">
     
     <children>
         <Label prefHeight="23.0" prefWidth="168.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Gebruiker Aanmaken" />
@@ -96,4 +96,4 @@
     <padding>
         <Insets bottom="30" left="40" right="40" top="30" />
     </padding>
-</fx:root>
+</VBox>

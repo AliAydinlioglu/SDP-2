@@ -4,16 +4,12 @@ import java.io.IOException;
 
 import domain.Gebruiker;
 import domain.GebruikerController;
-import enums.Rol;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -22,8 +18,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import utils.AlertHelper;
 
 public class GebruikersListFrameController extends VBox {
 	
@@ -45,38 +39,6 @@ public class GebruikersListFrameController extends VBox {
 	@FXML
 	private TextField txtFilter;
 	
-	@FXML
-	private TextField voornaamField;
-	
-	@FXML
-	private TextField achternaamField;
-	
-	@FXML
-	private TextField emailField;
-	
-	@FXML
-	private TextField gsmNrField;
-	
-	@FXML
-	private TextField straatField;
-	
-	@FXML
-	private TextField huisNrField;
-	
-	@FXML
-	private TextField postcodeField;
-	
-	@FXML
-	private TextField stadField;
-	
-	@FXML
-	private TextField landField;
-	
-	@FXML
-	private DatePicker geboorteDatumPicker;
-	
-	@FXML
-	private ChoiceBox<Rol> rolBox;
 	
     @FXML
     private Button addBtn;
@@ -101,8 +63,6 @@ public class GebruikersListFrameController extends VBox {
         emailCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
         
         gebruikersTable.setItems(dc.findAll());
-        
-        rolBox.setItems(FXCollections.observableArrayList(Rol.values()));
         
         addButtonToTable();
 		
@@ -142,17 +102,18 @@ public class GebruikersListFrameController extends VBox {
 	@FXML
 	private void addGebruiker() {
 		try {
-	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddGebruikerFrame.fxml"));
-	        Parent root = loader.load();
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddGebruikerFrame.fxml"));
+			Parent root = loader.load();
 
-	        AddGebruikerFrameController controller = loader.getController();
-	        controller.initData(this.dc); // pass the existing controller
+			AddGebruikerFrameController controller = loader.getController();
+			controller.initData(this.dc);
 
-	        Stage dialogStage = new Stage();
-	        dialogStage.setTitle("Nieuwe Gebruiker");
-	        dialogStage.initModality(Modality.APPLICATION_MODAL); // modal window
-	        dialogStage.setScene(new Scene(root));
-	        dialogStage.showAndWait(); // waits until window closes
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Gebruiker Toevoegen");
+			dialogStage.initModality(Modality.APPLICATION_MODAL);
+			dialogStage.setScene(new Scene(root));
+			dialogStage.showAndWait();
+
 
 	    } catch (IOException e) {
 	        e.printStackTrace();

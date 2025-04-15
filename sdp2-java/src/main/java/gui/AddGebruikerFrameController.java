@@ -2,6 +2,7 @@ package gui;
 
 import domain.GebruikerController;
 import enums.Rol;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -57,6 +58,7 @@ public class AddGebruikerFrameController {
 
     public void initData(GebruikerController controller) {
         this.dc = controller;
+        rolBox.setItems(FXCollections.observableArrayList(Rol.values()));
     }
 
     @FXML
@@ -71,6 +73,8 @@ public class AddGebruikerFrameController {
 		String stad = stadField.getText();
 		String land = landField.getText();
 		Rol rol = rolBox.getValue();
+		
+		
 	
 		try {
 			dc.addGebruiker(naam, voornaam, geboorteDatumPicker.getValue(), straat, huisNr, postcode, stad, land, email, gsm, rol);
