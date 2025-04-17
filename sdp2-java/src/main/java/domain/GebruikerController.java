@@ -35,7 +35,7 @@ public class GebruikerController {
     
 	
 	public GebruikerController() {
-		new PopulateDB().run();
+		// new PopulateDB().run();
 		gebruikerRepo = new GebruikerDaoJpa();		
 	}
 	
