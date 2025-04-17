@@ -13,6 +13,10 @@ import javafx.beans.property.StringProperty;
 
 @Entity
 @Table(name = "sites")
+@NamedQueries({
+	@NamedQuery(name = "Site.findByVerantwoordelijkeId",
+			query = "SELECT s FROM Site s WHERE s.verantwoordelijke.gebruikerID = :verantwoordelijkeId"),
+})
 @Getter @Setter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(exclude = {"siteId", "machines"})
 public class Site {
@@ -30,6 +34,7 @@ public class Site {
 
     @OneToMany(mappedBy = "site", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private Set<Machine> machines = new HashSet<>();
+    
 
     public Site(String naam) {
         setNaam(naam);

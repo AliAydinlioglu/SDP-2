@@ -20,4 +20,16 @@ public class SiteDaoJpa extends GenericDaoJpa<Site> implements SiteDao {
         query.setParameter("siteId", siteId);
         return query.getSingleResult();
     }
+
+
+	@Override
+	public List<Site> getSitesByVerantwoordelijkeId(int verantwoordelijkeId) {
+		try {
+            return em.createNamedQuery("Site.findByVerantwoordelijkeId", Site.class)
+                    .setParameter("verantwoordelijkeId", verantwoordelijkeId)
+                    .getResultList();
+        } catch (NoResultException ex) {
+            throw new EntityNotFoundException("Geen Sites gevonden met voor gebruiker met id: %d".formatted(verantwoordelijkeId));
+        }
+	}
 }

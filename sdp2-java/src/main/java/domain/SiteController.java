@@ -42,4 +42,9 @@ public class SiteController {
         }
         return site.getMachines().size();
     }
+    
+    
+    public ObservableList<Site> getSitesByUserId(int id){
+    	return FXCollections.observableArrayList(siteDao.getSitesByVerantwoordelijkeId(id));
+    }
 }

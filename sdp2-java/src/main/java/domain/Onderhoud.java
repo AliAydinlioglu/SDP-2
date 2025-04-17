@@ -64,6 +64,8 @@ public class Onderhoud implements Serializable {
 
     @Column(name = "machine_id")
     private int machineId;
+    
+    private boolean actief;
 
     public Onderhoud(LocalDateTime datum, LocalDateTime startTijd, LocalDateTime eindTijd,
             int techniekerId, String reden, String rapport, String opmerkingen,
@@ -100,6 +102,7 @@ public class Onderhoud implements Serializable {
 	    setOpmerkingen(opmerkingen);
 	    setStatus(status);
 	    setMachineId(machineId);
+	    setActief(true);
 	}
     
     public void setTechnieker(int techniekerId) {
