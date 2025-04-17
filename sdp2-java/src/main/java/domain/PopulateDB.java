@@ -16,20 +16,26 @@ public class PopulateDB {
         MachineDaoJpa machinedao = new MachineDaoJpa();
 
         gebruikerdao.startTransaction();
-        // sitedao.startTransaction();
-        // machinedao.startTransaction();
+        try {
+            Gebruiker gebruiker = new Gebruiker("Dornon", "Seppe", LocalDate.of(2004, 4, 1),
+                    new Adres("kroonstraat", "42", "9000", "Gent", "Belgie"), "seppe.dornon@student.hogent.be",
+                    "04123456",
+                    Rol.ADMINISTRATOR);
+            gebruikerdao.insert(gebruiker);
+            gebruikerdao.commitTransaction();
 
-        Gebruiker gebruiker = new Gebruiker("Dornon", "Seppe", LocalDate.of(2004, 4, 1),
-                new Adres("kroonstraat", "42", "9000", "Gent", "Belgie"), "seppe.dornon@student.hogent.be", "04123456",
-                Rol.ADMINISTRATOR);
-        gebruikerdao.insert(gebruiker);
-        Site site = new Site("site1");
-        sitedao.insert(site);
-        machinedao.insert(new Machine("M1", "Machine 1 locatie", "werkt uitstekent", MachineStatus.DRAAIT,
-                ProductionStatus.IN_ORDE, 10, gebruiker, 5, LocalDate.of(2025, 4, 5), site));
+            sitedao.startTransaction();
+            Site site = new Site("site1");
+            sitedao.insert(site);
+            sitedao.commitTransaction();
 
-        // machinedao.commitTransaction();
-        gebruikerdao.commitTransaction();
+            machinedao.startTransaction();
+            machinedao.insert(new Machine("M1", "Machine 1 locatie", "werkt uitstekent", MachineStatus.DRAAIT,
+                    ProductionStatus.IN_ORDE, 10, gebruiker, 5, LocalDate.of(2025, 4, 5), site));
+            machinedao.commitTransaction();
+        } catch (Exception e) {
+            System.out.println("PopulateDB: " + e.getMessage());
+        }
     }
 
 }

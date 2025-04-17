@@ -20,4 +20,20 @@ public class GebruikerDaoJpa extends GenericDaoJpa<Gebruiker> implements Gebruik
             throw new EntityNotFoundException("Geen gebruiker gevonden met email: %s".formatted(email));
         }
     }
+    @Override
+    public void insert(Gebruiker gebruiker) {
+        try {
+            // Check if a user with the same email already exists
+            Gebruiker existingUser = getGebruikerByEmail(gebruiker.getEmail());
+            if (existingUser != null) {
+                throw new IllegalArgumentException("Email is already in use: " + gebruiker.getEmail());
+            }
+        } catch (EntityNotFoundException ex) {
+            // No user with the same email exists, proceed with insertion
+            super.insert(gebruiker);
+        } catch (IllegalArgumentException e) {
+            // Show an alert box for duplicate email
+            utils.AlertHelper.showError("Duplicate Email", e.getMessage());
+        }
+    }
 }
