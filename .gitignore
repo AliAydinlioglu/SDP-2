@@ -9,3 +9,7 @@ META-INF/persistence.xml
 .vscode
 
 *.properties
+
+sdp2-java/src/main/resources/config/dev.properties.md
+
+sdp2-java/src/main/resources/config/prod.properties.md

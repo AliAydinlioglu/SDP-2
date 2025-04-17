@@ -46,7 +46,7 @@ public class Onderhoud implements Serializable {
     private LocalDateTime eindTijd;
 
     @ManyToOne
-    @JoinColumn(name = "technieker_id", insertable = false, updatable = false)
+    @JoinColumn(name = "technieker_id", nullable = false)
     private Gebruiker technieker;
 
     @Column(name = "reden")

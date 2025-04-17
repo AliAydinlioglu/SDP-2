@@ -1,5 +1,6 @@
 package gui;
 
+import domain.Gebruiker;
 import domain.Onderhoud;
 import domain.OnderhoudController;
 import enums.OnderhoudStatus;
@@ -12,7 +13,12 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class OnderhoudFrameController extends VBox {
+	
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
     @FXML private TableView<Onderhoud> onderhoudTable;
     @FXML private TableColumn<Onderhoud, String> datumCol;
@@ -29,9 +35,11 @@ public class OnderhoudFrameController extends VBox {
     @FXML private Button btnDelete;
 
     private OnderhoudController onderhoudController;
+    private Gebruiker ingelogdeGebruiker;
 
-    public OnderhoudFrameController(OnderhoudController onderhoudController) {
+    public OnderhoudFrameController(OnderhoudController onderhoudController, Gebruiker ingelogdeGebruiker) {
         this.onderhoudController = onderhoudController;
+        this.ingelogdeGebruiker = ingelogdeGebruiker;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudFrame.fxml"));
         loader.setRoot(this);
@@ -56,7 +64,7 @@ public class OnderhoudFrameController extends VBox {
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 "Machine ID: " + cellData.getValue().getMachineId()));
 
-        onderhoudTable.setItems(onderhoudController.getAllOnderhoud());
+        onderhoudTable.setItems(onderhoudController.filterByRole(ingelogdeGebruiker));
     }
 
     private void initializeForm() {
@@ -69,23 +77,28 @@ public class OnderhoudFrameController extends VBox {
 
     private void addOnderhoud() {
         try {
+        	String rapportJson = objectMapper.writeValueAsString(txtRapport.getText()); // Serialize to JSON
             Onderhoud nieuwOnderhoud = new Onderhoud(
-                    LocalDateTime.now(),
-                    LocalDateTime.now(),
-                    LocalDateTime.now().plusHours(1),
-                    1, // Technieker ID (voorbeeld)
-                    txtReden.getText(),
-                    txtRapport.getText(),
-                    txtOpmerkingen.getText(),
-                    statusBox.getValue(),
-                    1 // Machine ID (voorbeeld)
+            	LocalDateTime.now(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1),
+                ingelogdeGebruiker.getGebruikerID(),
+                txtReden.getText(),
+                rapportJson, // Use serialized JSON
+                txtOpmerkingen.getText(),
+                statusBox.getValue(),
+                1 // Machine ID (example)
             );
             onderhoudController.registerOnderhoud(nieuwOnderhoud);
-            onderhoudTable.getItems().add(nieuwOnderhoud);
+//            // Voeg het nieuwe onderhoud toe aan de originele lijst in de controller
+//            onderhoudController.getAllOnderhoud().add(nieuwOnderhoud);
         } catch (IllegalArgumentException e) {
             showError(e.getMessage());
-        }
+        } catch (JsonProcessingException e) {
+        	showError("Fout bij het verwerken van JSON: " + e.getMessage());
+		}
     }
+
 
     private void editOnderhoud() {
         Onderhoud geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();

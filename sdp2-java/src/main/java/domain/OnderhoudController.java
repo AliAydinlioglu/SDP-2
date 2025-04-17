@@ -11,6 +11,7 @@ import java.util.List;
 
 import enums.MachineStatus;
 import enums.OnderhoudStatus;
+import enums.Rol;
 
 public class OnderhoudController {
 
@@ -47,7 +48,9 @@ public class OnderhoudController {
     }
 
     public void addOnderhoud(Onderhoud onderhoud) {
+    	onderhoudDaoJpa.startTransaction();
         onderhoudDaoJpa.insert(onderhoud);
+        onderhoudDaoJpa.commitTransaction();
         onderhoudList.add(onderhoud);
     }
 
@@ -72,7 +75,10 @@ public class OnderhoudController {
         });
     }
     
-    public void filterByRole(boolean isVerantwoordelijke, int userId) {
+    public ObservableList<Onderhoud> filterByRole(Gebruiker gebruiker) {
+    	boolean isVerantwoordelijke = gebruiker.getRol() == Rol.VERANTWOORDELIJKE || gebruiker.getRol() == Rol.ADMINISTRATOR;
+    	int userId = gebruiker.getGebruikerID();
+    	
         filteredOnderhoudList.setPredicate(onderhoud -> {
             if (isVerantwoordelijke) {
                 // Verantwoordelijke ziet alle onderhouden
@@ -82,6 +88,7 @@ public class OnderhoudController {
                 return onderhoud.getTechnieker().getGebruikerID() == userId;
             }
         });
+		return filteredOnderhoudList;
     }
     
     public void validateOnderhoudDetails(Onderhoud onderhoud) {
