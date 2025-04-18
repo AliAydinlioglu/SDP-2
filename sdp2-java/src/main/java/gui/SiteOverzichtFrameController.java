@@ -3,6 +3,7 @@ package gui;
 import domain.Gebruiker;
 import domain.Site;
 import domain.SiteController;
+import dto.GebruikerDTO;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -23,9 +24,9 @@ public class SiteOverzichtFrameController extends VBox {
     @FXML private Label lblStatus;
 
     private SiteController siteController;
-    private Gebruiker gebruiker;
+    private GebruikerDTO gebruiker;
 
-    public SiteOverzichtFrameController(SiteController siteController, Gebruiker gebruiker) {
+    public SiteOverzichtFrameController(SiteController siteController, GebruikerDTO gebruiker) {
         this.siteController = siteController;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteOverzichtFrame.fxml"));
@@ -43,7 +44,7 @@ public class SiteOverzichtFrameController extends VBox {
 
         //sites ophalen
         //siteTable.setItems(siteController.getAllSites());
-        siteTable.setItems(siteController.getSitesByUserId(gebruiker.getGebruikerID()));
+        siteTable.setItems(siteController.getSitesByUserId(gebruiker.id()));
 
         siteTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {

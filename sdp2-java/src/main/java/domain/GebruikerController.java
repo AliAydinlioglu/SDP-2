@@ -2,8 +2,9 @@ package domain;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.List;
+import java.util.stream.Collectors;
 
+import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,20 +18,20 @@ public class GebruikerController {
 	private GebruikerDoa gebruikerRepo;
 	
 	private ObservableList<Gebruiker> gebruikerList;
-	private FilteredList<Gebruiker> filteredGebruikerList;
+	private FilteredList<GebruikerDTO> filteredGebruikerList;
 	
-	private SortedList<Gebruiker> sortedGebruikerList;
+	private SortedList<GebruikerDTO> sortedGebruikerList;
 	
-	private final Comparator<Gebruiker> byFirstName = (p1, p2)
-            -> p1.getVoornaam().compareToIgnoreCase(p2.getVoornaam());
+	private final Comparator<GebruikerDTO> byFirstName = (p1, p2)
+            -> p1.voornaam().compareToIgnoreCase(p2.voornaam());
 
-    private final Comparator<Gebruiker> byLastName = (p1, p2)
-            -> p1.getAchternaam().compareToIgnoreCase(p2.getAchternaam());
+    private final Comparator<GebruikerDTO> byLastName = (p1, p2)
+            -> p1.achternaam().compareToIgnoreCase(p2.achternaam());
 
-    private final Comparator<Gebruiker> byEmail = (p1, p2)
-            -> p1.getEmail().compareToIgnoreCase(p2.getEmail());
+    private final Comparator<GebruikerDTO> byEmail = (p1, p2)
+            -> p1.email().compareToIgnoreCase(p2.email());
 
-    private final Comparator<Gebruiker> sortOrder = byFirstName.thenComparing(byLastName).
+    private final Comparator<GebruikerDTO> sortOrder = byFirstName.thenComparing(byLastName).
             thenComparing(byEmail);
     
 	
@@ -47,39 +48,55 @@ public class GebruikerController {
 	private void initData() {
 		try {
             
-            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
+            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll().stream()
+            		.filter(Gebruiker::getActief)
+            		
+            		.collect(Collectors.toList()));
         } catch (Exception e) {
             e.printStackTrace();
-            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
+            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll().stream()
+            		.filter(Gebruiker::getActief)
+            		.collect(Collectors.toList()));        
         }
 		//gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
-		filteredGebruikerList = new FilteredList<>(gebruikerList, p -> true);
+		ObservableList<GebruikerDTO> gebruikerDTOs = FXCollections.observableArrayList(gebruikerList.stream()
+				.map(g -> new GebruikerDTO(g.getGebruikerID(), g.getVoornaam(), g.getAchternaam(), g.getGeboorteDatum(), g.getAdres(), g.getEmail(), g.getGsm(), g.getRol(), g.getActief()))
+				.collect(Collectors.toList()));
+		filteredGebruikerList = new FilteredList<>(gebruikerDTOs, p -> true);
 		sortedGebruikerList = new SortedList<>(filteredGebruikerList, sortOrder);
 	}
 	
 	
-	public Gebruiker getGebruiker(int id) {
-		return gebruikerRepo.get(id);
+	public GebruikerDTO getGebruiker(int id) {
+		Gebruiker g = gebruikerRepo.get(id);
+		return new GebruikerDTO(g.getGebruikerID(), g.getVoornaam(), g.getAchternaam(), g.getGeboorteDatum(), g.getAdres(), g.getEmail(), g.getGsm(), g.getRol(), g.getActief());
 	}
 	
-	public ObservableList<Gebruiker> findAll(){
+	public ObservableList<GebruikerDTO> findAll(){
 		if(gebruikerList == null) initData();
 		return sortedGebruikerList;
 	}
 	
-	public Gebruiker getGebruikerByEmail(String email)
+	public GebruikerDTO getGebruikerByEmailDTO(String email)
+	{
+		Gebruiker g = gebruikerRepo.getGebruikerByEmail(email);
+		return new GebruikerDTO(g.getGebruikerID(), g.getVoornaam(), g.getAchternaam(), g.getGeboorteDatum(), g.getAdres(), g.getEmail(), g.getGsm(), g.getRol(), g.getActief());
+
+	}
+	private Gebruiker getGebruikerByEmail(String email)
 	{
 		return gebruikerRepo.getGebruikerByEmail(email);
+
 	}
 	
 	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol) {
 		
-		Gebruiker gebruiker = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
+		Gebruiker g = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
 		
 		gebruikerRepo.startTransaction();
-		gebruikerRepo.insert(gebruiker);
+		gebruikerRepo.insert(g);
 		gebruikerRepo.commitTransaction();
-		gebruikerList.add(gebruiker);
+		gebruikerList.add(g);
 	}
 	
 	public void changeFilter(String filterValue) {
@@ -91,26 +108,32 @@ public class GebruikerController {
             // Compare first name and last name of every person with   
             //filter text.
             String lowerCaseValue = filterValue.toLowerCase();
-            return person.getVoornaam().toLowerCase().contains(lowerCaseValue)
-                    || person.getAchternaam().toLowerCase().contains(lowerCaseValue);
+            return person.voornaam().toLowerCase().contains(lowerCaseValue)
+                    || person.achternaam().toLowerCase().contains(lowerCaseValue);
         }
         );
     }
 	
-	public void removeGebruiker(Gebruiker gebruiker) {
-		gebruikerRepo.startTransaction();
-		gebruikerRepo.delete(gebruiker);
-		gebruikerRepo.commitTransaction();
-		gebruikerList.remove(gebruiker);
+	public void removeGebruiker(GebruikerDTO gebruiker) {
+		for(int i = 0; i < gebruikerList.size(); i++) {
+			if(gebruikerList.get(i).getGebruikerID() == gebruiker.id()) {
+				gebruikerList.get(i).setActief(false);
+				gebruikerRepo.startTransaction();
+				gebruikerRepo.update(gebruikerList.get(i));
+				gebruikerRepo.commitTransaction();
+				gebruikerList.remove(gebruikerList.get(i));
+				return;
+			}
+		}
 	}
 	
-	public Gebruiker login(String email, String wachtwoord) {
-		Gebruiker gebruiker = getGebruikerByEmail(email);
+	public GebruikerDTO login(String email, String wachtwoord) {
+		Gebruiker g = getGebruikerByEmail(email);
 		
-		if(gebruiker == null || !gebruiker.checkWachtwoord(email, wachtwoord)) {
+		if(g == null || !g.checkWachtwoord(email, wachtwoord)) {
 			throw new IllegalArgumentException("Ongeldige email of wachtwoord");
 		}
-		return gebruiker;
+		return new GebruikerDTO(g.getGebruikerID(), g.getVoornaam(), g.getAchternaam(), g.getGeboorteDatum(), g.getAdres(), g.getEmail(), g.getGsm(), g.getRol(), g.getActief());
 		
 		
 	}

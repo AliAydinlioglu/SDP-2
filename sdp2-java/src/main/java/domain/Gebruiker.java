@@ -86,11 +86,11 @@ public class Gebruiker implements Serializable {
     
     private static final Argon2PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 131072, 6);
 
-    public Gebruiker(String naam, String voornaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol) {
-        if (naam.isBlank() || voornaam.isBlank() || geboortedatum == null || adres == null) {
+    public Gebruiker(String voornaam, String achternaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol) {
+        if (achternaam.isBlank() || voornaam.isBlank() || geboortedatum == null || adres == null) {
             throw new IllegalArgumentException("Alle velden (behalve gsm) moeten ingevuld zijn.");
         }
-        setAchternaam(naam);
+        setAchternaam(achternaam);
         setVoornaam(voornaam);
         setGeboorteDatum(geboortedatum);
         setAdres(adres);
@@ -98,6 +98,8 @@ public class Gebruiker implements Serializable {
         setRol(rol);
         setGsm(gsm);
         setActief(true);
+        
+        
 
        // wachtwoord = "012345678"; // Placeholder, wachtwoord moet nog goed worden ingesteld
         setWachtwoord("012345678");
@@ -149,6 +151,10 @@ public class Gebruiker implements Serializable {
     
     public Set<Site> getSitesSet(){
     	return Collections.unmodifiableSet(sites);
+    }
+    
+    public boolean getActief() {
+    	return actief;
     }
 
     @Override

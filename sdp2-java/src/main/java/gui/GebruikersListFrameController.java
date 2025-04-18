@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import domain.Gebruiker;
 import domain.GebruikerController;
+import dto.GebruikerDTO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,19 +23,19 @@ import javafx.stage.Stage;
 public class GebruikersListFrameController extends VBox {
 	
 	@FXML
-	private TableView<Gebruiker> gebruikersTable;
+	private TableView<GebruikerDTO> gebruikersTable;
 	
 	@FXML
-	private TableColumn<Gebruiker, String> voornaamCol;
+	private TableColumn<GebruikerDTO, String> voornaamCol;
 	
 	@FXML
-	private TableColumn<Gebruiker, String> achternaamCol;
+	private TableColumn<GebruikerDTO, String> achternaamCol;
 	
 	@FXML
-	private TableColumn<Gebruiker, String> emailCol;
+	private TableColumn<GebruikerDTO, String> emailCol;
 	
 	@FXML
-	private TableColumn<Gebruiker, Void> actionCol;
+	private TableColumn<GebruikerDTO, Void> actionCol;
 	
 	@FXML
 	private TextField txtFilter;
@@ -58,9 +59,9 @@ public class GebruikersListFrameController extends VBox {
             throw new RuntimeException(ex);
         }
         
-        voornaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVoornaam()));
-        achternaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAchternaam()));
-        emailCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
+        voornaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().voornaam()));
+        achternaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().achternaam()));
+        emailCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().email()));
         
         gebruikersTable.setItems(dc.findAll());
         
@@ -80,7 +81,7 @@ public class GebruikersListFrameController extends VBox {
 
 	        {
 	            btn.setOnAction(event -> {
-	                Gebruiker gebruiker = getTableView().getItems().get(getIndex());
+	                GebruikerDTO gebruiker = getTableView().getItems().get(getIndex());
 	                dc.removeGebruiker(gebruiker);
 	                getTableView().getItems().remove(gebruiker);
 	            });
