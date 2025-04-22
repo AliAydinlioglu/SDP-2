@@ -1,7 +1,10 @@
 package gui;
 
+import domain.Gebruiker;
 import domain.Site;
 import domain.SiteController;
+import dto.GebruikerDTO;
+import dto.SiteDTO;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -15,15 +18,16 @@ import java.io.IOException;
 
 public class SiteOverzichtFrameController extends VBox {
 
-    @FXML private TableView<Site> siteTable;
-    @FXML private TableColumn<Site, String> naamCol;
-    @FXML private TableColumn<Site, String> verantwoordelijkeCol;
-    @FXML private TableColumn<Site, Number> aantalMachinesCol;
+    @FXML private TableView<SiteDTO> siteTable;
+    @FXML private TableColumn<SiteDTO, String> naamCol;
+    @FXML private TableColumn<SiteDTO, String> verantwoordelijkeCol;
+    @FXML private TableColumn<SiteDTO, Number> aantalMachinesCol;
     @FXML private Label lblStatus;
 
     private SiteController siteController;
+    private GebruikerDTO gebruiker;
 
-    public SiteOverzichtFrameController(SiteController siteController) {
+    public SiteOverzichtFrameController(SiteController siteController, GebruikerDTO gebruiker) {
         this.siteController = siteController;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteOverzichtFrame.fxml"));
@@ -35,16 +39,18 @@ public class SiteOverzichtFrameController extends VBox {
             throw new RuntimeException(ex);
         }
 
-        naamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNaam()));
-        verantwoordelijkeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVerantwoordelijke().getVoornaam() + " " + cellData.getValue().getVerantwoordelijke().getAchternaam()));
-        aantalMachinesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getMachines().size()));
+        naamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().naam()));
+        verantwoordelijkeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().verantwoordelijke().voornaam() + " " + cellData.getValue().verantwoordelijke().achternaam()));
+        aantalMachinesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().machines().size()));
 
-        siteTable.setItems(siteController.getAllSites());
+        //sites ophalen
+        //siteTable.setItems(siteController.getAllSites());
+        siteTable.setItems(siteController.getSitesByUserId(gebruiker.id()));
 
         siteTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                Site selectedSite = siteController.getSiteDetails(newSelection);
-                lblStatus.setText("Geselecteerd: " + selectedSite.getNaam());
+                SiteDTO selectedSite = siteController.getSiteDetails(newSelection);
+                lblStatus.setText("Geselecteerd: " + selectedSite.naam());
             } else {
                 lblStatus.setText("");
             }

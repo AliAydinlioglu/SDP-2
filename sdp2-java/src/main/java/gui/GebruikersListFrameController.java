@@ -1,10 +1,13 @@
 package gui;
 
 import java.io.IOException;
+import java.net.URL;
 
 import domain.Gebruiker;
 import domain.GebruikerController;
+import dto.GebruikerDTO;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,26 +18,30 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class GebruikersListFrameController extends VBox {
 	
 	@FXML
-	private TableView<Gebruiker> gebruikersTable;
+	private TableView<GebruikerDTO> gebruikersTable;
 	
 	@FXML
-	private TableColumn<Gebruiker, String> voornaamCol;
+	private TableColumn<GebruikerDTO, String> voornaamCol;
 	
 	@FXML
-	private TableColumn<Gebruiker, String> achternaamCol;
+	private TableColumn<GebruikerDTO, String> achternaamCol;
 	
 	@FXML
-	private TableColumn<Gebruiker, String> emailCol;
+	private TableColumn<GebruikerDTO, String> emailCol;
 	
-	@FXML
-	private TableColumn<Gebruiker, Void> actionCol;
+//	@FXML
+//	private TableColumn<GebruikerDTO, Void> verwijderCol;
+//	
+//	@FXML TableColumn<GebruikerDTO, Void> UpdateCol;
 	
 	@FXML
 	private TextField txtFilter;
@@ -58,13 +65,13 @@ public class GebruikersListFrameController extends VBox {
             throw new RuntimeException(ex);
         }
         
-        voornaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVoornaam()));
-        achternaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAchternaam()));
-        emailCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
+        voornaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().voornaam()));
+        achternaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().achternaam()));
+        emailCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().email()));
         
         gebruikersTable.setItems(dc.findAll());
         
-        addButtonToTable();
+        addActionButtonsToTable();
 		
 	}	
 	
@@ -74,38 +81,58 @@ public class GebruikersListFrameController extends VBox {
         dc.changeFilter(newValue);
     }
 	
-	private void addButtonToTable() {
-	    actionCol.setCellFactory(param -> new TableCell<>() {
-	        private final Button btn = new Button("Remove");
+	@FXML
+	private TableColumn<GebruikerDTO, Void> actionCol; // rename this to something general
 
-	        {
-	            btn.setOnAction(event -> {
-	                Gebruiker gebruiker = getTableView().getItems().get(getIndex());
-	                dc.removeGebruiker(gebruiker);
-	                getTableView().getItems().remove(gebruiker);
-	            });
-	        }
-
+	private void addActionButtonsToTable() {
+	    Callback<TableColumn<GebruikerDTO, Void>, TableCell<GebruikerDTO, Void>> cellFactory = new Callback<>() {
 	        @Override
-	        protected void updateItem(Void item, boolean empty) {
-	            super.updateItem(item, empty);
-	            if (empty) {
-	                setGraphic(null);
-	            } else {
-	                setGraphic(btn);
-	            }
+	        public TableCell<GebruikerDTO, Void> call(final TableColumn<GebruikerDTO, Void> param) {
+	            return new TableCell<>() {
+
+	                private final Button updateBtn = new Button("✎");
+	                private final Button deleteBtn = new Button("🗑");
+	                private final HBox hbox = new HBox(5, updateBtn, deleteBtn);
+
+	                {
+	                    updateBtn.setOnAction(event -> {
+	                        GebruikerDTO gebruiker = getTableView().getItems().get(getIndex());
+	                        updateGebruiker(gebruiker); // call your update logic
+	                    });
+
+	                    deleteBtn.setOnAction(event -> {
+	                        GebruikerDTO gebruiker = getTableView().getItems().get(getIndex());
+	                        dc.removeGebruiker(gebruiker); // call your delete logic
+	                    });
+
+	                    hbox.setStyle("-fx-alignment: CENTER;");
+	                }
+
+	                @Override
+	                protected void updateItem(Void item, boolean empty) {
+	                    super.updateItem(item, empty);
+	                    if (empty) {
+	                        setGraphic(null);
+	                    } else {
+	                        setGraphic(hbox);
+	                    }
+	                }
+	            };
 	        }
-	    });
+	    };
+
+	    actionCol.setCellFactory(cellFactory);
 	}
+
 
 	
 	@FXML
 	private void addGebruiker() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddGebruikerFrame.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditGebruikerFrame.fxml"));
 			Parent root = loader.load();
 
-			AddGebruikerFrameController controller = loader.getController();
+			AddOrEditGebruikerFrameController controller = loader.getController();
 			controller.initData(this.dc);
 
 			Stage dialogStage = new Stage();
@@ -113,12 +140,37 @@ public class GebruikersListFrameController extends VBox {
 			dialogStage.initModality(Modality.APPLICATION_MODAL);
 			dialogStage.setScene(new Scene(root));
 			dialogStage.showAndWait();
+			
+			gebruikersTable.refresh();
 
 
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
 		
+	}
+	
+	private void updateGebruiker(GebruikerDTO gebruiker) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditGebruikerFrame.fxml"));
+			Parent root = loader.load();
+
+			AddOrEditGebruikerFrameController controller = loader.getController();
+			controller.initData(this.dc, gebruiker);
+
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Gebruiker Aanpassen");
+			dialogStage.initModality(Modality.APPLICATION_MODAL);
+			dialogStage.setScene(new Scene(root));
+			dialogStage.showAndWait();
+			
+			gebruikersTable.refresh();
+		
+
+
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
 
 

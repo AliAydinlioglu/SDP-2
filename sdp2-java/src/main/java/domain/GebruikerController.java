@@ -3,7 +3,9 @@ package domain;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,21 +18,22 @@ public class GebruikerController {
 
 	private GebruikerDoa gebruikerRepo;
 	
-	private ObservableList<Gebruiker> gebruikerList;
-	private FilteredList<Gebruiker> filteredGebruikerList;
+	private List<Gebruiker> data;
+	private ObservableList<GebruikerDTO> gebruikerList;
+	private FilteredList<GebruikerDTO> filteredGebruikerList;
 	
-	private SortedList<Gebruiker> sortedGebruikerList;
+	private SortedList<GebruikerDTO> sortedGebruikerList;
 	
-	private final Comparator<Gebruiker> byFirstName = (p1, p2)
-            -> p1.getVoornaam().compareToIgnoreCase(p2.getVoornaam());
+	private final Comparator<GebruikerDTO> byFirstName = (p1, p2)
+            -> p1.voornaam().compareToIgnoreCase(p2.voornaam());
 
-    private final Comparator<Gebruiker> byLastName = (p1, p2)
-            -> p1.getAchternaam().compareToIgnoreCase(p2.getAchternaam());
+    private final Comparator<GebruikerDTO> byLastName = (p1, p2)
+            -> p1.achternaam().compareToIgnoreCase(p2.achternaam());
 
-    private final Comparator<Gebruiker> byEmail = (p1, p2)
-            -> p1.getEmail().compareToIgnoreCase(p2.getEmail());
+    private final Comparator<GebruikerDTO> byEmail = (p1, p2)
+            -> p1.email().compareToIgnoreCase(p2.email());
 
-    private final Comparator<Gebruiker> sortOrder = byFirstName.thenComparing(byLastName).
+    private final Comparator<GebruikerDTO> sortOrder = byFirstName.thenComparing(byLastName).
             thenComparing(byEmail);
     
 	
@@ -47,40 +50,62 @@ public class GebruikerController {
 	private void initData() {
 		try {
             
-            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
+            data = gebruikerRepo.findAll().stream()
+            		.filter(Gebruiker::getActief)
+
+            		.collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
-            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
+//            d = FXCollections.observableArrayList(gebruikerRepo.findAll().stream()
+//            		.filter(Gebruiker::getActief)
+//
+//            		.collect(Collectors.toList()));        
         }
-		//gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
+		
+		gebruikerList = FXCollections.observableArrayList(data.stream()
+				.map(GebruikerDTO::fromEntity)
+				.collect(Collectors.toList()));
 		filteredGebruikerList = new FilteredList<>(gebruikerList, p -> true);
 		sortedGebruikerList = new SortedList<>(filteredGebruikerList, sortOrder);
 	}
 	
 	
-	public Gebruiker getGebruiker(int id) {
-		return gebruikerRepo.get(id);
+	public GebruikerDTO getGebruiker(int id) {
+		Gebruiker g = gebruikerRepo.get(id);
+		return GebruikerDTO.fromEntity(g);
 	}
 	
-	public ObservableList<Gebruiker> findAll(){
+	public ObservableList<GebruikerDTO> findAll(){
 		if(gebruikerList == null) initData();
 		return sortedGebruikerList;
 	}
 	
-	public Gebruiker getGebruikerByEmail(String email)
+	public GebruikerDTO getGebruikerByEmailDTO(String email)
+	{
+		Gebruiker g = gebruikerRepo.getGebruikerByEmail(email);
+		return GebruikerDTO.fromEntity(g);
+
+	}
+	private Gebruiker getGebruikerByEmail(String email)
 	{
 		return gebruikerRepo.getGebruikerByEmail(email);
+
 	}
 	
 	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol) {
-		
-		Gebruiker gebruiker = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
-		
-		gebruikerRepo.startTransaction();
-		gebruikerRepo.insert(gebruiker);
-		gebruikerRepo.commitTransaction();
-		gebruikerList.add(gebruiker);
+    	Gebruiker g = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
+
+		try {
+	        gebruikerRepo.startTransaction();
+	        gebruikerRepo.insert(g);
+	        gebruikerRepo.commitTransaction();
+	        gebruikerList.add(GebruikerDTO.fromEntity(g));
+	        data.add(g);
+	    } catch (Exception e) {
+	    	throw new IllegalArgumentException(e.getMessage());
+	    }
 	}
+
 	
 	public void changeFilter(String filterValue) {
         filteredGebruikerList.setPredicate(person -> {
@@ -91,27 +116,73 @@ public class GebruikerController {
             // Compare first name and last name of every person with   
             //filter text.
             String lowerCaseValue = filterValue.toLowerCase();
-            return person.getVoornaam().toLowerCase().contains(lowerCaseValue)
-                    || person.getAchternaam().toLowerCase().contains(lowerCaseValue);
+            return person.voornaam().toLowerCase().contains(lowerCaseValue)
+                    || person.achternaam().toLowerCase().contains(lowerCaseValue);
         }
         );
     }
 	
-	public void removeGebruiker(Gebruiker gebruiker) {
-		gebruikerRepo.startTransaction();
-		gebruikerRepo.delete(gebruiker);
-		gebruikerRepo.commitTransaction();
-		gebruikerList.remove(gebruiker);
+	public void removeGebruiker(GebruikerDTO gebruiker) {
+		for(int i = 0; i < gebruikerList.size(); i++) {
+			if(data.get(i).getGebruikerID() == gebruiker.id()) {
+				try {
+					data.get(i).setActief(false);
+					gebruikerRepo.startTransaction();
+					gebruikerRepo.update(data.get(i));
+					gebruikerRepo.commitTransaction();
+					gebruikerList.remove(gebruikerList.get(i));
+					data.remove(i);
+					return;
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Gebruiker kon niet worden verwijdert: " + e.getMessage());
+				}
+			}
+		}
 	}
 	
-	public Gebruiker login(String email, String wachtwoord) {
-		Gebruiker gebruiker = getGebruikerByEmail(email);
+	public GebruikerDTO login(String email, String wachtwoord) {
+		Gebruiker g = getGebruikerByEmail(email);
 		
-		if(gebruiker == null || !gebruiker.checkWachtwoord(email, wachtwoord)) {
+		if(g == null || !g.checkWachtwoord(email, wachtwoord)) {
 			throw new IllegalArgumentException("Ongeldige email of wachtwoord");
 		}
-		return gebruiker;
+		return GebruikerDTO.fromEntity(g);
 		
 		
 	}
+
+	public void updateGebruiker(GebruikerDTO bewerkteDTO) {
+	    Gebruiker g = data.stream()
+	        .filter(e -> e.getGebruikerID() == bewerkteDTO.id())
+	        .findFirst()
+	        .orElse(null);
+	    if (g == null) return;
+
+	    int index = data.indexOf(g);
+
+	    g.setVoornaam(bewerkteDTO.voornaam());
+	    g.setAchternaam(bewerkteDTO.achternaam());
+	    g.setGeboorteDatum(bewerkteDTO.geboortedatum());
+	    g.setAdres(bewerkteDTO.adres());
+	    g.setEmail(bewerkteDTO.email());
+	    g.setGsm(bewerkteDTO.gsm());
+	    g.setRol(bewerkteDTO.rol());
+	    g.setActief(bewerkteDTO.actief());
+
+	    try {
+	    	gebruikerRepo.startTransaction();
+		    gebruikerRepo.update(g);
+		    gebruikerRepo.commitTransaction();
+
+		    data.set(index, g);
+		    GebruikerDTO gg = gebruikerList.stream().filter(e -> e.id() == bewerkteDTO.id()).findFirst().orElse(null);
+		    gebruikerList.set(gebruikerList.indexOf(gg), bewerkteDTO);
+			
+		} catch (Exception e2) {
+			throw new IllegalArgumentException("Gebruiker kon niet aangepas worden: " + e2.getMessage());
+		}
+	    
+
+	}
+
 }

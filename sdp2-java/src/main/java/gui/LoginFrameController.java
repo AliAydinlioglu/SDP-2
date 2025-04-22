@@ -7,6 +7,7 @@ import domain.GebruikerController;
 import domain.MachineController;
 import domain.OnderhoudController;
 import domain.SiteController;
+import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -91,7 +92,7 @@ public class LoginFrameController extends AnchorPane {
         }
 
         try {
-            Gebruiker gebruiker = dc.login(email, wachtwoord);
+            GebruikerDTO gebruiker = dc.login(email, wachtwoord);
             openMainView(gebruiker);
         } catch (Exception e) {
         	AlertHelper.showError("Login mislukt", e.getMessage());
@@ -99,20 +100,20 @@ public class LoginFrameController extends AnchorPane {
     }
 
     
-    private void openMainView(Gebruiker gebruiker) { 
+    private void openMainView(GebruikerDTO gebruiker) { 
         SiteController siteController = new SiteController();
         MachineController machineController = new MachineController();
         OnderhoudController onderhoudController = new OnderhoudController();
         
         
         GebruikersListFrameController gebruikersView = new GebruikersListFrameController(dc);
-        SiteOverzichtFrameController siteView = new SiteOverzichtFrameController(siteController);
+        SiteOverzichtFrameController siteView = new SiteOverzichtFrameController(siteController, gebruiker);
         MachineListFrameController machineView = new MachineListFrameController(machineController);
         OnderhoudFrameController onderhoudView = new OnderhoudFrameController(onderhoudController);
         
         TabPane tabPane = new TabPane();
         
-        if(gebruiker.getRol().equals(Rol.ADMINISTRATOR)) {
+        if(gebruiker.rol().equals(Rol.ADMINISTRATOR)) {
         	Tab gebruikersTab = new Tab("Gebruikers", gebruikersView);
             gebruikersTab.setClosable(false);
             tabPane.getTabs().add(gebruikersTab);

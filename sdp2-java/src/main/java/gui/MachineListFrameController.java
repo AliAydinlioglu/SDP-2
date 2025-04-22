@@ -2,6 +2,7 @@ package gui;
 
 import domain.Machine;
 import domain.MachineController;
+import dto.MachineDTO;
 import enums.MachineStatus;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,11 +17,11 @@ import java.io.IOException;
 
 public class MachineListFrameController extends VBox {
 
-    @FXML private TableView<Machine> machineTable;
-    @FXML private TableColumn<Machine, String> nameCol;
-    @FXML private TableColumn<Machine, String> locationCol;
-    @FXML private TableColumn<Machine, String> statusCol;
-    @FXML private TableColumn<Machine, Number> uptimeCol;
+    @FXML private TableView<MachineDTO> machineTable;
+    @FXML private TableColumn<MachineDTO, String> nameCol;
+    @FXML private TableColumn<MachineDTO, String> locationCol;
+    @FXML private TableColumn<MachineDTO, String> statusCol;
+    @FXML private TableColumn<MachineDTO, Number> uptimeCol;
     @FXML private Label lblStatus;
 
     private MachineController machineController;
@@ -37,17 +38,17 @@ public class MachineListFrameController extends VBox {
             throw new RuntimeException(ex);
         }
 
-        nameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNaam()));
-        locationCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocatie()));
-        statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().name()));
-        uptimeCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getUptime()));
+        nameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().naam()));
+        locationCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().locatie()));
+        statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().status().name()));
+        uptimeCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().uptime()));
 
         machineTable.setItems(machineController.getAll());
 
         machineTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                Machine selectedMachine = machineController.getMachine(newSelection.getMachineID());
-                lblStatus.setText("Geselecteerd: " + selectedMachine.getNaam() + " - Status: " + selectedMachine.getStatus());
+                MachineDTO selectedMachine = machineController.getMachine(newSelection.id());
+                lblStatus.setText("Geselecteerd: " + selectedMachine.naam() + " - Status: " + selectedMachine.status());
             } else {
                 lblStatus.setText("");
             }

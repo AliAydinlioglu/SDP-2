@@ -33,7 +33,7 @@ public class GebruikerDaoJpa extends GenericDaoJpa<Gebruiker> implements Gebruik
             super.insert(gebruiker);
         } catch (IllegalArgumentException e) {
             // Show an alert box for duplicate email
-            utils.AlertHelper.showError("Duplicate Email", e.getMessage());
+            throw new IllegalArgumentException("Er bestaat al een gebruiker met email: " + gebruiker.getEmail());
         }
     }
 }

@@ -64,6 +64,8 @@ public class Onderhoud implements Serializable {
 
     @Column(name = "machine_id")
     private int machineId;
+    
+   
 
     public Onderhoud(LocalDateTime datum, LocalDateTime startTijd, LocalDateTime eindTijd,
             int techniekerId, String reden, String rapport, String opmerkingen,
@@ -94,28 +96,29 @@ public class Onderhoud implements Serializable {
 		setDatum(datum);
 	    setStartTijd(startTijd);
 	    setEindTijd(eindTijd);
-	    setTechnieker(techniekerId);
+	    //setTechnieker(techniekerId);
 	    setReden(reden);
 	    setRapport(rapport);
 	    setOpmerkingen(opmerkingen);
 	    setStatus(status);
 	    setMachineId(machineId);
+	   
 	}
     
-    public void setTechnieker(int techniekerId) {
-        GebruikerController gebruikerController = new GebruikerController();
-        Gebruiker technieker = gebruikerController.getGebruiker(techniekerId);
-
-        if (technieker == null) {
-            throw new IllegalArgumentException("Technieker met ID " + techniekerId + " bestaat niet.");
-        }
-
-        if (technieker.getRol() != Rol.TECHNIEKER) {
-            throw new IllegalArgumentException("Gebruiker met ID " + techniekerId + " is geen technieker.");
-        }
-
-        this.technieker = technieker;
-    }
+//    public void setTechnieker(int techniekerId) {
+//        GebruikerController gebruikerController = new GebruikerController();
+//        Gebruiker technieker = gebruikerController.getGebruiker(techniekerId);
+//
+//        if (technieker == null) {
+//            throw new IllegalArgumentException("Technieker met ID " + techniekerId + " bestaat niet.");
+//        }
+//
+//        if (technieker.getRol() != Rol.TECHNIEKER) {
+//            throw new IllegalArgumentException("Gebruiker met ID " + techniekerId + " is geen technieker.");
+//        }
+//
+//        this.technieker = technieker;
+//    }
 
 
     @Override
