@@ -2,6 +2,7 @@ package gui;
 
 import domain.Onderhoud;
 import domain.OnderhoudController;
+import dto.OnderhoudDTO;
 import enums.OnderhoudStatus;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -14,11 +15,11 @@ import java.time.LocalDateTime;
 
 public class OnderhoudFrameController extends VBox {
 
-    @FXML private TableView<Onderhoud> onderhoudTable;
-    @FXML private TableColumn<Onderhoud, String> datumCol;
-    @FXML private TableColumn<Onderhoud, String> statusCol;
-    @FXML private TableColumn<Onderhoud, String> techniekerCol;
-    @FXML private TableColumn<Onderhoud, String> machineCol;
+    @FXML private TableView<OnderhoudDTO> onderhoudTable;
+    @FXML private TableColumn<OnderhoudDTO, String> datumCol;
+    @FXML private TableColumn<OnderhoudDTO, String> statusCol;
+    @FXML private TableColumn<OnderhoudDTO, String> techniekerCol;
+    @FXML private TableColumn<OnderhoudDTO, String> machineCol;
 
     @FXML private TextField txtReden;
     @FXML private TextField txtRapport;
@@ -47,14 +48,14 @@ public class OnderhoudFrameController extends VBox {
     }
 
     private void initializeTable() {
-        datumCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDatum().toString()));
-        statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().name()));
+        datumCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().datum().toString()));
+        statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().status().name()));
         techniekerCol.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().getTechnieker() != null
-                        ? cellData.getValue().getTechnieker().getVoornaam() + " " + cellData.getValue().getTechnieker().getAchternaam()
+                cellData.getValue().technieker() != null
+                        ? cellData.getValue().technieker().voornaam() + " " + cellData.getValue().technieker().achternaam()
                         : "Onbekend"));
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(
-                "Machine ID: " + cellData.getValue().getMachineId()));
+                "Machine ID: " + cellData.getValue().machineId()));
 
         onderhoudTable.setItems(onderhoudController.getAllOnderhoud());
     }
@@ -81,22 +82,34 @@ public class OnderhoudFrameController extends VBox {
                     1 // Machine ID (voorbeeld)
             );
             onderhoudController.registerOnderhoud(nieuwOnderhoud);
-            onderhoudTable.getItems().add(nieuwOnderhoud);
+            //onderhoudTable.getItems().add(nieuwOnderhoud);
         } catch (IllegalArgumentException e) {
             showError(e.getMessage());
         }
     }
 
     private void editOnderhoud() {
-        Onderhoud geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
+        OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
         if (geselecteerd != null) {
             try {
-                geselecteerd.setReden(txtReden.getText());
-                geselecteerd.setRapport(txtRapport.getText());
-                geselecteerd.setOpmerkingen(txtOpmerkingen.getText());
-                geselecteerd.setStatus(statusBox.getValue());
-                onderhoudController.updateOnderhoud(geselecteerd);
-                onderhoudTable.refresh();
+//                geselecteerd.setReden(txtReden.getText());
+//                geselecteerd.setRapport(txtRapport.getText());
+//                geselecteerd.setOpmerkingen(txtOpmerkingen.getText());
+//                geselecteerd.setStatus(statusBox.getValue());
+            	  OnderhoudDTO updatedOnderhoud = new OnderhoudDTO(
+						  geselecteerd.id(),
+						  geselecteerd.datum(),
+						  geselecteerd.startTijd(),
+						  geselecteerd.eindTijd(),
+						  txtReden.getText(),
+						  txtRapport.getText(),
+						  txtOpmerkingen.getText(),
+						  statusBox.getValue(),
+						  geselecteerd.machineId(),
+						  geselecteerd.technieker()
+				  );
+            	  onderhoudController.updateOnderhoud(updatedOnderhoud);
+            	  onderhoudTable.refresh();
             } catch (IllegalArgumentException e) {
                 showError(e.getMessage());
             }
@@ -106,7 +119,7 @@ public class OnderhoudFrameController extends VBox {
     }
 
     private void deleteOnderhoud() {
-        Onderhoud geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
+        OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
         if (geselecteerd != null) {
             onderhoudController.deleteOnderhoud(geselecteerd);
             onderhoudTable.getItems().remove(geselecteerd);

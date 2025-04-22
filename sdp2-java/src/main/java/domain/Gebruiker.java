@@ -121,7 +121,7 @@ public class Gebruiker implements Serializable {
         this.gsm = gsm;
     }
 
-    private void setRol(Rol rol) {
+    public void setRol(Rol rol) {
     	if(rol == null) {
 			throw new IllegalArgumentException("Rol moet ingevuld zijn.");
 		}

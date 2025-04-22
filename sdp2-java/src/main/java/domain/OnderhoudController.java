@@ -8,7 +8,11 @@ import repository.OnderhoudDaoJpa;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import dto.GebruikerDTO;
+import dto.MachineDTO;
+import dto.OnderhoudDTO;
 import enums.MachineStatus;
 import enums.OnderhoudStatus;
 
@@ -16,12 +20,12 @@ public class OnderhoudController {
 
     private OnderhoudDaoJpa onderhoudDaoJpa;
     private ObservableList<Onderhoud> onderhoudList;
-    private FilteredList<Onderhoud> filteredOnderhoudList;
-    private SortedList<Onderhoud> sortedOnderhoudList;
+    private FilteredList<OnderhoudDTO> filteredOnderhoudList;
+    private SortedList<OnderhoudDTO> sortedOnderhoudList;
 
-    private final Comparator<Onderhoud> byDate = Comparator.comparing(Onderhoud::getDatum);
-    private final Comparator<Onderhoud> byStatus = Comparator.comparing(Onderhoud::getStatus);
-    private final Comparator<Onderhoud> sortOrder = byDate.thenComparing(byStatus);
+    private final Comparator<OnderhoudDTO> byDate = Comparator.comparing(OnderhoudDTO::datum);
+    private final Comparator<OnderhoudDTO> byStatus = Comparator.comparing(OnderhoudDTO::status);
+    private final Comparator<OnderhoudDTO> sortOrder = byDate.thenComparing(byStatus);
 
     public OnderhoudController() {
         onderhoudDaoJpa = new OnderhoudDaoJpa();
@@ -33,17 +37,19 @@ public class OnderhoudController {
             onderhoudList = FXCollections.observableArrayList(); // Fallback
         }
 
-        
-        filteredOnderhoudList = new FilteredList<>(onderhoudList, p -> true);
+        ObservableList<OnderhoudDTO> onderhoudDTOList = FXCollections.observableArrayList(onderhoudList.stream()
+				.map(OnderhoudDTO::fromEntity)
+				.collect(Collectors.toList()));
+        filteredOnderhoudList = new FilteredList<>(onderhoudDTOList, p -> true);
         sortedOnderhoudList = new SortedList<>(filteredOnderhoudList, sortOrder);
     }
 
-    public ObservableList<Onderhoud> getAllOnderhoud() {
+    public ObservableList<OnderhoudDTO> getAllOnderhoud() {
         return sortedOnderhoudList;
     }
 
-    public Onderhoud getOnderhoudById(int id) {
-        return onderhoudDaoJpa.get(id);
+    public OnderhoudDTO getOnderhoudById(int id) {
+        return OnderhoudDTO.fromEntity(onderhoudDaoJpa.get(id));
     }
 
     public void addOnderhoud(Onderhoud onderhoud) {
@@ -51,14 +57,20 @@ public class OnderhoudController {
         onderhoudList.add(onderhoud);
     }
 
-    public void updateOnderhoud(Onderhoud onderhoud) {
-        onderhoudDaoJpa.update(onderhoud);
-        onderhoudList.set(onderhoudList.indexOf(onderhoud), onderhoud);
+    public void updateOnderhoud(OnderhoudDTO onderhoud) {
+    	Onderhoud updatedOnderhoud = onderhoudList.stream().filter(o -> o.getOnderhoudId() == onderhoud.id()).findFirst().orElse(null);
+        onderhoudDaoJpa.startTransaction();
+    	onderhoudDaoJpa.update(updatedOnderhoud);
+    	onderhoudDaoJpa.commitTransaction();
+        onderhoudList.set(onderhoudList.indexOf(updatedOnderhoud), updatedOnderhoud);
     }
 
-    public void deleteOnderhoud(Onderhoud onderhoud) {
-        onderhoudDaoJpa.delete(onderhoud);
-        onderhoudList.remove(onderhoud);
+    public void deleteOnderhoud(OnderhoudDTO onderhoud) {
+    	Onderhoud onderhoudToDelete = onderhoudList.stream().filter(o -> o.getOnderhoudId() == onderhoud.id()).findFirst().orElse(null);
+        onderhoudDaoJpa.startTransaction();
+    	onderhoudDaoJpa.delete(onderhoudToDelete);
+    	onderhoudDaoJpa.commitTransaction();
+        onderhoudList.remove(onderhoudToDelete);
     }
 
     public void changeFilter(String filterValue) {
@@ -67,8 +79,8 @@ public class OnderhoudController {
                 return true;
             }
             String lowerCaseValue = filterValue.toLowerCase();
-            return onderhoud.getReden().toLowerCase().contains(lowerCaseValue) ||
-                   onderhoud.getRapport().toLowerCase().contains(lowerCaseValue);
+            return onderhoud.reden().toLowerCase().contains(lowerCaseValue) ||
+                   onderhoud.rapport().toLowerCase().contains(lowerCaseValue);
         });
     }
     
@@ -79,7 +91,7 @@ public class OnderhoudController {
                 return true;
             } else {
                 // Technieker ziet alleen onderhouden van toegewezen machines
-                return onderhoud.getTechnieker().getGebruikerID() == userId;
+                return onderhoud.technieker().id() == userId;
             }
         });
     }
@@ -108,9 +120,9 @@ public class OnderhoudController {
         if (onderhoud.getStatus() == OnderhoudStatus.VOLTOOID) {
         	//weet niet zeker of je controller van machine meot gebruiken of de JPA
         	MachineController machineController = new MachineController();
-            Machine machine = machineController.getMachine(onderhoud.getMachineId());
-            machine.setStatus(MachineStatus.DRAAIT);
-            machineController.updateMachine(machine);
+//            MachineDTO machine = machineController.getMachine(onderhoud.getMachineId());
+//            machine.setStatus(MachineStatus.DRAAIT);
+//            machineController.updateMachine(machine);
         }
     }
     

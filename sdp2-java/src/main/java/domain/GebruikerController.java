@@ -2,6 +2,7 @@ package domain;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import dto.GebruikerDTO;
@@ -17,7 +18,8 @@ public class GebruikerController {
 
 	private GebruikerDoa gebruikerRepo;
 	
-	private ObservableList<Gebruiker> gebruikerList;
+	private List<Gebruiker> data;
+	private ObservableList<GebruikerDTO> gebruikerList;
 	private FilteredList<GebruikerDTO> filteredGebruikerList;
 	
 	private SortedList<GebruikerDTO> sortedGebruikerList;
@@ -48,28 +50,29 @@ public class GebruikerController {
 	private void initData() {
 		try {
             
-            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll().stream()
+            data = gebruikerRepo.findAll().stream()
             		.filter(Gebruiker::getActief)
-            		
-            		.collect(Collectors.toList()));
+
+            		.collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
-            gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll().stream()
-            		.filter(Gebruiker::getActief)
-            		.collect(Collectors.toList()));        
+//            d = FXCollections.observableArrayList(gebruikerRepo.findAll().stream()
+//            		.filter(Gebruiker::getActief)
+//
+//            		.collect(Collectors.toList()));        
         }
-		//gebruikerList = FXCollections.observableArrayList(gebruikerRepo.findAll());
-		ObservableList<GebruikerDTO> gebruikerDTOs = FXCollections.observableArrayList(gebruikerList.stream()
-				.map(g -> new GebruikerDTO(g.getGebruikerID(), g.getVoornaam(), g.getAchternaam(), g.getGeboorteDatum(), g.getAdres(), g.getEmail(), g.getGsm(), g.getRol(), g.getActief()))
+		
+		gebruikerList = FXCollections.observableArrayList(data.stream()
+				.map(GebruikerDTO::fromEntity)
 				.collect(Collectors.toList()));
-		filteredGebruikerList = new FilteredList<>(gebruikerDTOs, p -> true);
+		filteredGebruikerList = new FilteredList<>(gebruikerList, p -> true);
 		sortedGebruikerList = new SortedList<>(filteredGebruikerList, sortOrder);
 	}
 	
 	
 	public GebruikerDTO getGebruiker(int id) {
 		Gebruiker g = gebruikerRepo.get(id);
-		return new GebruikerDTO(g.getGebruikerID(), g.getVoornaam(), g.getAchternaam(), g.getGeboorteDatum(), g.getAdres(), g.getEmail(), g.getGsm(), g.getRol(), g.getActief());
+		return GebruikerDTO.fromEntity(g);
 	}
 	
 	public ObservableList<GebruikerDTO> findAll(){
@@ -80,7 +83,7 @@ public class GebruikerController {
 	public GebruikerDTO getGebruikerByEmailDTO(String email)
 	{
 		Gebruiker g = gebruikerRepo.getGebruikerByEmail(email);
-		return new GebruikerDTO(g.getGebruikerID(), g.getVoornaam(), g.getAchternaam(), g.getGeboorteDatum(), g.getAdres(), g.getEmail(), g.getGsm(), g.getRol(), g.getActief());
+		return GebruikerDTO.fromEntity(g);
 
 	}
 	private Gebruiker getGebruikerByEmail(String email)
@@ -90,14 +93,19 @@ public class GebruikerController {
 	}
 	
 	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol) {
-		
-		Gebruiker g = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
-		
-		gebruikerRepo.startTransaction();
-		gebruikerRepo.insert(g);
-		gebruikerRepo.commitTransaction();
-		gebruikerList.add(g);
+    	Gebruiker g = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
+
+		try {
+	        gebruikerRepo.startTransaction();
+	        gebruikerRepo.insert(g);
+	        gebruikerRepo.commitTransaction();
+	        gebruikerList.add(GebruikerDTO.fromEntity(g));
+	        data.add(g);
+	    } catch (Exception e) {
+	    	throw new IllegalArgumentException(e.getMessage());
+	    }
 	}
+
 	
 	public void changeFilter(String filterValue) {
         filteredGebruikerList.setPredicate(person -> {
@@ -116,13 +124,18 @@ public class GebruikerController {
 	
 	public void removeGebruiker(GebruikerDTO gebruiker) {
 		for(int i = 0; i < gebruikerList.size(); i++) {
-			if(gebruikerList.get(i).getGebruikerID() == gebruiker.id()) {
-				gebruikerList.get(i).setActief(false);
-				gebruikerRepo.startTransaction();
-				gebruikerRepo.update(gebruikerList.get(i));
-				gebruikerRepo.commitTransaction();
-				gebruikerList.remove(gebruikerList.get(i));
-				return;
+			if(data.get(i).getGebruikerID() == gebruiker.id()) {
+				try {
+					data.get(i).setActief(false);
+					gebruikerRepo.startTransaction();
+					gebruikerRepo.update(data.get(i));
+					gebruikerRepo.commitTransaction();
+					gebruikerList.remove(gebruikerList.get(i));
+					data.remove(i);
+					return;
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Gebruiker kon niet worden verwijdert: " + e.getMessage());
+				}
 			}
 		}
 	}
@@ -133,8 +146,43 @@ public class GebruikerController {
 		if(g == null || !g.checkWachtwoord(email, wachtwoord)) {
 			throw new IllegalArgumentException("Ongeldige email of wachtwoord");
 		}
-		return new GebruikerDTO(g.getGebruikerID(), g.getVoornaam(), g.getAchternaam(), g.getGeboorteDatum(), g.getAdres(), g.getEmail(), g.getGsm(), g.getRol(), g.getActief());
+		return GebruikerDTO.fromEntity(g);
 		
 		
 	}
+
+	public void updateGebruiker(GebruikerDTO bewerkteDTO) {
+	    Gebruiker g = data.stream()
+	        .filter(e -> e.getGebruikerID() == bewerkteDTO.id())
+	        .findFirst()
+	        .orElse(null);
+	    if (g == null) return;
+
+	    int index = data.indexOf(g);
+
+	    g.setVoornaam(bewerkteDTO.voornaam());
+	    g.setAchternaam(bewerkteDTO.achternaam());
+	    g.setGeboorteDatum(bewerkteDTO.geboortedatum());
+	    g.setAdres(bewerkteDTO.adres());
+	    g.setEmail(bewerkteDTO.email());
+	    g.setGsm(bewerkteDTO.gsm());
+	    g.setRol(bewerkteDTO.rol());
+	    g.setActief(bewerkteDTO.actief());
+
+	    try {
+	    	gebruikerRepo.startTransaction();
+		    gebruikerRepo.update(g);
+		    gebruikerRepo.commitTransaction();
+
+		    data.set(index, g);
+		    GebruikerDTO gg = gebruikerList.stream().filter(e -> e.id() == bewerkteDTO.id()).findFirst().orElse(null);
+		    gebruikerList.set(gebruikerList.indexOf(gg), bewerkteDTO);
+			
+		} catch (Exception e2) {
+			throw new IllegalArgumentException("Gebruiker kon niet aangepas worden: " + e2.getMessage());
+		}
+	    
+
+	}
+
 }

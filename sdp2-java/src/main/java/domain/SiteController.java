@@ -9,18 +9,23 @@ import repository.SiteDaoJpa; // Import de implementatie
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import dto.SiteDTO;
 
 public class SiteController {
 
     private SiteDao siteDao;
-    private ObservableList<Site> siteList;
+    private ObservableList<SiteDTO> siteList;
 
     public SiteController() {
         this.siteDao = new SiteDaoJpa();
 
         List<Site> sitesFromDb = siteDao.findAll();
 
-        this.siteList = FXCollections.observableArrayList(sitesFromDb);
+        this.siteList = FXCollections.observableArrayList(sitesFromDb.stream()
+        		.map(SiteDTO::fromEntity)
+        		.collect(Collectors.toList()));
     }
 
     /**
@@ -28,23 +33,28 @@ public class SiteController {
      *
      * @return ObservableList van Site objecten.
      */
-    public ObservableList<Site> getAllSites() {
+    public ObservableList<SiteDTO> getAllSites() {
         return siteList;
     }
 
-    public Site getSiteDetails(Site site) {
-        return site;
+    public SiteDTO getSiteDetails(SiteDTO site) {
+        return siteList.stream().filter(s -> s.id() == site.id())
+        		.findFirst()
+        		.orElseThrow(() -> new IllegalArgumentException("Site not found"));
     }
 
-    public long getAantalMachinesVoorSite(Site site) {
+    public long getAantalMachinesVoorSite(SiteDTO site) {
         if (siteDao instanceof SiteDaoJpa) {
-            return ((SiteDaoJpa) siteDao).countMachinesForSite(site.getSiteId());
+            return ((SiteDaoJpa) siteDao).countMachinesForSite(site.id());
         }
-        return site.getMachines().size();
+        return site.machines().size();
     }
     
     
-    public ObservableList<Site> getSitesByUserId(int id){
-    	return FXCollections.observableArrayList(siteDao.getSitesByVerantwoordelijkeId(id));
+    public ObservableList<SiteDTO> getSitesByUserId(int id){
+    	return FXCollections.observableArrayList(siteDao.getSitesByVerantwoordelijkeId(id)
+    			.stream()
+				.map(SiteDTO::fromEntity)
+				.collect(Collectors.toList()));
     }
 }

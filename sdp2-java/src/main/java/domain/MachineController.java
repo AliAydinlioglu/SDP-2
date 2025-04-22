@@ -2,7 +2,9 @@ package domain;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import dto.MachineDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -14,16 +16,16 @@ public class MachineController {
 
     private MachineDaoJpa machineDaoJpa;
 
-    private ObservableList<Machine> machineList;
-    private FilteredList<Machine> filteredMachineList;
+    private ObservableList<MachineDTO> machineList;
+    private FilteredList<MachineDTO> filteredMachineList;
 
-    private SortedList<Machine> sortedMachineList;
+    private SortedList<MachineDTO> sortedMachineList;
 
-    private final Comparator<Machine> byName = (m1, m2) -> m1.getNaam().compareToIgnoreCase(m2.getNaam());
-    private final Comparator<Machine> byID = Comparator.comparingInt(Machine::getMachineID);
-    private final Comparator<Machine> byStatus = Comparator.comparing(Machine::getStatus);
+    private final Comparator<MachineDTO> byName = (m1, m2) -> m1.naam().compareToIgnoreCase(m2.naam());
+    private final Comparator<MachineDTO> byID = Comparator.comparingInt(MachineDTO::id);
+    private final Comparator<MachineDTO> byStatus = Comparator.comparing(MachineDTO::status);
 
-    private final Comparator<Machine> sortOrder = byName.thenComparing(byID).thenComparing(byStatus);
+    private final Comparator<MachineDTO> sortOrder = byName.thenComparing(byID).thenComparing(byStatus);
 
     private static List<Machine> data;
 
@@ -32,16 +34,18 @@ public class MachineController {
         machineDaoJpa = new MachineDaoJpa();
         data = machineDaoJpa.findAll();
 
-        machineList = FXCollections.observableArrayList(data);
+        machineList = FXCollections.observableArrayList(data.stream().map(MachineDTO::fromEntity)
+        		.collect(Collectors.toList()));
         filteredMachineList = new FilteredList<>(machineList, p -> true);
         sortedMachineList = new SortedList<>(filteredMachineList, sortOrder);
     }
 
-    public Machine getMachine(int id) {
-        return machineDaoJpa.get(id);
+    public MachineDTO getMachine(int id) {
+        Machine m = machineDaoJpa.get(id);
+        return MachineDTO.fromEntity(m);
     }
 
-    public ObservableList<Machine> getAll() {
+    public ObservableList<MachineDTO> getAll() {
         return sortedMachineList;
     }
 
@@ -52,7 +56,7 @@ public class MachineController {
                 return true;
             }
             String lowerCaseValue = filterValue.toLowerCase();
-            return machine.getNaam().toLowerCase().contains(lowerCaseValue);
+            return machine.naam().toLowerCase().contains(lowerCaseValue);
         });
     }
 
@@ -69,14 +73,14 @@ public class MachineController {
         machineDaoJpa.update(machine);
     }
 
-    public ObservableList<Machine> getMachinesByStatus(MachineStatus status) {
-        FilteredList<Machine> filteredByStatus = new FilteredList<>(machineList, m -> m.getStatus().equals(status));
+    public ObservableList<MachineDTO> getMachinesByStatus(MachineStatus status) {
+        FilteredList<MachineDTO> filteredByStatus = new FilteredList<>(machineList, m -> m.status().equals(status));
         return new SortedList<>(filteredByStatus, sortOrder);
     }
     
-    public ObservableList<Machine> getMachinesForTechnieker(int techniekerId) {
-        FilteredList<Machine> filteredByTechnieker = new FilteredList<>(machineList, 
-            machine -> machine.getTechnieker() != null && machine.getTechnieker().getGebruikerID() == techniekerId);
+    public ObservableList<MachineDTO> getMachinesForTechnieker(int techniekerId) {
+        FilteredList<MachineDTO> filteredByTechnieker = new FilteredList<>(machineList, 
+            machine -> machine.technieker() != null && machine.technieker().id() == techniekerId);
         return new SortedList<>(filteredByTechnieker, sortOrder);
     }
     
