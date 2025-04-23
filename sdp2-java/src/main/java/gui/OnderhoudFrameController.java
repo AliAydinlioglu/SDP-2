@@ -1,5 +1,6 @@
 package gui;
 
+import domain.Gebruiker;
 import domain.Onderhoud;
 import domain.OnderhoudController;
 import dto.OnderhoudDTO;
@@ -9,11 +10,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import utils.AlertHelper;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class OnderhoudFrameController extends VBox {
+	
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
     @FXML private TableView<OnderhoudDTO> onderhoudTable;
     @FXML private TableColumn<OnderhoudDTO, String> datumCol;
@@ -30,9 +37,11 @@ public class OnderhoudFrameController extends VBox {
     @FXML private Button btnDelete;
 
     private OnderhoudController onderhoudController;
+    private Gebruiker ingelogdeGebruiker;
 
-    public OnderhoudFrameController(OnderhoudController onderhoudController) {
+    public OnderhoudFrameController(OnderhoudController onderhoudController, Gebruiker ingelogdeGebruiker) {
         this.onderhoudController = onderhoudController;
+        this.ingelogdeGebruiker = ingelogdeGebruiker;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudFrame.fxml"));
         loader.setRoot(this);
@@ -57,7 +66,7 @@ public class OnderhoudFrameController extends VBox {
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 "Machine ID: " + cellData.getValue().machineId()));
 
-        onderhoudTable.setItems(onderhoudController.getAllOnderhoud());
+        onderhoudTable.setItems(onderhoudController.filterByRole(ingelogdeGebruiker));
     }
 
     private void initializeForm() {
@@ -70,23 +79,26 @@ public class OnderhoudFrameController extends VBox {
 
     private void addOnderhoud() {
         try {
+        	String rapportJson = objectMapper.writeValueAsString(txtRapport.getText()); // Serialize to JSON
             Onderhoud nieuwOnderhoud = new Onderhoud(
-                    LocalDateTime.now(),
-                    LocalDateTime.now(),
-                    LocalDateTime.now().plusHours(1),
-                    1, // Technieker ID (voorbeeld)
-                    txtReden.getText(),
-                    txtRapport.getText(),
-                    txtOpmerkingen.getText(),
-                    statusBox.getValue(),
-                    1 // Machine ID (voorbeeld)
+            	LocalDateTime.now(),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1),
+                ingelogdeGebruiker.getGebruikerID(),
+                txtReden.getText(),
+                rapportJson, // Use serialized JSON
+                txtOpmerkingen.getText(),
+                statusBox.getValue(),
+                1 // Machine ID (example)
             );
             onderhoudController.registerOnderhoud(nieuwOnderhoud);
-            //onderhoudTable.getItems().add(nieuwOnderhoud);
-        } catch (IllegalArgumentException e) {
-            showError(e.getMessage());
+//            // Voeg het nieuwe onderhoud toe aan de originele lijst in de controller
+//            onderhoudController.getAllOnderhoud().add(nieuwOnderhoud);
+        } catch (Exception e) {
+        	AlertHelper.showError("Onderhoud toevoegen mislukt", e.getMessage());
         }
     }
+
 
     private void editOnderhoud() {
         OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
@@ -110,11 +122,11 @@ public class OnderhoudFrameController extends VBox {
 				  );
             	  onderhoudController.updateOnderhoud(updatedOnderhoud);
             	  onderhoudTable.refresh();
-            } catch (IllegalArgumentException e) {
-                showError(e.getMessage());
+            } catch (Exception e) {
+            	AlertHelper.showError("Onderhoud bewerken mislukt", e.getMessage());
             }
         } else {
-            showError("Selecteer een onderhoud om te bewerken.");
+        	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te bewerken.");
         }
     }
 
@@ -124,15 +136,8 @@ public class OnderhoudFrameController extends VBox {
             onderhoudController.deleteOnderhoud(geselecteerd);
             onderhoudTable.getItems().remove(geselecteerd);
         } else {
-            showError("Selecteer een onderhoud om te verwijderen.");
+        	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te verwijderen.");
         }
     }
 
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Fout");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }
