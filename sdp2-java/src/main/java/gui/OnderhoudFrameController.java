@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import utils.AlertHelper;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -92,11 +93,9 @@ public class OnderhoudFrameController extends VBox {
             onderhoudController.registerOnderhoud(nieuwOnderhoud);
 //            // Voeg het nieuwe onderhoud toe aan de originele lijst in de controller
 //            onderhoudController.getAllOnderhoud().add(nieuwOnderhoud);
-        } catch (IllegalArgumentException e) {
-            showError(e.getMessage());
-        } catch (JsonProcessingException e) {
-        	showError("Fout bij het verwerken van JSON: " + e.getMessage());
-		}
+        } catch (Exception e) {
+        	AlertHelper.showError("Onderhoud toevoegen mislukt", e.getMessage());
+        }
     }
 
 
@@ -110,11 +109,11 @@ public class OnderhoudFrameController extends VBox {
                 geselecteerd.setStatus(statusBox.getValue());
                 onderhoudController.updateOnderhoud(geselecteerd);
                 onderhoudTable.refresh();
-            } catch (IllegalArgumentException e) {
-                showError(e.getMessage());
+            } catch (Exception e) {
+            	AlertHelper.showError("Onderhoud bewerken mislukt", e.getMessage());
             }
         } else {
-            showError("Selecteer een onderhoud om te bewerken.");
+        	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te bewerken.");
         }
     }
 
@@ -124,15 +123,8 @@ public class OnderhoudFrameController extends VBox {
             onderhoudController.deleteOnderhoud(geselecteerd);
             onderhoudTable.getItems().remove(geselecteerd);
         } else {
-            showError("Selecteer een onderhoud om te verwijderen.");
+        	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te verwijderen.");
         }
     }
 
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Fout");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 }
