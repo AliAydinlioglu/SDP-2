@@ -32,16 +32,37 @@
             </Button>
          </children>
       </HBox>
-      <TableView fx:id="gebruikersTable" prefHeight="200.0" prefWidth="200.0">
+      <TableView fx:id="gebruikersTable" prefHeight="313.0" prefWidth="600.0">
         <columns>
           <TableColumn fx:id="voornaamCol" prefWidth="170.0" text="Voornaam" />
-          <TableColumn fx:id="achternaamCol" prefWidth="195.0" text="Achternaam" />
-          <TableColumn fx:id="emailCol" prefWidth="234.0" text="email" />
-          <TableColumn fx:id="actionCol" prefWidth="100.0" text="Action" />
+          <TableColumn fx:id="achternaamCol" prefWidth="160.5" text="Achternaam" />
+          <TableColumn fx:id="emailCol" prefWidth="182.5" text="Email" />
+            <TableColumn fx:id="rolCol" prefWidth="102.5" text="Rol" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
+      
+	<VBox fx:id="detailBox" spacing="10" visible="false"
+      style="-fx-background-color: #f4f4f4; -fx-border-color: #ccc; -fx-border-radius: 4;">
+   <padding>
+      <Insets top="10" right="10" bottom="10" left="10"/>
+   </padding>
+   <children>
+      <Label fx:id="lblFullName" text="Naam:" />
+      <Label fx:id="lblEmail" text="Email:" />
+      <Label fx:id="lblRol" text="Rol:" />
+      <Label fx:id="lblGeboorteDatum" text="Geboortedatum:" />
+      <Label fx:id="lblAdres" text="Adres:" />
+      <Label fx:id="lblGsm" text="GSM:" />
+      <HBox spacing="10">
+         <children>
+            <Button fx:id="editBtn" text="Bewerken" onAction="#editSelectedGebruiker"/>
+            <Button fx:id="clearBtn" text="Klaar" onAction="#clearSelectedGebruiker"/>
+         </children>
+      </HBox>
+	   </children>
+	</VBox>
    </children>
 </fx:root>

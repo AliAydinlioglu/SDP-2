@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -74,8 +75,9 @@
             <DatePicker fx:id="geboorteDatumPicker" GridPane.columnIndex="1" GridPane.rowIndex="8" />
 
             <!-- Row 10 -->
-            <Label text="Rol:" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+            <Label text="Rol:" GridPane.rowIndex="9" />
             <ChoiceBox fx:id="rolBox" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+         <CheckBox fx:id="actiefBox" mnemonicParsing="false" text="Actief" GridPane.columnIndex="2" GridPane.rowIndex="8" />
         </GridPane>
       <FlowPane alignment="CENTER">
          <children>

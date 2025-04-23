@@ -54,6 +54,9 @@ public class AddOrEditGebruikerFrameController {
 
     @FXML
     private Button cancelBtn;
+    
+    @FXML
+    private CheckBox actiefBox;
 
     private GebruikerController dc;
     private GebruikerDTO bewerkteGebruiker; // null if creating new
@@ -81,6 +84,8 @@ public class AddOrEditGebruikerFrameController {
             landField.setText(gebruiker.adres().getLand());
             geboorteDatumPicker.setValue(gebruiker.geboortedatum());
             rolBox.setValue(gebruiker.rol());
+            actiefBox.setSelected(gebruiker.actief());
+            
 
             submitBtn.setText("Opslaan");
             emailField.setDisable(true); // Optional: disable editing email
@@ -100,6 +105,7 @@ public class AddOrEditGebruikerFrameController {
         String postcode = postcodeField.getText();
         String stad = stadField.getText();
         String land = landField.getText();
+        boolean actief = actiefBox.isSelected();
         Rol rol = rolBox.getValue();
 
         try {
@@ -113,14 +119,15 @@ public class AddOrEditGebruikerFrameController {
                 		email,
                 		gsm,
                 		rol,
-                		true
+                		actief
                 		);
                 dc.updateGebruiker(bewerkteDTO);
             } else {
                 // CREATE
                 dc.addGebruiker(naam, voornaam, geboorteDatumPicker.getValue(),
-                        straat, huisNr, postcode, stad, land, email, gsm, rol);
+                        straat, huisNr, postcode, stad, land, email, gsm, rol, actief);
             }
+            ((Stage) submitBtn.getScene().getWindow()).close();
 
         } catch (Exception e) {
         	e.printStackTrace();
@@ -128,7 +135,7 @@ public class AddOrEditGebruikerFrameController {
             return;
         }
 
-        //((Stage) submitBtn.getScene().getWindow()).close();
+        
     }
 
     @FXML

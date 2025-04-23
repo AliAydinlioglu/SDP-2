@@ -95,7 +95,9 @@ public class LoginFrameController extends AnchorPane {
             GebruikerDTO gebruiker = dc.login(email, wachtwoord);
             openMainView(gebruiker);
         } catch (Exception e) {
+        	e.printStackTrace();
         	AlertHelper.showError("Login mislukt", e.getMessage());
+        	
         }
     }
 

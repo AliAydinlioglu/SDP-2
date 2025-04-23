@@ -87,9 +87,9 @@ public class OnderhoudController {
         });
     }
     
-    public ObservableList<Onderhoud> filterByRole(Gebruiker gebruiker) {
-    	boolean isVerantwoordelijke = gebruiker.getRol() == Rol.VERANTWOORDELIJKE || gebruiker.getRol() == Rol.ADMINISTRATOR;
-    	int userId = gebruiker.getGebruikerID();
+    public ObservableList<OnderhoudDTO> filterByRole(GebruikerDTO ingelogdeGebruiker) {
+    	boolean isVerantwoordelijke = ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE || ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR;
+    	int userId = ingelogdeGebruiker.id();
     	
         filteredOnderhoudList.setPredicate(onderhoud -> {
             if (isVerantwoordelijke) {

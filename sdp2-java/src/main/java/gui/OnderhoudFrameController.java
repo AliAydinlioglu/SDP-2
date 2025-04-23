@@ -3,6 +3,7 @@ package gui;
 import domain.Gebruiker;
 import domain.Onderhoud;
 import domain.OnderhoudController;
+import dto.GebruikerDTO;
 import dto.OnderhoudDTO;
 import enums.OnderhoudStatus;
 import javafx.beans.property.SimpleStringProperty;
@@ -37,9 +38,9 @@ public class OnderhoudFrameController extends VBox {
     @FXML private Button btnDelete;
 
     private OnderhoudController onderhoudController;
-    private Gebruiker ingelogdeGebruiker;
+    private GebruikerDTO ingelogdeGebruiker;
 
-    public OnderhoudFrameController(OnderhoudController onderhoudController, Gebruiker ingelogdeGebruiker) {
+    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker) {
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
 
@@ -84,7 +85,7 @@ public class OnderhoudFrameController extends VBox {
             	LocalDateTime.now(),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusHours(1),
-                ingelogdeGebruiker.getGebruikerID(),
+                ingelogdeGebruiker.id(),
                 txtReden.getText(),
                 rapportJson, // Use serialized JSON
                 txtOpmerkingen.getText(),
