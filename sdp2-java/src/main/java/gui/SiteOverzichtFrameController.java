@@ -13,6 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import utils.AlertHelper;
 
 import java.io.IOException;
 
@@ -44,13 +48,30 @@ public class SiteOverzichtFrameController extends VBox {
         aantalMachinesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().machines().size()));
 
         //sites ophalen
-        //siteTable.setItems(siteController.getAllSites());
-        siteTable.setItems(siteController.getSitesByUserId(gebruiker.id()));
+        siteTable.setItems(siteController.getAllSites());
+        //siteTable.setItems(siteController.getSitesByUserId(gebruiker.id()));
 
         siteTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                SiteDTO selectedSite = siteController.getSiteDetails(newSelection);
-                lblStatus.setText("Geselecteerd: " + selectedSite.naam());
+                lblStatus.setText("Geselecteerd: " + newSelection.naam());
+
+                try {
+                    SiteDetailFrameController detailView = new SiteDetailFrameController(newSelection);
+                    Stage detailStage = new Stage();
+                    detailStage.setTitle("Details voor " + newSelection.naam());
+
+                    detailStage.initModality(Modality.APPLICATION_MODAL);
+                    Scene scene = new Scene(detailView);
+
+                    detailStage.setScene(scene);
+
+                    detailStage.showAndWait();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    AlertHelper.showError("Fout", "Kon site details niet laden: " + e.getMessage());
+                }
+
             } else {
                 lblStatus.setText("");
             }

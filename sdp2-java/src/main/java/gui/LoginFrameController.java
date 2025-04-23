@@ -2,7 +2,6 @@ package gui;
 
 import java.io.IOException;
 
-import domain.Gebruiker;
 import domain.GebruikerController;
 import domain.MachineController;
 import domain.OnderhoudController;
