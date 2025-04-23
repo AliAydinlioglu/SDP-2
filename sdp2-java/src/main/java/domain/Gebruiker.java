@@ -86,7 +86,7 @@ public class Gebruiker implements Serializable {
     
     private static final Argon2PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 131072, 6);
 
-    public Gebruiker(String voornaam, String achternaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol) {
+    public Gebruiker(String voornaam, String achternaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol, boolean actief) {
         if (achternaam.isBlank() || voornaam.isBlank() || geboortedatum == null || adres == null) {
             throw new IllegalArgumentException("Alle velden (behalve gsm) moeten ingevuld zijn.");
         }
@@ -97,7 +97,7 @@ public class Gebruiker implements Serializable {
         setEmail(email);
         setRol(rol);
         setGsm(gsm);
-        setActief(true);
+        setActief(actief);
         
         
 

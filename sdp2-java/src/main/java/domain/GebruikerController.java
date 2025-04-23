@@ -13,6 +13,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import repository.GebruikerDaoJpa;
 import repository.GebruikerDoa;
+import utils.AlertHelper;
 
 public class GebruikerController {
 
@@ -50,16 +51,9 @@ public class GebruikerController {
 	private void initData() {
 		try {
             
-            data = gebruikerRepo.findAll().stream()
-            		.filter(Gebruiker::getActief)
-
-            		.collect(Collectors.toList());
+            data = gebruikerRepo.findAll();
         } catch (Exception e) {
-            e.printStackTrace();
-//            d = FXCollections.observableArrayList(gebruikerRepo.findAll().stream()
-//            		.filter(Gebruiker::getActief)
-//
-//            		.collect(Collectors.toList()));        
+            AlertHelper.showError("Connectie met databank mislukt", e.getMessage());     
         }
 		
 		gebruikerList = FXCollections.observableArrayList(data.stream()
@@ -92,8 +86,8 @@ public class GebruikerController {
 
 	}
 	
-	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol) {
-    	Gebruiker g = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol);
+	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol, boolean actief) {
+    	Gebruiker g = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol, actief);
 
 		try {
 	        gebruikerRepo.startTransaction();
@@ -102,6 +96,7 @@ public class GebruikerController {
 	        gebruikerList.add(GebruikerDTO.fromEntity(g));
 	        data.add(g);
 	    } catch (Exception e) {
+	    	gebruikerRepo.rollbackTransaction();
 	    	throw new IllegalArgumentException(e.getMessage());
 	    }
 	}
@@ -134,6 +129,7 @@ public class GebruikerController {
 					data.remove(i);
 					return;
 				} catch (Exception e) {
+					gebruikerRepo.rollbackTransaction();
 					throw new IllegalArgumentException("Gebruiker kon niet worden verwijdert: " + e.getMessage());
 				}
 			}
@@ -179,6 +175,7 @@ public class GebruikerController {
 		    gebruikerList.set(gebruikerList.indexOf(gg), bewerkteDTO);
 			
 		} catch (Exception e2) {
+			gebruikerRepo.rollbackTransaction();
 			throw new IllegalArgumentException("Gebruiker kon niet aangepas worden: " + e2.getMessage());
 		}
 	    
