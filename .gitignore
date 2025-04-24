@@ -4,12 +4,14 @@ target
 .classpath
 .project
 .idea/
-META-INF/persistence.xml
 .DS_Store
 .vscode
 
 *.properties
 
-sdp2-java/src/main/resources/config/dev.properties.md
+2025-java-gent13\sdp2-java\src\main\resources\META-INF\persistence.xml
 
-sdp2-java/src/main/resources/config/prod.properties.md
+
+sdp2-java/src/main/resources/config/dev.properties
+
+sdp2-java/src/main/resources/config/prod.properties
