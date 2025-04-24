@@ -20,7 +20,7 @@ public class PopulateDB {
             Gebruiker gebruiker = new Gebruiker("Dornon", "Seppe", LocalDate.of(2004, 4, 1),
                     new Adres("kroonstraat", "42", "9000", "Gent", "Belgie"), "seppe.dornon@student.hogent.be",
                     "04123456",
-                    Rol.ADMINISTRATOR, true);
+                    Rol.ADMINISTRATOR);
             gebruikerdao.insert(gebruiker);
             gebruikerdao.commitTransaction();
 
