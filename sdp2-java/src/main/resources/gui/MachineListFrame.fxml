@@ -5,6 +5,7 @@
 
 <fx:root type="VBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
 
+
     <TableView fx:id="machineTable" prefHeight="400" prefWidth="600">
         <columns>
             <TableColumn fx:id="nameCol" text="Naam" minWidth="150"/>
@@ -14,6 +15,6 @@
         </columns>
     </TableView>
 
-    <Label fx:id="lblNaam" text="Geen machine geselecteerd." style="-fx-font-size: 14px; -fx-text-fill: #555;" />
+    <Label fx:id="lblStatus" text="Geen machine geselecteerd." style="-fx-font-size: 14px; -fx-text-fill: #555;" />
 
 </fx:root>
