@@ -15,6 +15,7 @@ import utils.AlertHelper;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class OnderhoudFrameController extends VBox {
 	
 	private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger logger = Logger.getLogger(OnderhoudFrameController.class.getName());
 
     @FXML private TableView<OnderhoudDTO> onderhoudTable;
     @FXML private TableColumn<OnderhoudDTO, String> datumCol;
@@ -39,8 +41,8 @@ public class OnderhoudFrameController extends VBox {
 
     private OnderhoudController onderhoudController;
     private GebruikerDTO ingelogdeGebruiker;
-
-    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker) {
+    
+    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO gebruiker) {
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
 
@@ -80,6 +82,7 @@ public class OnderhoudFrameController extends VBox {
 
     private void addOnderhoud() {
         try {
+        	
         	String rapportJson = objectMapper.writeValueAsString(txtRapport.getText()); // Serialize to JSON
             Onderhoud nieuwOnderhoud = new Onderhoud(
             	LocalDateTime.now(),
@@ -92,10 +95,18 @@ public class OnderhoudFrameController extends VBox {
                 statusBox.getValue(),
                 1 // Machine ID (example)
             );
-            onderhoudController.registerOnderhoud(nieuwOnderhoud);
-//            // Voeg het nieuwe onderhoud toe aan de originele lijst in de controller
-//            onderhoudController.getAllOnderhoud().add(nieuwOnderhoud);
+            onderhoudController.addOnderhoud(LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    LocalDateTime.now().plusHours(1),
+                    ingelogdeGebruiker.id(),
+                    txtReden.getText(),
+                    rapportJson, // Use serialized JSON
+                    txtOpmerkingen.getText(),
+                    statusBox.getValue(),
+                    1 // Machine ID (example));
+                    );
         } catch (Exception e) {
+        	e.printStackTrace();
         	AlertHelper.showError("Onderhoud toevoegen mislukt", e.getMessage());
         }
     }
