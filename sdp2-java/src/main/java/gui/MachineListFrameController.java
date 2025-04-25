@@ -101,7 +101,7 @@ public class MachineListFrameController extends VBox {
                 Parent root = loader.load();
 
                 AddOrEditOnderhoudFrameController controller = loader.getController();
-                controller.initData(onderhoudController, selectedMachine); // Geef de geselecteerde machine mee
+                controller.initData(onderhoudController, ingelogdeGebruiker, selectedMachine); // Geef de geselecteerde machine mee
 
                 Stage dialogStage = new Stage();
                 dialogStage.setTitle("Onderhoud Toevoegen");
@@ -112,7 +112,7 @@ public class MachineListFrameController extends VBox {
                 
             } catch (IOException e) {
                 AlertHelper.showError("Fout", "Kan onderhoud niet toevoegen: " + e.getMessage());
-//                e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }

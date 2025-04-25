@@ -84,17 +84,7 @@ public class OnderhoudFrameController extends VBox {
         try {
         	
         	String rapportJson = objectMapper.writeValueAsString(txtRapport.getText()); // Serialize to JSON
-            Onderhoud nieuwOnderhoud = new Onderhoud(
-            	LocalDateTime.now(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                ingelogdeGebruiker.id(),
-                txtReden.getText(),
-                rapportJson, // Use serialized JSON
-                txtOpmerkingen.getText(),
-                statusBox.getValue(),
-                1 // Machine ID (example)
-            );
+            
             onderhoudController.addOnderhoud(LocalDateTime.now(),
                     LocalDateTime.now(),
                     LocalDateTime.now().plusHours(1),

@@ -1,6 +1,7 @@
 package gui;
 
 import domain.OnderhoudController;
+import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
 import enums.OnderhoudStatus;
@@ -12,6 +13,8 @@ import javafx.stage.Stage;
 import utils.AlertHelper;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AddOrEditOnderhoudFrameController {
 
@@ -41,18 +44,23 @@ public class AddOrEditOnderhoudFrameController {
 
     @FXML
     private Button cancelBtn;
-
+    
+	private final ObjectMapper objectMapper = new ObjectMapper();
     private OnderhoudController onderhoudController;
     private OnderhoudDTO bewerktOnderhoud; // null if creating new
+    private GebruikerDTO ingelogdeGebruiker;
+    private MachineDTO machine;
 
-    public void initData(OnderhoudController controller, MachineDTO machine) {
-        initData(controller, machine, null);
+    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine) {
+        initData(controller, gebruiker, machine, null);
         statusBox.setItems(FXCollections.observableArrayList(OnderhoudStatus.values()));
     }
 
-    public void initData(OnderhoudController controller, MachineDTO machine, OnderhoudDTO onderhoud) {
+    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, OnderhoudDTO onderhoud) {
         this.onderhoudController = controller;
         this.bewerktOnderhoud = onderhoud;
+        this.ingelogdeGebruiker = gebruiker;
+        this.machine = machine;
 
         statusBox.setItems(FXCollections.observableArrayList(OnderhoudStatus.values()));
 
@@ -76,7 +84,7 @@ public class AddOrEditOnderhoudFrameController {
             LocalDateTime startTijd = LocalDateTime.parse(datumPicker.getValue() + "T" + startTijdField.getText());
             LocalDateTime eindTijd = LocalDateTime.parse(datumPicker.getValue() + "T" + eindTijdField.getText());
             String reden = redenField.getText();
-            String rapport = rapportField.getText();
+            String rapport = objectMapper.writeValueAsString(rapportField.getText());
             String opmerkingen = opmerkingenArea.getText();
             OnderhoudStatus status = statusBox.getValue();
 
@@ -101,12 +109,12 @@ public class AddOrEditOnderhoudFrameController {
                         datum,
                         startTijd,
                         eindTijd,
-                        1, // Voorbeeld technieker ID
+                        ingelogdeGebruiker.id(),
                         reden,
                         rapport,
                         opmerkingen,
                         status,
-                        1 // Voorbeeld machine ID
+                        machine.id()
                 );
             }
 
