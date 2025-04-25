@@ -16,5 +16,6 @@
     </TableView>
 
     <Label fx:id="lblStatus" text="Geen machine geselecteerd." style="-fx-font-size: 14px; -fx-text-fill: #555;" />
+    <Button fx:id="addOnderhoudBtn" text="Onderhoud Toevoegen" />
 
 </fx:root>

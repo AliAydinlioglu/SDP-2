@@ -42,7 +42,7 @@ public class OnderhoudFrameController extends VBox {
     private OnderhoudController onderhoudController;
     private GebruikerDTO ingelogdeGebruiker;
     
-    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO gebruiker) {
+    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker) {
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
 

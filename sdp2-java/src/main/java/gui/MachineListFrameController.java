@@ -2,18 +2,30 @@ package gui;
 
 import domain.Machine;
 import domain.MachineController;
+import domain.Onderhoud;
+import domain.OnderhoudController;
 import dto.MachineDTO;
 import enums.MachineStatus;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import utils.AlertHelper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.logging.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MachineListFrameController extends VBox {
 
@@ -23,11 +35,16 @@ public class MachineListFrameController extends VBox {
     @FXML private TableColumn<MachineDTO, String> statusCol;
     @FXML private TableColumn<MachineDTO, Number> uptimeCol;
     @FXML private Label lblStatus;
+    @FXML private Button addOnderhoudBtn;
 
     private MachineController machineController;
+    private OnderhoudController onderhoudController;
+    
+    private MachineDTO selectedMachine;
 
-    public MachineListFrameController(MachineController machineController) {
+    public MachineListFrameController(MachineController machineController, OnderhoudController onderhoudController) {
         this.machineController = machineController;
+        this.onderhoudController = onderhoudController;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MachineListFrame.fxml"));
         loader.setRoot(this);
@@ -47,7 +64,7 @@ public class MachineListFrameController extends VBox {
 
         machineTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                MachineDTO selectedMachine = machineController.getMachine(newSelection.id());
+                this.selectedMachine = machineController.getMachine(newSelection.id());
                 lblStatus.setText("Geselecteerd: " + selectedMachine.naam() + " - Status: " + selectedMachine.status());
             } else {
                 lblStatus.setText("");
@@ -57,5 +74,37 @@ public class MachineListFrameController extends VBox {
         if (machineController.getAll().isEmpty()) {
             lblStatus.setText("Geen machines gevonden.");
         }
+        
+        initializeForm();
     }
+    
+    private void initializeForm() {
+		addOnderhoudBtn.setOnAction(event -> addOnderhoud());
+	}
+    
+    @FXML
+    private void addOnderhoud() {
+        if (selectedMachine != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
+                Parent root = loader.load();
+
+                AddOrEditOnderhoudFrameController controller = loader.getController();
+                controller.initData(onderhoudController, selectedMachine); // Geef de geselecteerde machine mee
+
+                Stage dialogStage = new Stage();
+                dialogStage.setTitle("Onderhoud Toevoegen");
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.setScene(new Scene(root));
+                dialogStage.showAndWait();
+            } catch (IOException e) {
+                AlertHelper.showError("Fout", "Kan onderhoud niet toevoegen: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            AlertHelper.showWarning("Geen machine geselecteerd", "Selecteer een machine om onderhoud toe te voegen.");
+        }
+    }
+
+
 }
