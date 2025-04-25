@@ -110,7 +110,7 @@ public class LoginFrameController extends AnchorPane {
         
         GebruikersListFrameController gebruikersView = new GebruikersListFrameController(dc);
         SiteOverzichtFrameController siteView = new SiteOverzichtFrameController(siteController, gebruiker);
-        MachineListFrameController machineView = new MachineListFrameController(machineController, onderhoudController);
+        MachineListFrameController machineView = new MachineListFrameController(machineController, onderhoudController, gebruiker);
         OnderhoudFrameController onderhoudView = new OnderhoudFrameController(onderhoudController, gebruiker);
         
         TabPane tabPane = new TabPane();

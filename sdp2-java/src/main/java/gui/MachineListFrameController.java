@@ -4,8 +4,10 @@ import domain.Machine;
 import domain.MachineController;
 import domain.Onderhoud;
 import domain.OnderhoudController;
+import dto.GebruikerDTO;
 import dto.MachineDTO;
 import enums.MachineStatus;
+import enums.Rol;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -40,11 +42,13 @@ public class MachineListFrameController extends VBox {
     private MachineController machineController;
     private OnderhoudController onderhoudController;
     
+    private GebruikerDTO ingelogdeGebruiker;
     private MachineDTO selectedMachine;
 
-    public MachineListFrameController(MachineController machineController, OnderhoudController onderhoudController) {
+    public MachineListFrameController(MachineController machineController, OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker) {
         this.machineController = machineController;
         this.onderhoudController = onderhoudController;
+        this.ingelogdeGebruiker = ingelogdeGebruiker;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MachineListFrame.fxml"));
         loader.setRoot(this);
@@ -79,12 +83,19 @@ public class MachineListFrameController extends VBox {
     }
     
     private void initializeForm() {
+    	if (ingelogdeGebruiker.rol() != Rol.TECHNIEKER) {
+    		addOnderhoudBtn.setVisible(false);
+    	}
 		addOnderhoudBtn.setOnAction(event -> addOnderhoud());
 	}
     
     @FXML
     private void addOnderhoud() {
-        if (selectedMachine != null) {
+        if (selectedMachine == null) {
+            AlertHelper.showWarning("Geen machine geselecteerd", "Selecteer een machine om onderhoud toe te voegen.");
+        } else if (selectedMachine.status() == MachineStatus.DRAAIT) {
+            AlertHelper.showWarning("Machine draait", "Onderhoud kan niet worden toegevoegd terwijl de machine draait.");
+        } else {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
                 Parent root = loader.load();
@@ -97,14 +108,15 @@ public class MachineListFrameController extends VBox {
                 dialogStage.initModality(Modality.APPLICATION_MODAL);
                 dialogStage.setScene(new Scene(root));
                 dialogStage.showAndWait();
+                
+                
             } catch (IOException e) {
                 AlertHelper.showError("Fout", "Kan onderhoud niet toevoegen: " + e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
             }
-        } else {
-            AlertHelper.showWarning("Geen machine geselecteerd", "Selecteer een machine om onderhoud toe te voegen.");
         }
     }
+
 
 
 }
