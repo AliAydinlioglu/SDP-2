@@ -87,7 +87,15 @@ public class GebruikerController {
 	}
 	
 	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol, boolean actief) {
-    	Gebruiker g = new Gebruiker(naam, voornaam, geboortedatum, new Adres(straat, huisNr, stad, land, postcode), email, gsm, rol, actief);
+    	Gebruiker g = new GebruikerBuilder().
+				voornaam(voornaam).
+				achternaam(naam).
+				geboorteDatum(geboortedatum).
+				adres(new AdresBuilder().straat(straat).huis_nr(huisNr).stad(stad).land(land).postcode(postcode).build()).
+				email(email).
+				rol(rol).
+				gsm(gsm).
+				actief(actief).build();
 
 		try {
 	        gebruikerRepo.startTransaction();
@@ -159,7 +167,13 @@ public class GebruikerController {
 	    g.setVoornaam(bewerkteDTO.voornaam());
 	    g.setAchternaam(bewerkteDTO.achternaam());
 	    g.setGeboorteDatum(bewerkteDTO.geboortedatum());
-	    g.setAdres(bewerkteDTO.adres());
+	    g.setAdres(new AdresBuilder()
+	            .straat(bewerkteDTO.adres().straat())
+	            .huis_nr(bewerkteDTO.adres().huis_nr())
+	            .postcode(bewerkteDTO.adres().postcode())
+	            .stad(bewerkteDTO.adres().stad())
+	            .land(bewerkteDTO.adres().land())
+	            .build());
 	    g.setEmail(bewerkteDTO.email());
 	    g.setGsm(bewerkteDTO.gsm());
 	    g.setRol(bewerkteDTO.rol());
