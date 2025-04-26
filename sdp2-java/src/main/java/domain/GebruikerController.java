@@ -69,6 +69,10 @@ public class GebruikerController {
 		return GebruikerDTO.fromEntity(g);
 	}
 	
+	protected Gebruiker getRealGebruiker(int id) {
+		return gebruikerRepo.get(id);
+	}
+	
 	public ObservableList<GebruikerDTO> findAll(){
 		if(gebruikerList == null) initData();
 		return sortedGebruikerList;

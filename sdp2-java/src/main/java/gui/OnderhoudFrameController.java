@@ -9,12 +9,17 @@ import enums.OnderhoudStatus;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import utils.AlertHelper;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class OnderhoudFrameController extends VBox {
 	
 	private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger logger = Logger.getLogger(OnderhoudFrameController.class.getName());
 
     @FXML private TableView<OnderhoudDTO> onderhoudTable;
     @FXML private TableColumn<OnderhoudDTO, String> datumCol;
@@ -39,7 +45,7 @@ public class OnderhoudFrameController extends VBox {
 
     private OnderhoudController onderhoudController;
     private GebruikerDTO ingelogdeGebruiker;
-
+    
     public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker) {
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
@@ -71,58 +77,29 @@ public class OnderhoudFrameController extends VBox {
     }
 
     private void initializeForm() {
-        statusBox.getItems().addAll(OnderhoudStatus.values());
 
-        btnAdd.setOnAction(event -> addOnderhoud());
         btnEdit.setOnAction(event -> editOnderhoud());
         btnDelete.setOnAction(event -> deleteOnderhoud());
     }
 
-    private void addOnderhoud() {
-        try {
-        	String rapportJson = objectMapper.writeValueAsString(txtRapport.getText()); // Serialize to JSON
-            Onderhoud nieuwOnderhoud = new Onderhoud(
-            	LocalDateTime.now(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                ingelogdeGebruiker.id(),
-                txtReden.getText(),
-                rapportJson, // Use serialized JSON
-                txtOpmerkingen.getText(),
-                statusBox.getValue(),
-                1 // Machine ID (example)
-            );
-            onderhoudController.registerOnderhoud(nieuwOnderhoud);
-//            // Voeg het nieuwe onderhoud toe aan de originele lijst in de controller
-//            onderhoudController.getAllOnderhoud().add(nieuwOnderhoud);
-        } catch (Exception e) {
-        	AlertHelper.showError("Onderhoud toevoegen mislukt", e.getMessage());
-        }
-    }
-
-
+    @FXML
     private void editOnderhoud() {
         OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
         if (geselecteerd != null) {
             try {
-//                geselecteerd.setReden(txtReden.getText());
-//                geselecteerd.setRapport(txtRapport.getText());
-//                geselecteerd.setOpmerkingen(txtOpmerkingen.getText());
-//                geselecteerd.setStatus(statusBox.getValue());
-            	  OnderhoudDTO updatedOnderhoud = new OnderhoudDTO(
-						  geselecteerd.id(),
-						  geselecteerd.datum(),
-						  geselecteerd.startTijd(),
-						  geselecteerd.eindTijd(),
-						  txtReden.getText(),
-						  txtRapport.getText(),
-						  txtOpmerkingen.getText(),
-						  statusBox.getValue(),
-						  geselecteerd.machineId(),
-						  geselecteerd.technieker()
-				  );
-            	  onderhoudController.updateOnderhoud(updatedOnderhoud);
-            	  onderhoudTable.refresh();
+            	FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
+                Parent root = loader.load();
+
+                AddOrEditOnderhoudFrameController controller = loader.getController();
+                controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd); // Geef de geselecteerde machine mee
+
+                Stage dialogStage = new Stage();
+                dialogStage.setTitle("Onderhoud Toevoegen");
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.setScene(new Scene(root));
+                dialogStage.showAndWait();
+            	onderhoudTable.refresh();
+            	
             } catch (Exception e) {
             	AlertHelper.showError("Onderhoud bewerken mislukt", e.getMessage());
             }

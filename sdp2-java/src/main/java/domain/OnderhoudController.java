@@ -6,6 +6,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import repository.OnderhoudDaoJpa;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,9 +19,10 @@ import enums.OnderhoudStatus;
 import enums.Rol;
 
 public class OnderhoudController {
-
+	
+	private List<Onderhoud> data;
     private OnderhoudDaoJpa onderhoudDaoJpa;
-    private ObservableList<Onderhoud> onderhoudList;
+    private ObservableList<OnderhoudDTO> onderhoudList;
     private FilteredList<OnderhoudDTO> filteredOnderhoudList;
     private SortedList<OnderhoudDTO> sortedOnderhoudList;
 
@@ -31,17 +33,16 @@ public class OnderhoudController {
     public OnderhoudController() {
         onderhoudDaoJpa = new OnderhoudDaoJpa();
         try {
-            List<Onderhoud> data = onderhoudDaoJpa.findAll();
-            onderhoudList = FXCollections.observableArrayList(data);
+            data = onderhoudDaoJpa.findAll();
         } catch (Exception e) {
             e.printStackTrace();
             onderhoudList = FXCollections.observableArrayList(); // Fallback
         }
 
-        ObservableList<OnderhoudDTO> onderhoudDTOList = FXCollections.observableArrayList(onderhoudList.stream()
+        onderhoudList = FXCollections.observableArrayList(data.stream()
 				.map(OnderhoudDTO::fromEntity)
 				.collect(Collectors.toList()));
-        filteredOnderhoudList = new FilteredList<>(onderhoudDTOList, p -> true);
+        filteredOnderhoudList = new FilteredList<>(onderhoudList, p -> true);
         sortedOnderhoudList = new SortedList<>(filteredOnderhoudList, sortOrder);
     }
 
@@ -52,28 +53,65 @@ public class OnderhoudController {
     public OnderhoudDTO getOnderhoudById(int id) {
         return OnderhoudDTO.fromEntity(onderhoudDaoJpa.get(id));
     }
+    
+    public Onderhoud getRealOnderhoudById(int id) {
+		return onderhoudDaoJpa.get(id);
+	}
 
-    public void addOnderhoud(Onderhoud onderhoud) {
-    	onderhoudDaoJpa.startTransaction();
-        onderhoudDaoJpa.insert(onderhoud);
-        onderhoudDaoJpa.commitTransaction();
-        onderhoudList.add(onderhoud);
+    public void addOnderhoud(LocalDateTime datum, LocalDateTime startTijd, LocalDateTime eindTijd,
+			int techniekerId, String reden, String rapport, String opmerkingen,
+			OnderhoudStatus status, int machineId) {
+		Onderhoud onderhoud = new Onderhoud(datum, startTijd, eindTijd, techniekerId, reden, rapport, opmerkingen, status, machineId);
+		
+        validateOnderhoudDetails(onderhoud);
+
+        
+        try {
+        	onderhoudDaoJpa.startTransaction();
+            onderhoudDaoJpa.insert(onderhoud);
+            onderhoudDaoJpa.commitTransaction();
+            onderhoudList.add(OnderhoudDTO.fromEntity(onderhoud));
+	        data.add(onderhoud);
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+//	    	onderhoudDaoJpa.rollbackTransaction();
+	    	throw new IllegalArgumentException(e.getMessage());
+	    }
     }
 
-    public void updateOnderhoud(OnderhoudDTO onderhoud) {
-    	Onderhoud updatedOnderhoud = onderhoudList.stream().filter(o -> o.getOnderhoudId() == onderhoud.id()).findFirst().orElse(null);
-        onderhoudDaoJpa.startTransaction();
-    	onderhoudDaoJpa.update(updatedOnderhoud);
-    	onderhoudDaoJpa.commitTransaction();
-        onderhoudList.set(onderhoudList.indexOf(updatedOnderhoud), updatedOnderhoud);
+    public void updateOnderhoud(OnderhoudDTO onderhouddto) {
+    	Onderhoud onderhoud = getRealOnderhoudById(onderhouddto.id());
+    	
+    	int index = data.indexOf(onderhoud);
+        
+        try {
+        	Onderhoud updatedOnderhoud = data.stream().filter(o -> o.getOnderhoudId() == onderhouddto.id()).findFirst().orElse(null);
+            onderhoudDaoJpa.startTransaction();
+        	onderhoudDaoJpa.update(updatedOnderhoud);
+        	onderhoudDaoJpa.commitTransaction();
+        	
+//            onderhoudList.set(onderhoudList.indexOf(OnderhoudDTO.fromEntity(updatedOnderhoud)), onderhoud);
+        	data.set(index, updatedOnderhoud);
+	    } catch (Exception e) {
+//	    	onderhoudDaoJpa.rollbackTransaction();
+	    	e.printStackTrace();
+	    }
     }
 
     public void deleteOnderhoud(OnderhoudDTO onderhoud) {
-    	Onderhoud onderhoudToDelete = onderhoudList.stream().filter(o -> o.getOnderhoudId() == onderhoud.id()).findFirst().orElse(null);
-        onderhoudDaoJpa.startTransaction();
-    	onderhoudDaoJpa.delete(onderhoudToDelete);
-    	onderhoudDaoJpa.commitTransaction();
-        onderhoudList.remove(onderhoudToDelete);
+    	        
+        try {
+        	Onderhoud onderhoudToDelete = data.stream().filter(o -> o.getOnderhoudId() == onderhoud.id()).findFirst().orElse(null);
+            onderhoudDaoJpa.startTransaction();
+        	onderhoudDaoJpa.delete(onderhoudToDelete);
+        	onderhoudDaoJpa.commitTransaction();
+            onderhoudList.remove(OnderhoudDTO.fromEntity(onderhoudToDelete));
+        	
+        	data.remove(onderhoud);
+	    } catch (Exception e) {
+	    	onderhoudDaoJpa.rollbackTransaction();
+	    	throw new IllegalArgumentException(e.getMessage());
+	    }
     }
 
     public void changeFilter(String filterValue) {
@@ -115,21 +153,6 @@ public class OnderhoudController {
         }
         if (onderhoud.getStatus() == OnderhoudStatus.INGEPLAND) {
             throw new IllegalArgumentException("De status 'ingepland' is niet toegestaan voor techniekers.");
-        }
-    }
-
-    
-    public void registerOnderhoud(Onderhoud onderhoud) {
-        validateOnderhoudDetails(onderhoud);
-        addOnderhoud(onderhoud);
-
-        // Als het onderhoud voltooid is, wijzig de status van de machine naar STARTBAAR
-        if (onderhoud.getStatus() == OnderhoudStatus.VOLTOOID) {
-        	//weet niet zeker of je controller van machine meot gebruiken of de JPA
-        	MachineController machineController = new MachineController();
-//            MachineDTO machine = machineController.getMachine(onderhoud.getMachineId());
-//            machine.setStatus(MachineStatus.DRAAIT);
-//            machineController.updateMachine(machine);
         }
     }
     

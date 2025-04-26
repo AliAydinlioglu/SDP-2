@@ -37,4 +37,6 @@ public record MachineDTO(
                 SiteDTO.SiteSummaryDTO.fromEntity(machine.getSite())
         );
     }
+    
+    
 }

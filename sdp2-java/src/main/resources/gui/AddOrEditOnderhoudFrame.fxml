@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" prefHeight="491.0" prefWidth="600" spacing="20" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AddOrEditOnderhoudFrameController">
+    <children>
+        <Label fx:id="hoofdLabel" prefHeight="23.0" prefWidth="300.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Onderhoud Aanmaken/Bewerken" />
+
+        <GridPane hgap="15" vgap="12">
+            <columnConstraints>
+                <ColumnConstraints halignment="RIGHT" />
+                <ColumnConstraints hgrow="ALWAYS" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints valignment="CENTER" />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
+
+            <!-- Row 0 -->
+            <Label text="Datum:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <DatePicker fx:id="datumPicker" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="0" />
+
+            <!-- Row 1 -->
+            <Label text="Start Tijd:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="startTijdField" promptText="HH:mm" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+
+            <!-- Row 2 -->
+            <Label text="Eind Tijd:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <TextField fx:id="eindTijdField" promptText="HH:mm" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+
+            <!-- Row 3 -->
+            <Label text="Reden:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField fx:id="redenField" promptText="Reden" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+
+            <!-- Row 4 -->
+            <Label text="Rapport:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <TextField fx:id="rapportField" promptText="Rapport" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+
+            <!-- Row 5 -->
+            <Label text="Opmerkingen:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+            <TextArea fx:id="opmerkingenArea" promptText="Opmerkingen" prefRowCount="3" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+
+            <!-- Row 6 -->
+            <Label text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <ComboBox fx:id="statusBox" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+        </GridPane>
+
+        <FlowPane alignment="CENTER">
+            <children>
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#cancel" prefWidth="150.0" text="Cancel">
+                    <FlowPane.margin>
+                        <Insets right="20.0" />
+                    </FlowPane.margin>
+                </Button>
+                <Button fx:id="submitBtn" onAction="#saveOnderhoud" prefWidth="150" text="Toevoegen" />
+            </children>
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </FlowPane>
+    </children>
+    <padding>
+        <Insets bottom="30" left="40" right="40" top="30" />
+    </padding>
+</VBox>

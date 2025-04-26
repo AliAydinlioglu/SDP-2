@@ -28,7 +28,7 @@ public record OnderhoudDTO(
             onderhoud.getOpmerkingen(),
             onderhoud.getStatus(),
             onderhoud.getMachineId(),
-            onderhoud.getTechnieker() != null ? GebruikerDTO.fromEntity(onderhoud.getTechnieker()) : null
+            GebruikerDTO.fromEntity(onderhoud.getTechnieker())
         );
     }
 }
