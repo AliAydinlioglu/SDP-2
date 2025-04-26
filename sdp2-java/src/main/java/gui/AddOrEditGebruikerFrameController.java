@@ -2,6 +2,7 @@ package gui;
 
 import domain.Adres;
 import domain.GebruikerController;
+import dto.AdresDTO;
 import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.collections.FXCollections;
@@ -77,11 +78,11 @@ public class AddOrEditGebruikerFrameController {
             achternaamField.setText(gebruiker.achternaam());
             emailField.setText(gebruiker.email());
             gsmNrField.setText(gebruiker.gsm());
-            straatField.setText(gebruiker.adres().getStraat());
-            huisNrField.setText(gebruiker.adres().getHuis_nr());
-            postcodeField.setText(gebruiker.adres().getPostcode());
-            stadField.setText(gebruiker.adres().getStad());
-            landField.setText(gebruiker.adres().getLand());
+            straatField.setText(gebruiker.adres().straat());
+            huisNrField.setText(gebruiker.adres().huis_nr());
+            postcodeField.setText(gebruiker.adres().postcode());
+            stadField.setText(gebruiker.adres().stad());
+            landField.setText(gebruiker.adres().land());
             geboorteDatumPicker.setValue(gebruiker.geboortedatum());
             rolBox.setValue(gebruiker.rol());
             actiefBox.setSelected(gebruiker.actief());
@@ -115,7 +116,7 @@ public class AddOrEditGebruikerFrameController {
                 		voornaam,
                 		naam,
                 		geboorteDatumPicker.getValue(),
-                		new Adres(straat, huisNr, postcode, stad, land),
+                		new AdresDTO(straat, huisNr, postcode, stad, land),
                 		email,
                 		gsm,
                 		rol,

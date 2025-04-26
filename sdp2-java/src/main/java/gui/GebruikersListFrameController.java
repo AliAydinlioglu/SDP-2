@@ -95,8 +95,11 @@ public class GebruikersListFrameController extends VBox {
                             setStyle("");
                         } else if (!gebruiker.actief() && !isSelected()) {
                             setStyle("-fx-background-color: #e0e0e0;"); // light grey for inactive users
-                        } else {
+                        } else if (!isSelected()) {
                             setStyle("");
+                        }
+                        else {
+                        	setStyle("");
                         }
                     }
                 };
@@ -123,6 +126,7 @@ public class GebruikersListFrameController extends VBox {
 	
 	@FXML
 	private void clearSelectedGebruiker() {
+		gebruikersTable.getSelectionModel().clearSelection();
 	    detailBox.setVisible(false);
 	}
 
