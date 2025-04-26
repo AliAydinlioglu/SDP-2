@@ -51,9 +51,12 @@ public class AddOrEditOnderhoudFrameController {
     private GebruikerDTO ingelogdeGebruiker;
     private MachineDTO machine;
 
+    public void initData(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, OnderhoudDTO geselecteerd) {
+		initData(onderhoudController, ingelogdeGebruiker, null, geselecteerd);
+	}
+
     public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine) {
         initData(controller, gebruiker, machine, null);
-        statusBox.setItems(FXCollections.observableArrayList(OnderhoudStatus.values()));
     }
 
     public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, OnderhoudDTO onderhoud) {
@@ -130,4 +133,5 @@ public class AddOrEditOnderhoudFrameController {
     void cancel(ActionEvent event) {
         ((Stage) cancelBtn.getScene().getWindow()).close();
     }
+
 }

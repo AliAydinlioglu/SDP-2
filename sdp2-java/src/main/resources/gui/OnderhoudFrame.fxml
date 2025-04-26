@@ -34,18 +34,7 @@
          </columnResizePolicy>
       </TableView>
       <HBox spacing="10.0">
-         <VBox spacing="5.0">
-            <Label text="Reden" />
-            <TextField fx:id="txtReden" promptText="Reden" />
-            <Label text="Rapport" />
-            <TextField fx:id="txtRapport" promptText="Rapport" />
-            <Label text="Opmerkingen" />
-            <TextArea fx:id="txtOpmerkingen" promptText="Opmerkingen" prefRowCount="3" />
-            <Label text="Status" />
-            <ComboBox fx:id="statusBox" />
-         </VBox>
          <VBox spacing="10.0" alignment="CENTER">
-            <Button fx:id="btnAdd" text="Toevoegen" />
             <Button fx:id="btnEdit" text="Bewerken" />
             <Button fx:id="btnDelete" text="Verwijderen" />
          </VBox>

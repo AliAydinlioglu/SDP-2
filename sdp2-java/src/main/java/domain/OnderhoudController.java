@@ -53,6 +53,10 @@ public class OnderhoudController {
     public OnderhoudDTO getOnderhoudById(int id) {
         return OnderhoudDTO.fromEntity(onderhoudDaoJpa.get(id));
     }
+    
+    public Onderhoud getRealOnderhoudById(int id) {
+		return onderhoudDaoJpa.get(id);
+	}
 
     public void addOnderhoud(LocalDateTime datum, LocalDateTime startTijd, LocalDateTime eindTijd,
 			int techniekerId, String reden, String rapport, String opmerkingen,
@@ -75,21 +79,22 @@ public class OnderhoudController {
 	    }
     }
 
-    public void updateOnderhoud(OnderhoudDTO onderhoud) {
+    public void updateOnderhoud(OnderhoudDTO onderhouddto) {
+    	Onderhoud onderhoud = getRealOnderhoudById(onderhouddto.id());
     	
     	int index = data.indexOf(onderhoud);
         
         try {
-        	Onderhoud updatedOnderhoud = data.stream().filter(o -> o.getOnderhoudId() == onderhoud.id()).findFirst().orElse(null);
+        	Onderhoud updatedOnderhoud = data.stream().filter(o -> o.getOnderhoudId() == onderhouddto.id()).findFirst().orElse(null);
             onderhoudDaoJpa.startTransaction();
         	onderhoudDaoJpa.update(updatedOnderhoud);
         	onderhoudDaoJpa.commitTransaction();
         	
+//            onderhoudList.set(onderhoudList.indexOf(OnderhoudDTO.fromEntity(updatedOnderhoud)), onderhoud);
         	data.set(index, updatedOnderhoud);
-            onderhoudList.set(onderhoudList.indexOf(updatedOnderhoud), onderhoud);
 	    } catch (Exception e) {
-	    	onderhoudDaoJpa.rollbackTransaction();
-	    	throw new IllegalArgumentException(e.getMessage());
+//	    	onderhoudDaoJpa.rollbackTransaction();
+	    	e.printStackTrace();
 	    }
     }
 

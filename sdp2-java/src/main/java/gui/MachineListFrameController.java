@@ -108,8 +108,7 @@ public class MachineListFrameController extends VBox {
                 dialogStage.initModality(Modality.APPLICATION_MODAL);
                 dialogStage.setScene(new Scene(root));
                 dialogStage.showAndWait();
-                
-                
+                                
             } catch (IOException e) {
                 AlertHelper.showError("Fout", "Kan onderhoud niet toevoegen: " + e.getMessage());
                 e.printStackTrace();
