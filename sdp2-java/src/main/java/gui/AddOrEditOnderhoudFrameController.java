@@ -125,6 +125,12 @@ public class AddOrEditOnderhoudFrameController {
                         bewerktOnderhoud.technieker()
                 );
                 onderhoudController.updateOnderhoud(updatedOnderhoud);
+                
+                if (status == OnderhoudStatus.VOLTOOID) {
+                	MachineDTO m = machineController.getMachine(bewerktOnderhoud.machineId());
+                	machineController.stopOnderhoud(m);
+                }
+                
             } else {
                 onderhoudController.addOnderhoud(
                         datumUTC.toLocalDateTime(),

@@ -126,5 +126,14 @@ public class MachineController {
         MachineDTO updatedMachine = MachineDTO.fromEntity(machine);
         updateMachine(updatedMachine);
     }
+    
+    public void stopOnderhoud(MachineDTO machineDTO) {
+		validateMachineStatus(machineDTO);
+		Machine machine = getRealMachine(machineDTO.id());
+		machine.setStatus(MachineStatus.STARTBAAR);
+		
+		MachineDTO updatedMachine = MachineDTO.fromEntity(machine);
+		updateMachine(updatedMachine);
+	}
 
 }
