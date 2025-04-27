@@ -14,8 +14,12 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import utils.AlertHelper;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,16 +78,9 @@ public class AddOrEditOnderhoudFrameController {
         statusBox.setItems(FXCollections.observableArrayList(OnderhoudStatus.values()));
 
         if (onderhoud != null) {
-            // Converteer datum van UTC naar lokale tijd
-            ZonedDateTime datumLocal = onderhoud.datum().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
-            datumPicker.setValue(datumLocal.toLocalDate());
 
-            // Converteer tijden van UTC naar lokale tijd
-            ZonedDateTime startTijdLocal = onderhoud.startTijd().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
-            ZonedDateTime eindTijdLocal = onderhoud.eindTijd().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
-
-            startTijdField.setText(startTijdLocal.toLocalTime().toString());
-            eindTijdField.setText(eindTijdLocal.toLocalTime().toString());
+            startTijdField.setText(onderhoud.startTijd().toString());
+            eindTijdField.setText(onderhoud.eindTijd().toString());
             redenField.setText(onderhoud.reden());
             rapportField.setText(onderhoud.rapport());
             opmerkingenArea.setText(onderhoud.opmerkingen());
@@ -96,15 +93,10 @@ public class AddOrEditOnderhoudFrameController {
     @FXML
     private void saveOnderhoud() {
         try {
-            LocalDateTime datum = datumPicker.getValue().atStartOfDay();
-            ZonedDateTime datumUTC = datum.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+            LocalDate datum = datumPicker.getValue();
 
-            LocalDateTime startTijd = LocalDateTime.parse(datumPicker.getValue() + "T" + startTijdField.getText());
-            LocalDateTime eindTijd = LocalDateTime.parse(datumPicker.getValue() + "T" + eindTijdField.getText());
-
-            // Converteer naar UTC
-            ZonedDateTime startTijdUTC = startTijd.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
-            ZonedDateTime eindTijdUTC = eindTijd.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+            LocalTime startTijd = LocalTime.parse(startTijdField.getText());
+            LocalTime eindTijd = LocalTime.parse(eindTijdField.getText());
 
             String reden = redenField.getText();
             String rapport = objectMapper.writeValueAsString(rapportField.getText());
@@ -114,9 +106,9 @@ public class AddOrEditOnderhoudFrameController {
             if (bewerktOnderhoud != null) {
                 OnderhoudDTO updatedOnderhoud = new OnderhoudDTO(
                         bewerktOnderhoud.id(),
-                        datumUTC.toLocalDateTime(),
-                        startTijdUTC.toLocalDateTime(),
-                        eindTijdUTC.toLocalDateTime(),
+                        datum,
+                        startTijd,
+                        eindTijd,
                         reden,
                         rapport,
                         opmerkingen,
@@ -133,9 +125,9 @@ public class AddOrEditOnderhoudFrameController {
                 
             } else {
                 onderhoudController.addOnderhoud(
-                        datumUTC.toLocalDateTime(),
-                        startTijdUTC.toLocalDateTime(),
-                        eindTijdUTC.toLocalDateTime(),
+                		datum,
+                        startTijd,
+                        eindTijd,
                         ingelogdeGebruiker.id(),
                         reden,
                         rapport,
@@ -147,6 +139,8 @@ public class AddOrEditOnderhoudFrameController {
             }
 
             ((Stage) submitBtn.getScene().getWindow()).close();
+            
+            AlertHelper.showInfo("Opslaan gelukt", "Het onderhoud is succesvol opgeslagen.");
 
         } catch (Exception e) {
             e.printStackTrace();

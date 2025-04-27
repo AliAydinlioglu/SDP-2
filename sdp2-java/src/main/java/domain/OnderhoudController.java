@@ -7,7 +7,9 @@ import javafx.collections.transformation.SortedList;
 import repository.OnderhoudDao;
 import repository.OnderhoudDaoJpa;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,7 +61,7 @@ public class OnderhoudController {
 		return onderhoudDao.get(id);
 	}
 
-    public void addOnderhoud(LocalDateTime datum, LocalDateTime startTijd, LocalDateTime eindTijd,
+    public void addOnderhoud(LocalDate datum, LocalTime startTijd, LocalTime eindTijd,
 			int techniekerId, String reden, String rapport, String opmerkingen,
 			OnderhoudStatus status, int machineId) {
 		Onderhoud onderhoud = new Onderhoud(datum, startTijd, eindTijd, techniekerId, reden, rapport, opmerkingen, status, machineId);
@@ -104,13 +106,10 @@ public class OnderhoudController {
         	onderhoudDao.update(onderhoud);
         	onderhoudDao.commitTransaction();
         	
-        	System.out.println(data);
-        	System.out.println(onderhoudList);
-        	
         	data.set(indexData, onderhoud);
             onderhoudList.set(indexList, onderhouddto);
 	    } catch (Exception e) {
-//	    	onderhoudDao.rollbackTransaction();
+	    	onderhoudDao.rollbackTransaction();
 	    	e.printStackTrace();
 	    }
     }
@@ -142,7 +141,7 @@ public class OnderhoudController {
         });
     }
     
-    public ObservableList<OnderhoudDTO> filterByRole(GebruikerDTO ingelogdeGebruiker) {
+    public ObservableList<OnderhoudDTO> filterByUser(GebruikerDTO ingelogdeGebruiker) {
     	boolean isVerantwoordelijke = ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE || ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR;
     	int userId = ingelogdeGebruiker.id();
     	

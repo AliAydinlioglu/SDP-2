@@ -76,7 +76,7 @@ public class OnderhoudFrameController extends VBox {
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 "Machine ID: " + cellData.getValue().machineId()));
 
-        onderhoudTable.setItems(onderhoudController.filterByRole(ingelogdeGebruiker));
+        onderhoudTable.setItems(onderhoudController.filterByUser(ingelogdeGebruiker));
     }
 
     private void initializeForm() {
