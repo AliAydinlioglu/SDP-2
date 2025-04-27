@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
+import dto.SiteDTO;
 import enums.MachineStatus;
 import enums.OnderhoudStatus;
 import enums.Rol;
@@ -62,46 +63,57 @@ public class OnderhoudController {
 	}
 
     public void addOnderhoud(LocalDate datum, LocalTime startTijd, LocalTime eindTijd,
-			int techniekerId, String reden, String rapport, String opmerkingen,
-			OnderhoudStatus status, int machineId) {
-		Onderhoud onderhoud = new Onderhoud(datum, startTijd, eindTijd, techniekerId, reden, rapport, opmerkingen, status, machineId);
-		
-        validateOnderhoudDetails(onderhoud);
-
-        
+            int techniekerId, String reden, String rapport, String opmerkingen,
+            OnderhoudStatus status, int machineId) {
         try {
-        	onderhoudDao.startTransaction();
-        	onderhoudDao.insert(onderhoud);
-        	onderhoudDao.commitTransaction();
+        	
+            Gebruiker technieker = new GebruikerController().getRealGebruiker(techniekerId); // Assuming this method exists
+            Onderhoud onderhoud = new OnderhoudBuilder()
+                    .datum(datum)
+                    .startTijd(startTijd)
+                    .eindTijd(eindTijd)
+                    .technieker(technieker)
+                    .reden(reden)
+                    .rapport(rapport)
+                    .opmerkingen(opmerkingen)
+                    .status(status)
+                    .machineId(machineId)
+                    .build();
+
+            onderhoudDao.startTransaction();
+            onderhoudDao.insert(onderhoud);
+            onderhoudDao.commitTransaction();
             onderhoudList.add(OnderhoudDTO.fromEntity(onderhoud));
-	        data.add(onderhoud);
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    	onderhoudDao.rollbackTransaction();
-	    	throw new IllegalArgumentException(e.getMessage());
-	    }
+            data.add(onderhoud);
+        } catch (Exception e) {
+//            onderhoudDao.rollbackTransaction();
+            e.printStackTrace();
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
+
     public void updateOnderhoud(OnderhoudDTO onderhouddto) {
-    	Onderhoud onderhoud = getRealOnderhoudById(onderhouddto.id());
-    	
-    	int indexData = data.indexOf(onderhoud);
-    	int indexList = onderhoudList.indexOf(
-    		    onderhoudList.stream()
-    		        .filter(o -> o.id() == onderhouddto.id())
-    		        .findFirst()
-    		        .orElse(null)
-    		);
-    	
-    	onderhoud.setDatum(onderhouddto.datum());
-    	onderhoud.setStartTijd(onderhouddto.startTijd());
-    	onderhoud.setEindTijd(onderhouddto.eindTijd());
-    	onderhoud.setReden(onderhouddto.reden());
-    	onderhoud.setRapport(onderhouddto.rapport());
-    	onderhoud.setOpmerkingen(onderhouddto.opmerkingen());
-    	onderhoud.setStatus(onderhouddto.status());
         
         try {
+        	Onderhoud onderhoud = getRealOnderhoudById(onderhouddto.id());
+        	
+        	int indexData = data.indexOf(onderhoud);
+        	int indexList = onderhoudList.indexOf(
+        		    onderhoudList.stream()
+        		        .filter(o -> o.id() == onderhouddto.id())
+        		        .findFirst()
+        		        .orElse(null)
+        		);
+        	
+        	onderhoud.setDatum(onderhouddto.datum());
+        	onderhoud.setStartTijd(onderhouddto.startTijd());
+        	onderhoud.setEindTijd(onderhouddto.eindTijd());
+        	onderhoud.setReden(onderhouddto.reden());
+        	onderhoud.setRapport(onderhouddto.rapport());
+        	onderhoud.setOpmerkingen(onderhouddto.opmerkingen());
+        	onderhoud.setStatus(onderhouddto.status());
+        	
         	onderhoudDao.startTransaction();
         	onderhoudDao.update(onderhoud);
         	onderhoudDao.commitTransaction();
@@ -109,7 +121,7 @@ public class OnderhoudController {
         	data.set(indexData, onderhoud);
             onderhoudList.set(indexList, onderhouddto);
 	    } catch (Exception e) {
-	    	onderhoudDao.rollbackTransaction();
+//	    	onderhoudDao.rollbackTransaction();
 	    	e.printStackTrace();
 	    }
     }
@@ -125,7 +137,7 @@ public class OnderhoudController {
         	
         	data.remove(onderhoud);
 	    } catch (Exception e) {
-	    	onderhoudDao.rollbackTransaction();
+//	    	onderhoudDao.rollbackTransaction();
 	    	throw new IllegalArgumentException(e.getMessage());
 	    }
     }
@@ -145,9 +157,23 @@ public class OnderhoudController {
     	boolean isVerantwoordelijke = ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE || ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR;
     	int userId = ingelogdeGebruiker.id();
     	
+//    	if (isVerantwoordelijke) {
+//    		SiteController siteController = new SiteController();
+//    		MachineController mc = new MachineController();
+//    		
+//    		List<SiteDTO> sites = siteController.getSitesByUserId(userId);
+//    		List<MachineDTO> machines = mc.getMachinesBySiteList(sites);
+//    		
+//    		return FXCollections.observableArrayList(
+//					onderhoudList.stream()
+//					.filter(onderhoud -> machines.stream().anyMatch(machine -> machine.id() == onderhoud.machineId()))
+//					.collect(Collectors.toList())
+//			);
+//    	}
+    	
         filteredOnderhoudList.setPredicate(onderhoud -> {
             if (isVerantwoordelijke) {
-                // Verantwoordelijke ziet alle onderhouden
+                // Verantwoordelijke ziet alle onderhouden van site
                 return true;
             } else {
                 // Technieker ziet alleen onderhouden van toegewezen machines

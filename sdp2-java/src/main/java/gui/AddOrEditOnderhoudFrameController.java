@@ -21,6 +21,7 @@ import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -93,7 +94,9 @@ public class AddOrEditOnderhoudFrameController {
     @FXML
     private void saveOnderhoud() {
         try {
-            LocalDate datum = datumPicker.getValue();
+        	validateOnderhoud();
+            
+        	LocalDate datum = datumPicker.getValue();
 
             LocalTime startTijd = LocalTime.parse(startTijdField.getText());
             LocalTime eindTijd = LocalTime.parse(eindTijdField.getText());
@@ -142,6 +145,8 @@ public class AddOrEditOnderhoudFrameController {
             
             AlertHelper.showInfo("Opslaan gelukt", "Het onderhoud is succesvol opgeslagen.");
 
+        } catch (DateTimeParseException dtp) {
+        	AlertHelper.showError("Ongeldige tijd", "De tijd moet in het formaat HH:mm zijn.");        
         } catch (Exception e) {
             e.printStackTrace();
             AlertHelper.showError("Opslaan mislukt", e.getMessage());
@@ -151,6 +156,21 @@ public class AddOrEditOnderhoudFrameController {
     @FXML
     void cancel(ActionEvent event) {
         ((Stage) cancelBtn.getScene().getWindow()).close();
+    }
+    
+    public void validateOnderhoud() {
+		if (datumPicker.getValue() == null)
+			throw new IllegalArgumentException("Datum mag niet leeg zijn.");
+		if (startTijdField.getText() == null || startTijdField.getText().isEmpty())
+			throw new IllegalArgumentException("Starttijd mag niet leeg zijn.");
+		if (eindTijdField.getText() == null || eindTijdField.getText().isEmpty())
+			throw new IllegalArgumentException("Eindtijd mag niet leeg zijn.");
+		if (redenField.getText() == null || redenField.getText().isEmpty())
+			throw new IllegalArgumentException("Reden mag niet leeg zijn.");
+		if (rapportField.getText() == null || rapportField.getText().isEmpty())
+			throw new IllegalArgumentException("Rapport mag niet leeg zijn.");
+		if (statusBox.getValue() == null)
+			throw new IllegalArgumentException("Status mag niet leeg zijn.");
     }
 
 }

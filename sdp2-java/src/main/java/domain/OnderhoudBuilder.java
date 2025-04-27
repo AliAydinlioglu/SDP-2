@@ -68,9 +68,6 @@ public class OnderhoudBuilder {
 	}
 	
 	public OnderhoudBuilder opmerkingen(String opmerkingen) {
-		if(opmerkingen == null || opmerkingen.isBlank()) {
-			throw new IllegalArgumentException("Opmerkingen mogen niet leeg zijn");
-		}
 		this.opmerkingen = opmerkingen;
 		return this;
 	}

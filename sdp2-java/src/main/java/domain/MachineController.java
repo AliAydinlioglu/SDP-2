@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import dto.MachineDTO;
+import dto.SiteDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -108,6 +109,22 @@ public class MachineController {
         FilteredList<MachineDTO> filteredByTechnieker = new FilteredList<>(machineList, 
             machine -> machine.technieker() != null && machine.technieker().id() == techniekerId);
         return new SortedList<>(filteredByTechnieker, sortOrder);
+    }
+    
+    public ObservableList<MachineDTO> getMachinesBySite(int siteId) {
+		FilteredList<MachineDTO> filteredBySite = new FilteredList<>(machineList, 
+			machine -> machine.site() != null && machine.site().id() == siteId);
+		return new SortedList<>(filteredBySite, sortOrder);
+	}
+    
+    public List<MachineDTO> getMachinesBySiteList(List<SiteDTO> siteList) {
+        List<MachineDTO> allMachines = getAll();
+
+        // Filter machines that belong to the sites in siteList
+        return allMachines.stream()
+                .filter(machine -> siteList.stream()
+                        .anyMatch(site -> site.id() == machine.site().id()))
+                .collect(Collectors.toList());
     }
     
     public void validateMachineStatus(MachineDTO machine) {
