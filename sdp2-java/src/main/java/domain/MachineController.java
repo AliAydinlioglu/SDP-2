@@ -9,12 +9,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import repository.MachineDao;
 import repository.MachineDaoJpa;
 import enums.MachineStatus;
 
 public class MachineController {
 
-    private MachineDaoJpa machineDaoJpa;
+    private MachineDao machineDaoJpa;
 
     private ObservableList<MachineDTO> machineList;
     private FilteredList<MachineDTO> filteredMachineList;
@@ -44,6 +45,10 @@ public class MachineController {
         Machine m = machineDaoJpa.get(id);
         return MachineDTO.fromEntity(m);
     }
+    
+    public Machine getRealMachine(int id) {
+		return machineDaoJpa.get(id);
+	}
 
     public ObservableList<MachineDTO> getAll() {
         return sortedMachineList;
@@ -60,9 +65,30 @@ public class MachineController {
         });
     }
 
-    public void updateMachine(Machine machine) {
-        machineDaoJpa.update(machine);
+    public void updateMachine(MachineDTO machineDTO) {
+        Machine machine = getRealMachine(machineDTO.id());
+
+        if (machine == null) return;
+
+        int index = data.indexOf(machine);
+
+        machine.setNaam(machineDTO.naam());
+        machine.setStatus(machineDTO.status());
+
+        try {
+            machineDaoJpa.startTransaction();
+            machineDaoJpa.update(machine);
+            machineDaoJpa.commitTransaction();
+
+            data.set(index, machine);
+            MachineDTO updatedDTO = MachineDTO.fromEntity(machine);
+            machineList.set(index, updatedDTO);
+        } catch (Exception e) {
+            machineDaoJpa.rollbackTransaction();
+            throw new IllegalArgumentException("Machine kon niet worden aangepast: " + e.getMessage());
+        }
     }
+
 
     public void addMachine(Machine machine) {
         machineDaoJpa.insert(machine);
@@ -84,18 +110,21 @@ public class MachineController {
         return new SortedList<>(filteredByTechnieker, sortOrder);
     }
     
-    public void validateMachineStatus(Machine machine) {
-        if (machine.getStatus() != MachineStatus.GESTOPT_AUTO 
-                && machine.getStatus() != MachineStatus.GESTOPT_MANUEEL 
-                && machine.getStatus() != MachineStatus.IN_ONDERHOUD) {
+    public void validateMachineStatus(MachineDTO machine) {
+        if (machine.status() != MachineStatus.GESTOPT_AUTO 
+                && machine.status() != MachineStatus.GESTOPT_MANUEEL 
+                && machine.status() != MachineStatus.IN_ONDERHOUD) {
             throw new IllegalArgumentException("De machine moet gestopt (automatisch of manueel) of in onderhoud zijn.");
         }
     }
 
-    public void startOnderhoud(Machine machine) {
-        validateMachineStatus(machine);
+    public void startOnderhoud(MachineDTO machineDTO) {
+        validateMachineStatus(machineDTO);
+        Machine machine = getRealMachine(machineDTO.id());
         machine.setStatus(MachineStatus.IN_ONDERHOUD);
-        updateMachine(machine);
+        
+        MachineDTO updatedMachine = MachineDTO.fromEntity(machine);
+        updateMachine(updatedMachine);
     }
 
 }

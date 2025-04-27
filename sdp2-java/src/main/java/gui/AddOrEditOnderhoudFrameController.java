@@ -1,5 +1,7 @@
 package gui;
 
+import domain.Machine;
+import domain.MachineController;
 import domain.OnderhoudController;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
@@ -13,6 +15,8 @@ import javafx.stage.Stage;
 import utils.AlertHelper;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,27 +54,36 @@ public class AddOrEditOnderhoudFrameController {
     private OnderhoudDTO bewerktOnderhoud; // null if creating new
     private GebruikerDTO ingelogdeGebruiker;
     private MachineDTO machine;
+    private MachineController machineController;
 
-    public void initData(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, OnderhoudDTO geselecteerd) {
-		initData(onderhoudController, ingelogdeGebruiker, null, geselecteerd);
+    public void initData(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, OnderhoudDTO geselecteerd, MachineController machineController) {
+		initData(onderhoudController, ingelogdeGebruiker, null, geselecteerd, machineController);
 	}
 
-    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine) {
-        initData(controller, gebruiker, machine, null);
+    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, MachineController machineController) {
+        initData(controller, gebruiker, machine, null, machineController);
     }
 
-    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, OnderhoudDTO onderhoud) {
+    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, OnderhoudDTO onderhoud, MachineController machineController) {
         this.onderhoudController = controller;
         this.bewerktOnderhoud = onderhoud;
         this.ingelogdeGebruiker = gebruiker;
         this.machine = machine;
+        this.machineController = machineController;
 
         statusBox.setItems(FXCollections.observableArrayList(OnderhoudStatus.values()));
 
         if (onderhoud != null) {
-            datumPicker.setValue(onderhoud.datum().toLocalDate());
-            startTijdField.setText(onderhoud.startTijd().toLocalTime().toString());
-            eindTijdField.setText(onderhoud.eindTijd().toLocalTime().toString());
+            // Converteer datum van UTC naar lokale tijd
+            ZonedDateTime datumLocal = onderhoud.datum().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
+            datumPicker.setValue(datumLocal.toLocalDate());
+
+            // Converteer tijden van UTC naar lokale tijd
+            ZonedDateTime startTijdLocal = onderhoud.startTijd().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
+            ZonedDateTime eindTijdLocal = onderhoud.eindTijd().atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault());
+
+            startTijdField.setText(startTijdLocal.toLocalTime().toString());
+            eindTijdField.setText(eindTijdLocal.toLocalTime().toString());
             redenField.setText(onderhoud.reden());
             rapportField.setText(onderhoud.rapport());
             opmerkingenArea.setText(onderhoud.opmerkingen());
@@ -84,20 +97,26 @@ public class AddOrEditOnderhoudFrameController {
     private void saveOnderhoud() {
         try {
             LocalDateTime datum = datumPicker.getValue().atStartOfDay();
+            ZonedDateTime datumUTC = datum.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+
             LocalDateTime startTijd = LocalDateTime.parse(datumPicker.getValue() + "T" + startTijdField.getText());
             LocalDateTime eindTijd = LocalDateTime.parse(datumPicker.getValue() + "T" + eindTijdField.getText());
+
+            // Converteer naar UTC
+            ZonedDateTime startTijdUTC = startTijd.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+            ZonedDateTime eindTijdUTC = eindTijd.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+
             String reden = redenField.getText();
             String rapport = objectMapper.writeValueAsString(rapportField.getText());
             String opmerkingen = opmerkingenArea.getText();
             OnderhoudStatus status = statusBox.getValue();
 
             if (bewerktOnderhoud != null) {
-                // Update bestaand onderhoud
                 OnderhoudDTO updatedOnderhoud = new OnderhoudDTO(
                         bewerktOnderhoud.id(),
-                        datum,
-                        startTijd,
-                        eindTijd,
+                        datumUTC.toLocalDateTime(),
+                        startTijdUTC.toLocalDateTime(),
+                        eindTijdUTC.toLocalDateTime(),
                         reden,
                         rapport,
                         opmerkingen,
@@ -107,11 +126,10 @@ public class AddOrEditOnderhoudFrameController {
                 );
                 onderhoudController.updateOnderhoud(updatedOnderhoud);
             } else {
-                // Voeg nieuw onderhoud toe
                 onderhoudController.addOnderhoud(
-                        datum,
-                        startTijd,
-                        eindTijd,
+                        datumUTC.toLocalDateTime(),
+                        startTijdUTC.toLocalDateTime(),
+                        eindTijdUTC.toLocalDateTime(),
                         ingelogdeGebruiker.id(),
                         reden,
                         rapport,
@@ -119,6 +137,7 @@ public class AddOrEditOnderhoudFrameController {
                         status,
                         machine.id()
                 );
+                machineController.startOnderhoud(machine);
             }
 
             ((Stage) submitBtn.getScene().getWindow()).close();
