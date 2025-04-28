@@ -151,7 +151,9 @@ public class GebruikersListFrameController extends VBox {
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Gebruiker Toevoegen");
 			dialogStage.initModality(Modality.APPLICATION_MODAL);
+			dialogStage.initOwner(this.getScene().getWindow());
 			dialogStage.setScene(new Scene(root));
+			dialogStage.setResizable(false);
 			dialogStage.showAndWait();
 			
 			gebruikersTable.refresh();
@@ -174,7 +176,9 @@ public class GebruikersListFrameController extends VBox {
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Gebruiker Aanpassen");
 			dialogStage.initModality(Modality.APPLICATION_MODAL);
+			dialogStage.initOwner(this.getScene().getWindow());
 			dialogStage.setScene(new Scene(root));
+			dialogStage.setResizable(false);
 			dialogStage.showAndWait();
 			
 			gebruikersTable.refresh();
