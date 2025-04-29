@@ -154,25 +154,24 @@ public class OnderhoudController {
     }
     
     public ObservableList<OnderhoudDTO> filterByUser(GebruikerDTO ingelogdeGebruiker) {
-    	boolean isVerantwoordelijke = ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE || ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR;
     	int userId = ingelogdeGebruiker.id();
     	
-//    	if (isVerantwoordelijke) {
-//    		SiteController siteController = new SiteController();
-//    		MachineController mc = new MachineController();
-//    		
-//    		List<SiteDTO> sites = siteController.getSitesByUserId(userId);
-//    		List<MachineDTO> machines = mc.getMachinesBySiteList(sites);
-//    		
-//    		return FXCollections.observableArrayList(
-//					onderhoudList.stream()
-//					.filter(onderhoud -> machines.stream().anyMatch(machine -> machine.id() == onderhoud.machineId()))
-//					.collect(Collectors.toList())
-//			);
-//    	}
+    	if (ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE) {
+    		SiteController siteController = new SiteController();
+    		MachineController mc = new MachineController();
+    		
+    		List<SiteDTO> sites = siteController.getSitesByUserId(userId);
+    		List<MachineDTO> machines = mc.getMachinesBySiteList(sites);
+    		
+    		return FXCollections.observableArrayList(
+					onderhoudList.stream()
+					.filter(onderhoud -> machines.stream().anyMatch(machine -> machine.id() == onderhoud.machineId()))
+					.collect(Collectors.toList())
+			);
+    	}
     	
         filteredOnderhoudList.setPredicate(onderhoud -> {
-            if (isVerantwoordelijke) {
+            if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
                 // Verantwoordelijke ziet alle onderhouden van site
                 return true;
             } else {
