@@ -14,7 +14,7 @@ public class StartUpGui extends Application {
 
         LoginFrameController loginView = new LoginFrameController(gebruikerController, primaryStage);
 
-        Scene loginScene = new Scene(loginView); // You can change width/height as needed
+        Scene loginScene = new Scene(loginView, 400, 300); // You can change width/height as needed
         primaryStage.setTitle("Login");
         primaryStage.setScene(loginScene);
         primaryStage.setFullScreen(true);

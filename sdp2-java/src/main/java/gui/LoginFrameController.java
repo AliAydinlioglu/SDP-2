@@ -108,7 +108,7 @@ public class LoginFrameController extends AnchorPane {
 
     
     private void openMainView(GebruikerDTO gebruiker) { 
-    	Scene scene = new Scene(new MainFrameController(gebruiker));
+    	Scene scene = new Scene(new MainFrameController(gebruiker, stage));
     	scene.getStylesheets().add(getClass().getResource("/styles/index.css").toExternalForm());
     	stage.setScene(scene);
     	stage.setFullScreen(true);

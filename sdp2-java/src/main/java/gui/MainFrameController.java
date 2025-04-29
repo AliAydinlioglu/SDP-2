@@ -12,7 +12,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import utils.AlertHelper;
 
 public class MainFrameController extends BorderPane {
 
@@ -45,27 +45,35 @@ public class MainFrameController extends BorderPane {
     private SiteOverzichtFrameController siteOverzichtController;
     private GebruikersListFrameController gebruikersListController;
 
+    private Stage stage;
 
     
     GebruikerDTO gebruiker;
     
-    public MainFrameController(GebruikerDTO gebruiker) {
+    public MainFrameController(GebruikerDTO gebruiker, Stage stage) {
+    	
+    	this.stage = stage;
+    	this.gebruiker = gebruiker;
     	
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainFrame.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
-        try {
-            loader.load();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
+		loader.setRoot(this);
+		loader.setController(this);
+		try {
+			loader.load();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
         this.gebruiker = gebruiker;
-    	loggedInGebruiker.setText(gebruiker.voornaam() + " " + gebruiker.achternaam());
+    	
     	
     	init();
     }
 
     private void init() {
+    	
+    	loggedInGebruiker.setText(gebruiker.voornaam() + " " + gebruiker.achternaam());
+    	
+    	
         machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker);
         onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker);
         siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker);
@@ -131,21 +139,16 @@ public class MainFrameController extends BorderPane {
 
     @FXML
     void LogOut(ActionEvent event) {
-        // LogOut Logic - Reset the current scene and show Login view
-
-        try {
-        	Stage stage = (Stage) root.getScene().getWindow();
-        	Scene scene = new Scene(new LoginFrameController(new GebruikerController(), stage));
-        	scene.getStylesheets().add(getClass().getResource("/styles/index.css").toExternalForm());
-        	
-        	stage.setScene(scene);
-        	stage.setFullScreen(false);
-        	stage.setTitle("Delaware");
-        	stage.show();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    	boolean confirmed = AlertHelper.showConfirmationAndWait("Bevestiging", "Weet je zeker dat je wilt uitloggen?");
+        
+        if (!confirmed) return; 
+    	
+    	Scene scene = new Scene(new LoginFrameController(new GebruikerController(), stage));
+    	
+    	stage.setScene(scene);
+    	stage.setFullScreen(false);
+    	stage.setTitle("Login");
+        
     }
 
 
