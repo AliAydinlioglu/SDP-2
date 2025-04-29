@@ -1,15 +1,17 @@
 package dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import domain.Onderhoud;
 import enums.OnderhoudStatus;
 
 public record OnderhoudDTO(
     int id,
-    LocalDateTime datum,
-    LocalDateTime startTijd,
-    LocalDateTime eindTijd,
+    LocalDate datum,
+    LocalTime startTijd,
+    LocalTime eindTijd,
     String reden,
     String rapport,
     String opmerkingen,

@@ -1,7 +1,10 @@
 package domain;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 
 import enums.OnderhoudStatus;
 import enums.Rol;
@@ -37,13 +40,13 @@ public class Onderhoud implements Serializable {
     private int onderhoudId;
 
     @Column(name = "datum")
-    private LocalDateTime datum;
+    private LocalDate datum;
 
     @Column(name = "starttijd")
-    private LocalDateTime startTijd;
+    private LocalTime startTijd;
 
     @Column(name = "eindtijd")
-    private LocalDateTime eindTijd;
+    private LocalTime eindTijd;
 
     @ManyToOne
     @JoinColumn(name = "technieker_id", nullable = false)
@@ -67,7 +70,7 @@ public class Onderhoud implements Serializable {
     
    
 
-    public Onderhoud(LocalDateTime datum, LocalDateTime startTijd, LocalDateTime eindTijd,
+    public Onderhoud(LocalDate datum, LocalTime startTijd, LocalTime eindTijd,
             int techniekerId, String reden, String rapport, String opmerkingen,
             OnderhoudStatus status, int machineId) {
     	
@@ -124,7 +127,7 @@ public class Onderhoud implements Serializable {
     @Override
     public String toString() {
         return String.format("Onderhoud op %s (%s - %s) door technieker %s | Status: %s",
-                datum.toLocalDate(), startTijd.toLocalTime(), eindTijd.toLocalTime(),
+                datum, startTijd, eindTijd,
                 technieker != null ? technieker.getVoornaam() + " " + technieker.getAchternaam() : "Onbekend", status);
     }
 }
