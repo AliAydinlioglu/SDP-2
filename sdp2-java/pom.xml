@@ -13,35 +13,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
-
-	<!-- Maven profiles for different environments -->
-	<profiles>
-		<profile>
-			<id>dev</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<environment>dev</environment>
-			</properties>
-			<build>
-				<filters>
-					<filter>src/main/resources/config/dev.properties</filter>
-				</filters>
-			</build>
-		</profile>
-		<profile>
-			<id>prod</id>
-			<properties>
-				<environment>prod</environment>
-			</properties>
-			<build>
-				<filters>
-					<filter>src/main/resources/config/prod.properties</filter>
-				</filters>
-			</build>
-		</profile>
-	</profiles>
+	
 
 	<dependencies>
 		<!-- JSON-->
@@ -142,7 +114,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+					<filtering>false</filtering>
 				<includes>
 					<include>**/*.fxml</include>
 					<include>**/*.css</include>

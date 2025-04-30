@@ -116,20 +116,36 @@ public class GebruikerController {
 	}
 
 	
-	public void changeFilter(String filterValue) {
-        filteredGebruikerList.setPredicate(person -> {
-            // If filter text is empty, display all persons.
-            if (filterValue == null || filterValue.isBlank()) {
-                return true;
-            }
-            // Compare first name and last name of every person with   
-            //filter text.
-            String lowerCaseValue = filterValue.toLowerCase();
-            return person.voornaam().toLowerCase().contains(lowerCaseValue)
-                    || person.achternaam().toLowerCase().contains(lowerCaseValue);
-        }
-        );
-    }
+	public void changeFilter(String filterValue, Rol rol, Boolean actiefChecked, Boolean nonActiefChecked) {
+	    filteredGebruikerList.setPredicate(person -> {
+	        boolean matchesText = true;
+	        boolean matchesRole = true;
+	        boolean matchesActief = true;
+
+	        // Filter de string
+	        if (filterValue != null && !filterValue.isBlank()) {
+	            String lowerCaseValue = filterValue.toLowerCase();
+	            matchesText = person.voornaam().toLowerCase().contains(lowerCaseValue)
+	                    || person.achternaam().toLowerCase().contains(lowerCaseValue)
+	                    || person.email().toLowerCase().contains(lowerCaseValue);
+	        }
+
+	        // Filter de rol
+	        if (rol != null) {
+	            matchesRole = person.rol() == rol;
+	        }
+
+	        // Filter actief status
+	        if (actiefChecked) {
+	            matchesActief = person.actief(); // Only show actief=true
+	        } else if (nonActiefChecked) {
+	            matchesActief = !person.actief(); // Only show actief=false
+	        }
+
+	        return matchesText && matchesRole && matchesActief;
+	    });
+	}
+
 	
 	public void removeGebruiker(GebruikerDTO gebruiker) {
 		for(int i = 0; i < gebruikerList.size(); i++) {

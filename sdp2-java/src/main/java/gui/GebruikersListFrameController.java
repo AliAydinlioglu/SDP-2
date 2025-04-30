@@ -1,30 +1,28 @@
 package gui;
 
 import java.io.IOException;
-import java.net.URL;
-
-import domain.Gebruiker;
 import domain.GebruikerController;
 import dto.GebruikerDTO;
+import enums.Rol;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import utils.AlertHelper;
 
 public class GebruikersListFrameController extends VBox {
@@ -62,6 +60,14 @@ public class GebruikersListFrameController extends VBox {
 	private GebruikerController dc;
 	
 	private GebruikerDTO selectedGebruiker;
+	@FXML
+    private ChoiceBox<Rol> rolBox;
+	
+	@FXML
+	private CheckBox actiefCB;
+	
+	@FXML
+	private CheckBox nonActiefCB;
 	
 
 	
@@ -115,13 +121,49 @@ public class GebruikersListFrameController extends VBox {
             }
         });
         
+        rolBox.getItems().add(null);
+        rolBox.getItems().addAll(Rol.values());
+        
+        rolBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            filter(null);
+        });
+        
+        rolBox.setConverter(new StringConverter<Rol>() {
+			
+			@Override
+			public String toString(Rol rol) {
+				return rol == null ? "alle rollen": rol.toString().toLowerCase();
+
+			}
+
+			@Override
+			public Rol fromString(String string) {
+				return null;
+			}
+		});
+        
+        actiefCB.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+            if (isNowSelected) {
+                nonActiefCB.setSelected(false);
+            }
+            filter(null);
+        });
+
+        nonActiefCB.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+            if (isNowSelected) {
+                actiefCB.setSelected(false);
+            }
+            filter(null);
+        });
+        
 		
 	}	
 	
 	@FXML
     private void filter(KeyEvent event) {
         String newValue = txtFilter.getText();
-        dc.changeFilter(newValue);
+        Rol rol = rolBox.getValue();
+        dc.changeFilter(newValue, rol, actiefCB.isSelected(), nonActiefCB.isSelected());
     }
 	
 	@FXML

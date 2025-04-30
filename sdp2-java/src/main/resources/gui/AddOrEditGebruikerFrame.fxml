@@ -31,8 +31,7 @@
             <RowConstraints />
             <RowConstraints />
             <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
+            <RowConstraints maxHeight="22.0" minHeight="15.0" prefHeight="15.0" />
             <RowConstraints />
             <RowConstraints />
             </rowConstraints>
@@ -57,27 +56,24 @@
             <Label text="Straat:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
             <TextField fx:id="straatField" promptText="Straatnaam" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <TextField fx:id="huisNrField" promptText="Huisnr" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-
-            <!-- Row 6 -->
-            <Label text="Postcode:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-            <TextField fx:id="postcodeField" promptText="Postcode" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+            <TextField fx:id="postcodeField" promptText="Postcode" GridPane.columnIndex="2" GridPane.rowIndex="5" />
 
             <!-- Row 7 -->
-            <Label text="Stad:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-            <TextField fx:id="stadField" promptText="Stad" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+            <Label text="Stad:" GridPane.rowIndex="5" />
+            <TextField fx:id="stadField" promptText="Stad" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
             <!-- Row 8 -->
-            <Label text="Land:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-            <TextField fx:id="landField" promptText="Land" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+            <Label text="Land:" GridPane.rowIndex="6" />
+            <TextField fx:id="landField" promptText="Land" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
 
             <!-- Row 9 -->
-            <Label text="Geboortedatum:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-            <DatePicker fx:id="geboorteDatumPicker" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <Label text="Geboortedatum:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+            <DatePicker fx:id="geboorteDatumPicker" promptText="dd/mm/jjjj" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
             <!-- Row 10 -->
-            <Label text="Rol:" GridPane.rowIndex="9" />
-            <ChoiceBox fx:id="rolBox" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-         <CheckBox fx:id="actiefBox" mnemonicParsing="false" text="Actief" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+            <Label text="Rol:" GridPane.rowIndex="8" />
+            <ChoiceBox fx:id="rolBox" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+         <CheckBox fx:id="actiefBox" mnemonicParsing="false" text="Actief" GridPane.columnIndex="2" GridPane.rowIndex="7" />
         </GridPane>
       <FlowPane alignment="CENTER">
          <children>
