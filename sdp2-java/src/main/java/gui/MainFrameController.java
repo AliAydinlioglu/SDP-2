@@ -104,28 +104,26 @@ public class MainFrameController extends BorderPane {
             
             mainView.getChildren().setAll(gebruikersListController);
             gebruikersButton.setStyle("-fx-underline: true;");
+            selectedButton = gebruikersButton;
 
         } else {
         	mainView.getChildren().setAll(siteOverzichtController);
             sitesButton.setStyle("-fx-underline: true;");
+            selectedButton = sitesButton;
         }
 
         
     }
 
     private void onButtonClick(Button clickedButton) {
-        // Remove underline from previously selected button
         if (selectedButton != null) {
             selectedButton.setStyle("-fx-underline: false;");
         }
 
-        // Set underline to clicked button
         clickedButton.setStyle("-fx-underline: true;");
 
-        // Update selected button
         selectedButton = clickedButton;
 
-        // Change the main view based on the selected button
         if (clickedButton.getText().equals("Machines")) {
             mainView.getChildren().setAll(machineListController);
         } else if (clickedButton.getText().equals("Onderhoud")) {
