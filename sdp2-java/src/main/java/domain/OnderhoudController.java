@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import domain.builders.OnderhoudBuilder;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
@@ -154,33 +155,40 @@ public class OnderhoudController {
     }
     
     public ObservableList<OnderhoudDTO> filterByUser(GebruikerDTO ingelogdeGebruiker) {
-    	int userId = ingelogdeGebruiker.id();
-    	
-    	if (ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE) {
-    		SiteController siteController = new SiteController();
-    		MachineController mc = new MachineController();
-    		
-    		List<SiteDTO> sites = siteController.getSitesByUserId(userId);
-    		List<MachineDTO> machines = mc.getMachinesBySiteList(sites);
-    		
-    		return FXCollections.observableArrayList(
-					onderhoudList.stream()
-					.filter(onderhoud -> machines.stream().anyMatch(machine -> machine.id() == onderhoud.machineId()))
-					.collect(Collectors.toList())
-			);
-    	}
-    	
-        filteredOnderhoudList.setPredicate(onderhoud -> {
-            if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
-                // Verantwoordelijke ziet alle onderhouden van site
-                return true;
-            } else {
-                // Technieker ziet alleen onderhouden van toegewezen machines
-                return onderhoud.technieker().id() == userId;
-            }
-        });
-		return filteredOnderhoudList;
+        int userId = ingelogdeGebruiker.id();
+
+        if (ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE) {
+            SiteController siteController = new SiteController();
+            MachineController machineController = new MachineController();
+
+            List<Integer> machineIds = siteController.getSitesByUserId(userId).stream()
+                    .flatMap(site -> machineController.getMachinesBySite(site.id()).stream())
+                    .map(MachineDTO::id)
+                    .collect(Collectors.toList());
+
+            filteredOnderhoudList.setPredicate(onderhoud -> machineIds.contains(onderhoud.machineId()));
+        } else if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
+            filteredOnderhoudList.setPredicate(onderhoud -> true); // Toon alles
+        } else {
+            filteredOnderhoudList.setPredicate(onderhoud -> onderhoud.technieker().id() == userId);
+        }
+
+        return filteredOnderhoudList;
     }
+    
+    public ObservableList<OnderhoudDTO> filterBySite(SiteDTO site) {
+		int siteId = site.id();
+
+		filteredOnderhoudList.setPredicate(onderhoud -> {
+			MachineController machineController = new MachineController();
+			List<Integer> machineIds = machineController.getMachinesBySite(siteId).stream()
+					.map(MachineDTO::id)
+					.collect(Collectors.toList());
+			return machineIds.contains(onderhoud.machineId());
+		});
+
+		return filteredOnderhoudList;
+	}
     
     public void validateOnderhoudDetails(Onderhoud onderhoud) {
         if (onderhoud.getDatum() == null || onderhoud.getStartTijd() == null || onderhoud.getEindTijd() == null) {
@@ -195,10 +203,6 @@ public class OnderhoudController {
         if (onderhoud.getStatus() == OnderhoudStatus.INGEPLAND) {
             throw new IllegalArgumentException("De status 'ingepland' is niet toegestaan voor techniekers.");
         }
-    }
-    
-    public void showSuccessMessage() {
-        System.out.println("Onderhoud succesvol geregistreerd.");
     }
 
 

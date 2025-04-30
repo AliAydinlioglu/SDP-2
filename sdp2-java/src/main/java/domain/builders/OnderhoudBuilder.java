@@ -1,9 +1,12 @@
-package domain;
+package domain.builders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import domain.Gebruiker;
+import domain.MachineController;
+import domain.Onderhoud;
 import enums.OnderhoudStatus;
 
 public class OnderhoudBuilder {

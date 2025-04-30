@@ -1,4 +1,6 @@
-package domain;
+package domain.builders;
+
+import domain.Adres;
 
 public class AdresBuilder {
 	

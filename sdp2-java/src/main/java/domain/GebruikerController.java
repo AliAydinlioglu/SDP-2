@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import domain.builders.AdresBuilder;
+import domain.builders.GebruikerBuilder;
 import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.collections.FXCollections;

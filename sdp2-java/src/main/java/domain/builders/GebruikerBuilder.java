@@ -1,7 +1,9 @@
-package domain;
+package domain.builders;
 
 import java.time.LocalDate;
 
+import domain.Adres;
+import domain.Gebruiker;
 import enums.Rol;
 
 public class GebruikerBuilder {
