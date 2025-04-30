@@ -1,0 +1,44 @@
+/* Style for sidebar buttons */
+.sidebar-button {
+    -fx-font-size: 16px;
+    -fx-padding: 10 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-border-color: #ddd;          /* Light border color */
+    -fx-border-width: 1;             /* Thin border */
+    -fx-focus-border-color: transparent; /* Remove focus border */
+    -fx-focus-color: transparent;    /* Remove focus effects */
+    -fx-alignment: center-left;   
+    -fx-text-fill: #000;             /* Default text color (black) */
+    -fx-underline: false;       
+    
+}
+
+/* Hover effect */
+.sidebar-button:hover {
+     -fx-text-fill: #555;             /* Slightly lighter text color on hover */
+    -fx-underline: true;  
+}
+
+/* Pressed effect (slightly lighter than hover) */
+.sidebar-button:pressed {
+    -fx-text-fill: #000;             /* Slightly lighter text color on hover */
+    -fx-underline: true;   /* Lighter gray on press */
+}
+.sidebar-button:selected {
+    -fx-text-fill: #555;             /* Slightly lighter text color on hover */
+    -fx-underline: true;   /* Solid underline (black color) */
+}
+
+/* VBox alignment and spacing */
+#sidebar {
+    -fx-alignment: top-left;         /* Align buttons to the top left */
+    -fx-padding: 20;                 /* Padding around the sidebar */
+    -fx-spacing: 10;                 /* Spacing between buttons */
+    -fx-background-color: #f4f4f4;   /* Light gray background for the sidebar */
+}
+
+/* Make sidebar a bit darker */
+#sidebar {
+    -fx-background-color: #dcdcdc;  /* Darker light gray for sidebar */
+}

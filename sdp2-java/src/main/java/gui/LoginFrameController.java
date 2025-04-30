@@ -12,6 +12,7 @@ import enums.Rol;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,7 +20,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import utils.AlertHelper;
 
@@ -103,37 +108,13 @@ public class LoginFrameController extends AnchorPane {
 
     
     private void openMainView(GebruikerDTO gebruiker) { 
-        SiteController siteController = new SiteController();
-        MachineController machineController = new MachineController();
-        OnderhoudController onderhoudController = new OnderhoudController();
-        
-        
-        GebruikersListFrameController gebruikersView = new GebruikersListFrameController(dc);
-        SiteOverzichtFrameController siteView = new SiteOverzichtFrameController(siteController, gebruiker);
-        MachineListFrameController machineView = new MachineListFrameController(machineController, onderhoudController, gebruiker);
-        OnderhoudFrameController onderhoudView = new OnderhoudFrameController(onderhoudController, gebruiker, machineController);
-        
-        TabPane tabPane = new TabPane();
-        
-        if(gebruiker.rol().equals(Rol.ADMINISTRATOR)) {
-        	Tab gebruikersTab = new Tab("Gebruikers", gebruikersView);
-            gebruikersTab.setClosable(false);
-            tabPane.getTabs().add(gebruikersTab);
-        }
-        Tab sitesTab = new Tab("Sites", siteView);
-        sitesTab.setClosable(false);
+    	Scene scene = new Scene(new MainFrameController(gebruiker, stage));
+    	scene.getStylesheets().add(getClass().getResource("/styles/index.css").toExternalForm());
+    	stage.setScene(scene);
+    	stage.setFullScreen(true);
+    	stage.setTitle("Delaware");
+    	stage.show();
 
-        Tab machineTab = new Tab("Machines", machineView);
-        machineTab.setClosable(false);
-        
-        Tab onderhoudTab = new Tab("Onderhoud", onderhoudView);
-        onderhoudTab.setClosable(false);
-
-        tabPane.getTabs().addAll( sitesTab, machineTab, onderhoudTab);
-
-        Scene mainScene = new Scene(tabPane, 800, 600);
-        stage.setTitle("Beheer Applicatie");
-        stage.setScene(mainScene);
     }
 
 }
