@@ -116,14 +116,13 @@ public class AddOrEditOnderhoudFrameController {
                         rapport,
                         opmerkingen,
                         status,
-                        bewerktOnderhoud.machineId(),
+                        bewerktOnderhoud.machine(),
                         bewerktOnderhoud.technieker()
                 );
                 onderhoudController.updateOnderhoud(updatedOnderhoud);
                 
-                if (status == OnderhoudStatus.VOLTOOID) {
-                	MachineDTO m = machineController.getMachine(bewerktOnderhoud.machineId());
-                	machineController.stopOnderhoud(m);
+                if (status == OnderhoudStatus.VOLTOOID) {;
+                	machineController.stopOnderhoud(bewerktOnderhoud.machine());
                 }
                 
             } else {
