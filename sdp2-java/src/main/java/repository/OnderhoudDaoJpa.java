@@ -1,5 +1,6 @@
 package repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,13 +13,15 @@ public class OnderhoudDaoJpa extends GenericDaoJpa<Onderhoud> implements Onderho
         super(Onderhoud.class);
     }
     
+    @Override
     public List<Onderhoud> findVoltooideLaatste3Maanden() {
-        LocalDateTime ninetyDaysAgo = LocalDateTime.now().minusDays(90);
+        LocalDate ninetyDaysAgo = LocalDate.now().minusDays(90); // Use LocalDate instead of LocalDateTime
         return em.createNamedQuery("Onderhoud.findVoltooideLaatste3Maanden", Onderhoud.class)
                  .setParameter("status", OnderhoudStatus.VOLTOOID)
-                 .setParameter("date", ninetyDaysAgo)
+                 .setParameter("date", ninetyDaysAgo) // Pass LocalDate
                  .getResultList();
     }
+
     
     public List<Onderhoud> findLaatsteVoltooidePerMachine() {
         return em.createNamedQuery("Onderhoud.findLaatsteVoltooidePerMachine", Onderhoud.class)

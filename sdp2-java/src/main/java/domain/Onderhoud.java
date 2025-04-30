@@ -17,12 +17,12 @@ import lombok.*;
 	@NamedQuery(name = "Onderhoud.findByTechniekerId",
             	query = "SELECT o FROM Onderhoud o WHERE o.technieker.gebruikerID = :techniekerId"),
     @NamedQuery(name = "Onderhoud.findByMachineId",
-                query = "SELECT o FROM Onderhoud o WHERE o.machineId = :machineId"),
+                query = "SELECT o FROM Onderhoud o WHERE o.machine.machineID = :machineId"),
     @NamedQuery(name = "Onderhoud.findVoltooideLaatste3Maanden",
     			query = "SELECT o FROM Onderhoud o WHERE o.status = :status AND o.datum >= :date"),
     @NamedQuery(name = "Onderhoud.findLaatsteVoltooidePerMachine",
     			query = "SELECT o FROM Onderhoud o WHERE o.status = enums.OnderhoudStatus.VOLTOOID " +
-            			"AND o.datum = (SELECT MAX(o2.datum) FROM Onderhoud o2 WHERE o2.machineId = o.machineId)")
+            			"AND o.datum = (SELECT MAX(o2.datum) FROM Onderhoud o2 WHERE o2.machine.machineID = o.machine.machineID)")
     
 })
 @Getter
@@ -64,9 +64,10 @@ public class Onderhoud implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OnderhoudStatus status;
-
-    @Column(name = "machine_id")
-    private int machineId;
+    
+    @ManyToOne
+    @JoinColumn(name = "machine_id", nullable = false)
+    private Machine machine;
     
    
 
@@ -104,7 +105,7 @@ public class Onderhoud implements Serializable {
 	    setRapport(rapport);
 	    setOpmerkingen(opmerkingen);
 	    setStatus(status);
-	    setMachineId(machineId);
+	    setMachine(machineId);
 	   
 	}
     
@@ -122,7 +123,17 @@ public class Onderhoud implements Serializable {
 
         this.technieker = technieker;
     }
+    
+    public void setMachine(int machineId) {
+		MachineController machineController = new MachineController();
+		Machine machine = machineController.getRealMachine(machineId);
 
+		if (machine == null) {
+			throw new IllegalArgumentException("Machine met ID " + machineId + " bestaat niet.");
+		}
+
+		this.machine = machine;
+	}
 
     @Override
     public String toString() {

@@ -8,6 +8,8 @@ import dto.GebruikerDTO;
 import dto.OnderhoudDTO;
 import enums.OnderhoudStatus;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,7 +22,9 @@ import utils.AlertHelper;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,11 +77,11 @@ public class OnderhoudFrameController extends VBox {
                 cellData.getValue().technieker() != null
                         ? cellData.getValue().technieker().voornaam() + " " + cellData.getValue().technieker().achternaam()
                         : "Onbekend"));
-        machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(
-                "Machine ID: " + cellData.getValue().machineId()));
-
+        machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().machine().naam()));
+        
         onderhoudTable.setItems(onderhoudController.filterByUser(ingelogdeGebruiker));
     }
+
 
     private void initializeForm() {
 
@@ -115,10 +119,42 @@ public class OnderhoudFrameController extends VBox {
         OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
         if (geselecteerd != null) {
             onderhoudController.deleteOnderhoud(geselecteerd);
-            onderhoudTable.getItems().remove(geselecteerd);
+            onderhoudTable.refresh();
         } else {
         	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te verwijderen.");
         }
     }
+    
+//    public List<OnderhoudDTO> getFilteredOnderhouden() {
+//        // Onderhouden van de gebruiker
+//        List<OnderhoudDTO> onderhoudenGebruiker = onderhoudController.filterByUser(ingelogdeGebruiker);
+//        
+//        System.out.println(onderhoudenGebruiker);
+//
+//        // Gemeenschappelijke onderhouden van de laatste 3 maanden en de gebruiker
+//        List<OnderhoudDTO> onderhouden3Maanden = onderhoudController.getVoltooideOnderhoudLaatste3Maanden();
+//        List<OnderhoudDTO> gemeenschappelijkeOnderhouden = onderhoudenGebruiker.stream()
+//                .filter(onderhouden3Maanden::contains)
+//                .collect(Collectors.toList());
+//        
+//        System.out.println(onderhouden3Maanden);
+//        System.out.println(gemeenschappelijkeOnderhouden);
+//
+//        // Onderhouden van laatst voltooid die alleen voorkomen in die van de gebruiker
+//        List<OnderhoudDTO> onderhoudenLaatstVoltooid = onderhoudController.getLaatsteVoltooideOnderhoudPerMachine();
+//        List<OnderhoudDTO> uniekeOnderhouden = onderhoudenLaatstVoltooid.stream()
+//                .filter(onderhoud -> !gemeenschappelijkeOnderhouden.contains(onderhoud))
+//                .collect(Collectors.toList());
+//        
+//        System.out.println(onderhoudenLaatstVoltooid);
+//        System.out.println(uniekeOnderhouden);
+//
+//        // Voeg de unieke onderhouden toe aan de gemeenschappelijke lijst
+//        gemeenschappelijkeOnderhouden.addAll(uniekeOnderhouden);
+//        
+//        System.out.println(gemeenschappelijkeOnderhouden);
+//
+//        return gemeenschappelijkeOnderhouden;
+//    }
 
 }

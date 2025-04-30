@@ -84,6 +84,7 @@ public class OnderhoudController {
             onderhoudDao.startTransaction();
             onderhoudDao.insert(onderhoud);
             onderhoudDao.commitTransaction();
+            
             onderhoudList.add(OnderhoudDTO.fromEntity(onderhoud));
             data.add(onderhoud);
         } catch (Exception e) {
@@ -134,8 +135,8 @@ public class OnderhoudController {
         	onderhoudDao.startTransaction();
         	onderhoudDao.delete(onderhoudToDelete);
         	onderhoudDao.commitTransaction();
-            onderhoudList.remove(OnderhoudDTO.fromEntity(onderhoudToDelete));
         	
+            onderhoudList.remove(OnderhoudDTO.fromEntity(onderhoudToDelete));
         	data.remove(onderhoud);
 	    } catch (Exception e) {
 //	    	onderhoudDao.rollbackTransaction();
@@ -143,16 +144,21 @@ public class OnderhoudController {
 	    }
     }
 
-    public void changeFilter(String filterValue) {
-        filteredOnderhoudList.setPredicate(onderhoud -> {
-            if (filterValue == null || filterValue.isBlank()) {
-                return true;
-            }
-            String lowerCaseValue = filterValue.toLowerCase();
-            return onderhoud.reden().toLowerCase().contains(lowerCaseValue) ||
-                   onderhoud.rapport().toLowerCase().contains(lowerCaseValue);
-        });
+    public ObservableList<OnderhoudDTO> changeFilter(String filterValue) {
+        return FXCollections.observableArrayList(
+            onderhoudList.stream()
+                .filter(onderhoud -> {
+                    if (filterValue == null || filterValue.isBlank()) {
+                        return true;
+                    }
+                    String lowerCaseValue = filterValue.toLowerCase();
+                    return onderhoud.reden().toLowerCase().contains(lowerCaseValue) ||
+                           onderhoud.rapport().toLowerCase().contains(lowerCaseValue);
+                })
+                .collect(Collectors.toList())
+        );
     }
+
     
     public ObservableList<OnderhoudDTO> filterByUser(GebruikerDTO ingelogdeGebruiker) {
         int userId = ingelogdeGebruiker.id();
@@ -166,29 +172,48 @@ public class OnderhoudController {
                     .map(MachineDTO::id)
                     .collect(Collectors.toList());
 
-            filteredOnderhoudList.setPredicate(onderhoud -> machineIds.contains(onderhoud.machineId()));
+            filteredOnderhoudList.setPredicate(onderhoud -> machineIds.contains(onderhoud.machine().id()));
         } else if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
-            filteredOnderhoudList.setPredicate(onderhoud -> true); // Toon alles
+            filteredOnderhoudList.setPredicate(p -> true); // No filtering for administrators
         } else {
             filteredOnderhoudList.setPredicate(onderhoud -> onderhoud.technieker().id() == userId);
         }
 
         return filteredOnderhoudList;
     }
+
+
     
     public ObservableList<OnderhoudDTO> filterBySite(SiteDTO site) {
-		int siteId = site.id();
+        int siteId = site.id();
 
-		filteredOnderhoudList.setPredicate(onderhoud -> {
-			MachineController machineController = new MachineController();
-			List<Integer> machineIds = machineController.getMachinesBySite(siteId).stream()
-					.map(MachineDTO::id)
-					.collect(Collectors.toList());
-			return machineIds.contains(onderhoud.machineId());
-		});
+        MachineController machineController = new MachineController();
+        List<Integer> machineIds = machineController.getMachinesBySite(siteId).stream()
+                .map(MachineDTO::id)
+                .collect(Collectors.toList());
 
-		return filteredOnderhoudList;
-	}
+        return FXCollections.observableArrayList(
+                onderhoudList.stream()
+                        .filter(onderhoud -> machineIds.contains(onderhoud.machine().id()))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public ObservableList<OnderhoudDTO> getVoltooideOnderhoudLaatste3Maanden() {
+        return FXCollections.observableArrayList(
+                onderhoudDao.findVoltooideLaatste3Maanden().stream()
+                        .map(OnderhoudDTO::fromEntity)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public ObservableList<OnderhoudDTO> getLaatsteVoltooideOnderhoudPerMachine() {
+        return FXCollections.observableArrayList(
+                onderhoudDao.findLaatsteVoltooidePerMachine().stream()
+                        .map(OnderhoudDTO::fromEntity)
+                        .collect(Collectors.toList())
+        );
+    }
     
     public void validateOnderhoudDetails(Onderhoud onderhoud) {
         if (onderhoud.getDatum() == null || onderhoud.getStartTijd() == null || onderhoud.getEindTijd() == null) {

@@ -16,7 +16,7 @@ public record OnderhoudDTO(
     String rapport,
     String opmerkingen,
     OnderhoudStatus status,
-    int machineId,
+    MachineDTO machine,
     GebruikerDTO technieker
 ) {
     public static OnderhoudDTO fromEntity(Onderhoud onderhoud) {
@@ -29,8 +29,24 @@ public record OnderhoudDTO(
             onderhoud.getRapport(),
             onderhoud.getOpmerkingen(),
             onderhoud.getStatus(),
-            onderhoud.getMachineId(),
+            MachineDTO.fromEntity(onderhoud.getMachine()),
             GebruikerDTO.fromEntity(onderhoud.getTechnieker())
         );
+    }
+    
+    @Override
+    public String toString() {
+        return "OnderhoudDTO{" +
+               "id=" + id +
+               ", datum=" + datum +
+               ", startTijd=" + startTijd +
+               ", eindTijd=" + eindTijd +
+               ", reden='" + reden + '\'' +
+               ", rapport='" + rapport + '\'' +
+               ", opmerkingen='" + opmerkingen + '\'' +
+               ", status=" + status +
+               ", machine=" + machine +
+               ", technieker=" + technieker +
+               '}';
     }
 }
