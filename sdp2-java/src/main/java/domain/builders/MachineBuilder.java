@@ -1,7 +1,10 @@
-package domain;
+package domain.builders;
 
 import java.time.LocalDate;
 
+import domain.Gebruiker;
+import domain.Machine;
+import domain.Site;
 import enums.MachineStatus;
 import enums.ProductionStatus;
 import jakarta.persistence.Column;

@@ -1,7 +1,11 @@
-package domain;
+package domain.builders;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import domain.Gebruiker;
+import domain.Machine;
+import domain.Site;
 
 
 public class SiteBuilder {
