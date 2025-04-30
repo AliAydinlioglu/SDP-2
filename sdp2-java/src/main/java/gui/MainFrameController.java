@@ -75,7 +75,7 @@ public class MainFrameController extends BorderPane {
     	
     	
         machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker);
-        onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker);
+        onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker, new MachineController());
         siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker);
 
         Button machinesButton = new Button("Machines");
