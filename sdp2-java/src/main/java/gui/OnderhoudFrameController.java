@@ -1,6 +1,7 @@
 package gui;
 
 import domain.Gebruiker;
+import domain.MachineController;
 import domain.Onderhoud;
 import domain.OnderhoudController;
 import dto.GebruikerDTO;
@@ -45,10 +46,12 @@ public class OnderhoudFrameController extends VBox {
 
     private OnderhoudController onderhoudController;
     private GebruikerDTO ingelogdeGebruiker;
+    private MachineController machineController;
     
-    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker) {
+    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, MachineController machineController) {
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
+        this.machineController = machineController;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudFrame.fxml"));
         loader.setRoot(this);
@@ -73,7 +76,7 @@ public class OnderhoudFrameController extends VBox {
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 "Machine ID: " + cellData.getValue().machineId()));
 
-        onderhoudTable.setItems(onderhoudController.filterByRole(ingelogdeGebruiker));
+        onderhoudTable.setItems(onderhoudController.filterByUser(ingelogdeGebruiker));
     }
 
     private void initializeForm() {
@@ -91,7 +94,7 @@ public class OnderhoudFrameController extends VBox {
                 Parent root = loader.load();
 
                 AddOrEditOnderhoudFrameController controller = loader.getController();
-                controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd); // Geef de geselecteerde machine mee
+                controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd, machineController); // Geef de geselecteerde machine mee
 
                 Stage dialogStage = new Stage();
                 dialogStage.setTitle("Onderhoud Toevoegen");

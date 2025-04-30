@@ -1,14 +1,19 @@
-package domain;
+package domain.builders;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
+import domain.Gebruiker;
+import domain.MachineController;
+import domain.Onderhoud;
 import enums.OnderhoudStatus;
 
 public class OnderhoudBuilder {
 
-	private LocalDateTime datum;
-    private LocalDateTime startTijd;
-    private LocalDateTime eindTijd;
+	private LocalDate datum;
+    private LocalTime startTijd;
+    private LocalTime eindTijd;
     private Gebruiker technieker;
     private String reden;
     private String rapport;
@@ -17,7 +22,7 @@ public class OnderhoudBuilder {
     private int machineId;
     
     
-    public OnderhoudBuilder datum(LocalDateTime datum) {
+    public OnderhoudBuilder datum(LocalDate datum) {
 		if (datum == null) {
 		   throw new IllegalArgumentException("Datum mag niet null zijn.");
 		}
@@ -25,7 +30,7 @@ public class OnderhoudBuilder {
 		return this;
 	}
     
-    public OnderhoudBuilder startTijd(LocalDateTime startTijd) {
+    public OnderhoudBuilder startTijd(LocalTime startTijd) {
 		if (startTijd == null) {
 		   throw new IllegalArgumentException("Starttijd mag niet null zijn.");
 		}
@@ -33,7 +38,7 @@ public class OnderhoudBuilder {
 		return this;
 	}
 	
-	public OnderhoudBuilder eindTijd(LocalDateTime eindTijd) {
+	public OnderhoudBuilder eindTijd(LocalTime eindTijd) {
 		if (eindTijd == null) {
 		   throw new IllegalArgumentException("Eindtijd mag niet null zijn.");
 		}
@@ -66,9 +71,6 @@ public class OnderhoudBuilder {
 	}
 	
 	public OnderhoudBuilder opmerkingen(String opmerkingen) {
-		if(opmerkingen == null || opmerkingen.isBlank()) {
-			throw new IllegalArgumentException("Opmerkingen mogen niet leeg zijn");
-		}
 		this.opmerkingen = opmerkingen;
 		return this;
 	}

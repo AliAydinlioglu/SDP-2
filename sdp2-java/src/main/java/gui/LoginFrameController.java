@@ -114,6 +114,7 @@ public class LoginFrameController extends AnchorPane {
     	stage.setFullScreen(true);
     	stage.setTitle("Delaware");
     	stage.show();
+
     }
 
 }

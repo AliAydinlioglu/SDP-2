@@ -1,5 +1,7 @@
 package gui;
 
+import domain.Machine;
+import domain.MachineController;
 import domain.OnderhoudController;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
@@ -12,7 +14,14 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import utils.AlertHelper;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,27 +59,29 @@ public class AddOrEditOnderhoudFrameController {
     private OnderhoudDTO bewerktOnderhoud; // null if creating new
     private GebruikerDTO ingelogdeGebruiker;
     private MachineDTO machine;
+    private MachineController machineController;
 
-    public void initData(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, OnderhoudDTO geselecteerd) {
-		initData(onderhoudController, ingelogdeGebruiker, null, geselecteerd);
+    public void initData(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, OnderhoudDTO geselecteerd, MachineController machineController) {
+		initData(onderhoudController, ingelogdeGebruiker, null, geselecteerd, machineController);
 	}
 
-    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine) {
-        initData(controller, gebruiker, machine, null);
+    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, MachineController machineController) {
+        initData(controller, gebruiker, machine, null, machineController);
     }
 
-    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, OnderhoudDTO onderhoud) {
+    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, OnderhoudDTO onderhoud, MachineController machineController) {
         this.onderhoudController = controller;
         this.bewerktOnderhoud = onderhoud;
         this.ingelogdeGebruiker = gebruiker;
         this.machine = machine;
+        this.machineController = machineController;
 
         statusBox.setItems(FXCollections.observableArrayList(OnderhoudStatus.values()));
 
         if (onderhoud != null) {
-            datumPicker.setValue(onderhoud.datum().toLocalDate());
-            startTijdField.setText(onderhoud.startTijd().toLocalTime().toString());
-            eindTijdField.setText(onderhoud.eindTijd().toLocalTime().toString());
+
+            startTijdField.setText(onderhoud.startTijd().toString());
+            eindTijdField.setText(onderhoud.eindTijd().toString());
             redenField.setText(onderhoud.reden());
             rapportField.setText(onderhoud.rapport());
             opmerkingenArea.setText(onderhoud.opmerkingen());
@@ -83,16 +94,19 @@ public class AddOrEditOnderhoudFrameController {
     @FXML
     private void saveOnderhoud() {
         try {
-            LocalDateTime datum = datumPicker.getValue().atStartOfDay();
-            LocalDateTime startTijd = LocalDateTime.parse(datumPicker.getValue() + "T" + startTijdField.getText());
-            LocalDateTime eindTijd = LocalDateTime.parse(datumPicker.getValue() + "T" + eindTijdField.getText());
+        	validateOnderhoud();
+            
+        	LocalDate datum = datumPicker.getValue();
+
+            LocalTime startTijd = LocalTime.parse(startTijdField.getText());
+            LocalTime eindTijd = LocalTime.parse(eindTijdField.getText());
+
             String reden = redenField.getText();
             String rapport = objectMapper.writeValueAsString(rapportField.getText());
             String opmerkingen = opmerkingenArea.getText();
             OnderhoudStatus status = statusBox.getValue();
 
             if (bewerktOnderhoud != null) {
-                // Update bestaand onderhoud
                 OnderhoudDTO updatedOnderhoud = new OnderhoudDTO(
                         bewerktOnderhoud.id(),
                         datum,
@@ -106,10 +120,15 @@ public class AddOrEditOnderhoudFrameController {
                         bewerktOnderhoud.technieker()
                 );
                 onderhoudController.updateOnderhoud(updatedOnderhoud);
+                
+                if (status == OnderhoudStatus.VOLTOOID) {
+                	MachineDTO m = machineController.getMachine(bewerktOnderhoud.machineId());
+                	machineController.stopOnderhoud(m);
+                }
+                
             } else {
-                // Voeg nieuw onderhoud toe
                 onderhoudController.addOnderhoud(
-                        datum,
+                		datum,
                         startTijd,
                         eindTijd,
                         ingelogdeGebruiker.id(),
@@ -119,10 +138,15 @@ public class AddOrEditOnderhoudFrameController {
                         status,
                         machine.id()
                 );
+                machineController.startOnderhoud(machine);
             }
 
             ((Stage) submitBtn.getScene().getWindow()).close();
+            
+            AlertHelper.showInfo("Opslaan gelukt", "Het onderhoud is succesvol opgeslagen.");
 
+        } catch (DateTimeParseException dtp) {
+        	AlertHelper.showError("Ongeldige tijd", "De tijd moet in het formaat HH:mm zijn.");        
         } catch (Exception e) {
             e.printStackTrace();
             AlertHelper.showError("Opslaan mislukt", e.getMessage());
@@ -132,6 +156,21 @@ public class AddOrEditOnderhoudFrameController {
     @FXML
     void cancel(ActionEvent event) {
         ((Stage) cancelBtn.getScene().getWindow()).close();
+    }
+    
+    public void validateOnderhoud() {
+		if (datumPicker.getValue() == null)
+			throw new IllegalArgumentException("Datum mag niet leeg zijn.");
+		if (startTijdField.getText() == null || startTijdField.getText().isEmpty())
+			throw new IllegalArgumentException("Starttijd mag niet leeg zijn.");
+		if (eindTijdField.getText() == null || eindTijdField.getText().isEmpty())
+			throw new IllegalArgumentException("Eindtijd mag niet leeg zijn.");
+		if (redenField.getText() == null || redenField.getText().isEmpty())
+			throw new IllegalArgumentException("Reden mag niet leeg zijn.");
+		if (rapportField.getText() == null || rapportField.getText().isEmpty())
+			throw new IllegalArgumentException("Rapport mag niet leeg zijn.");
+		if (statusBox.getValue() == null)
+			throw new IllegalArgumentException("Status mag niet leeg zijn.");
     }
 
 }

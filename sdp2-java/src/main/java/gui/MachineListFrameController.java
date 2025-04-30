@@ -21,6 +21,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.AlertHelper;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
 import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.IOException;
@@ -44,11 +45,14 @@ public class MachineListFrameController extends VBox {
     
     private GebruikerDTO ingelogdeGebruiker;
     private MachineDTO selectedMachine;
+	private ObservableList<MachineDTO> machineList;
 
     public MachineListFrameController(MachineController machineController, OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker) {
         this.machineController = machineController;
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
+        
+        this.machineList = machineController.getMachinesForTechnieker(ingelogdeGebruiker.id());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MachineListFrame.fxml"));
         loader.setRoot(this);
@@ -64,7 +68,7 @@ public class MachineListFrameController extends VBox {
         statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().status().name()));
         uptimeCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().uptime()));
 
-        machineTable.setItems(machineController.getAll());
+        machineTable.setItems(machineList);
 
         machineTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -75,7 +79,7 @@ public class MachineListFrameController extends VBox {
             }
         });
 
-        if (machineController.getAll().isEmpty()) {
+        if (machineList.isEmpty()) {
             lblStatus.setText("Geen machines gevonden.");
         }
         
@@ -101,7 +105,7 @@ public class MachineListFrameController extends VBox {
                 Parent root = loader.load();
 
                 AddOrEditOnderhoudFrameController controller = loader.getController();
-                controller.initData(onderhoudController, ingelogdeGebruiker, selectedMachine); // Geef de geselecteerde machine mee
+                controller.initData(onderhoudController, ingelogdeGebruiker, selectedMachine, machineController); // Geef de geselecteerde machine mee
 
                 Stage dialogStage = new Stage();
                 dialogStage.setTitle("Onderhoud Toevoegen");

@@ -1,6 +1,9 @@
-package domain;
+package domain.builders;
 
 import java.time.LocalDate;
+
+import domain.Gebruiker;
+import domain.Melding;
 
 public class MeldingBuilder {
 
