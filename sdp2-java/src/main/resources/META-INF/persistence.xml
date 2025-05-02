@@ -15,7 +15,7 @@
             <property name="jakarta.persistence.jdbc.password" value="${jdbc.password}"/>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
-            <!-- Schema generation - this enables automatic table creation -->
+<!-- Schema generation - this enables automatic table creation -->
 
         </properties>
     </persistence-unit>

@@ -42,3 +42,11 @@
 #sidebar {
     -fx-background-color: #dcdcdc;  /* Darker light gray for sidebar */
 }
+
+
+.table-row-cell.inactive-row {
+    -fx-background-color: #e0e0e0;
+}
+
+
+

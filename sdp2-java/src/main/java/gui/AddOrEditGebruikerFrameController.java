@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import utils.AlertHelper;
 
 public class AddOrEditGebruikerFrameController {
@@ -64,14 +65,26 @@ public class AddOrEditGebruikerFrameController {
 
     public void initData(GebruikerController controller) {
         initData(controller, null);
-        rolBox.setItems(FXCollections.observableArrayList(Rol.values()));
     }
 
     public void initData(GebruikerController controller, GebruikerDTO gebruiker) {
         this.dc = controller;
         this.bewerkteGebruiker = gebruiker;
 
-        rolBox.setItems(FXCollections.observableArrayList(Rol.values()));
+        rolBox.getItems().addAll(Rol.values());
+        rolBox.setConverter(new StringConverter<Rol>() {
+			
+			@Override
+			public String toString(Rol rol) {
+				return rol.toString().toLowerCase();
+
+			}
+
+			@Override
+			public Rol fromString(String string) {
+				return null;
+			}
+		});
 
         if (gebruiker != null) {
             voornaamField.setText(gebruiker.voornaam());

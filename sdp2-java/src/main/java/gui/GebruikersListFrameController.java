@@ -1,30 +1,28 @@
 package gui;
 
 import java.io.IOException;
-import java.net.URL;
-
-import domain.Gebruiker;
 import domain.GebruikerController;
 import dto.GebruikerDTO;
+import enums.Rol;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import utils.AlertHelper;
 
 public class GebruikersListFrameController extends VBox {
@@ -62,6 +60,14 @@ public class GebruikersListFrameController extends VBox {
 	private GebruikerController dc;
 	
 	private GebruikerDTO selectedGebruiker;
+	@FXML
+    private ChoiceBox<Rol> rolBox;
+	
+	@FXML
+	private CheckBox actiefCB;
+	
+	@FXML
+	private CheckBox nonActiefCB;
 	
 
 	
@@ -83,23 +89,26 @@ public class GebruikersListFrameController extends VBox {
         
         gebruikersTable.setItems(dc.findAll());
         
-        gebruikersTable.setRowFactory(new Callback<TableView<GebruikerDTO>, TableRow<GebruikerDTO>>() {
+        gebruikersTable.setRowFactory(new Callback<>() {
             @Override
             public TableRow<GebruikerDTO> call(TableView<GebruikerDTO> tableView) {
-                return new TableRow<GebruikerDTO>() {
+                return new TableRow<>() {
                     @Override
                     protected void updateItem(GebruikerDTO gebruiker, boolean empty) {
                         super.updateItem(gebruiker, empty);
+                        
 
                         if (gebruiker == null || empty) {
                             setStyle("");
-                        } else if (!gebruiker.actief() && !isSelected()) {
-                            setStyle("-fx-background-color: #e0e0e0;"); // light grey for inactive users
-                        } else if (!isSelected()) {
-                            setStyle("");
-                        }
-                        else {
-                        	setStyle("");
+                        } else if (!gebruiker.actief()) {
+                            // Only apply grey background if not selected
+                            if (!isSelected()) {
+                                setStyle("-fx-background-color: #e0e0e0;");
+                            } else {
+                                setStyle(""); // clear style so selection color shows
+                            }
+                        } else {
+                            setStyle(""); // default style for active users
                         }
                     }
                 };
@@ -112,7 +121,47 @@ public class GebruikersListFrameController extends VBox {
                     showDetails(selected);
                     selectedGebruiker = selected;
                 }
+        		gebruikersTable.getSelectionModel().clearSelection();
             }
+        });
+        
+//        gebruikersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+//            gebruikersTable.refresh(); 
+//        });
+        
+        rolBox.getItems().add(null);
+        rolBox.getItems().addAll(Rol.values());
+        
+        rolBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            filter(null);
+        });
+        
+        rolBox.setConverter(new StringConverter<Rol>() {
+			
+			@Override
+			public String toString(Rol rol) {
+				return rol == null ? "alle rollen": rol.toString().toLowerCase();
+
+			}
+
+			@Override
+			public Rol fromString(String string) {
+				return null;
+			}
+		});
+        
+        actiefCB.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+            if (isNowSelected) {
+                nonActiefCB.setSelected(false);
+            }
+            filter(null);
+        });
+
+        nonActiefCB.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+            if (isNowSelected) {
+                actiefCB.setSelected(false);
+            }
+            filter(null);
         });
         
 		
@@ -120,8 +169,10 @@ public class GebruikersListFrameController extends VBox {
 	
 	@FXML
     private void filter(KeyEvent event) {
+		gebruikersTable.getSelectionModel().clearSelection();
         String newValue = txtFilter.getText();
-        dc.changeFilter(newValue);
+        Rol rol = rolBox.getValue();
+        dc.changeFilter(newValue, rol, actiefCB.isSelected(), nonActiefCB.isSelected());
     }
 	
 	@FXML
@@ -193,7 +244,7 @@ public class GebruikersListFrameController extends VBox {
 	private void showDetails(GebruikerDTO g) {
 	    lblFullName.setText("Naam: " + g.voornaam() + " " + g.achternaam());
 	    lblEmail.setText("Email: " + g.email());
-	    lblRol.setText("Rol: " + g.rol().name());
+	    lblRol.setText("Rol: " + g.rol().name().toLowerCase());
 	    lblGeboorteDatum.setText("Geboortedatum: " + g.geboortedatum().toString());
 	    lblAdres.setText("Adres: " + g.adres().toString());
 	    lblGsm.setText("GSM: " + g.gsm());
