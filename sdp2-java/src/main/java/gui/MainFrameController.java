@@ -15,6 +15,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -111,6 +113,21 @@ public class MainFrameController extends BorderPane {
             sitesButton.setStyle("-fx-underline: true;");
             selectedButton = sitesButton;
         }
+        
+        ImageView logoView = new ImageView(new Image(getClass().getResource("/images/delaware-logo-opengraph.png").toExternalForm()));
+
+        // Optional styling
+        logoView.setFitWidth(75); // increased size
+        logoView.setPreserveRatio(true); // maintain aspect ratio
+        logoView.setSmooth(true);
+        logoView.setCache(true);
+
+        // Spacer to push logo to bottom
+        VBox spacer = new VBox();
+        VBox.setVgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        // Add spacer and image to sidebar
+        sidebar.getChildren().addAll(spacer, logoView);
 
         
     }

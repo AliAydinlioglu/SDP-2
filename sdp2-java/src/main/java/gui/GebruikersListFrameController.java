@@ -247,7 +247,7 @@ public class GebruikersListFrameController extends VBox {
 	    lblRol.setText("Rol: " + g.rol().name().toLowerCase());
 	    lblGeboorteDatum.setText("Geboortedatum: " + g.geboortedatum().toString());
 	    lblAdres.setText("Adres: " + g.adres().toString());
-	    lblGsm.setText("GSM: " + g.gsm());
+	    lblGsm.setText("Telefoon: " + g.gsm());
 
 	    detailBox.setVisible(true);
 	}
