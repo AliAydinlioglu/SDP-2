@@ -21,6 +21,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -31,7 +33,7 @@ import utils.AlertHelper;
 public class LoginFrameController extends AnchorPane {
 	
 	@FXML
-    private Label LoginLabel;
+    private ImageView delewareImage;
 
     @FXML
     private TextField emailField;

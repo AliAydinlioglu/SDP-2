@@ -13,7 +13,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
-	
 	<!-- Maven profiles for different environments -->
 	<profiles>
 		<profile>
@@ -149,6 +148,7 @@
 					<include>**/*.css</include>
 					<include>**/*.properties</include>
 					<include>META-INF/persistence.xml</include>
+					<include>images/*</include>
 				</includes>
 			</resource>
 		</resources>
