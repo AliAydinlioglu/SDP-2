@@ -14,6 +14,35 @@
 	</properties>
 
 	
+	<!-- Maven profiles for different environments -->
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<environment>dev</environment>
+			</properties>
+			<build>
+				<filters>
+					<filter>src/main/resources/config/dev.properties</filter>
+				</filters>
+			</build>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<environment>prod</environment>
+			</properties>
+			<build>
+				<filters>
+					<filter>src/main/resources/config/prod.properties</filter>
+				</filters>
+			</build>
+		</profile>
+	</profiles>
+
 
 	<dependencies>
 		<!-- JSON-->

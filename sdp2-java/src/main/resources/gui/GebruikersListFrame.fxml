@@ -15,7 +15,7 @@
 
 <fx:root prefWidth="1200.0" type="VBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="62.0" prefWidth="600.0" text="Gebruikers" textAlignment="JUSTIFY">
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="62.0" prefWidth="1241.0" text="Gebruikers" textAlignment="JUSTIFY">
          <font>
             <Font size="34.0" />
          </font>
@@ -26,11 +26,27 @@
          </VBox.margin>
          <children>
             <TextField fx:id="txtFilter" onKeyReleased="#filter" prefHeight="26.0" prefWidth="224.0" promptText="Filter" />
-            <Button fx:id="addBtn" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="3.0" layoutX="1038.0" mnemonicParsing="false" onAction="#addGebruiker" prefHeight="26.0" prefWidth="138.0" text="Gebruiker Toevoegen" textAlignment="CENTER" />
-            <Label layoutX="300.0" layoutY="5.0" text="Rol: " />
-            <ChoiceBox fx:id="rolBox" layoutX="329.0" layoutY="1.0" prefHeight="26.0" prefWidth="145.0" />
-            <CheckBox fx:id="actiefCB" layoutX="513.0" layoutY="5.0" mnemonicParsing="false" text="Actief" />
-            <CheckBox fx:id="nonActiefCB" layoutX="658.0" layoutY="6.0" mnemonicParsing="false" text="Non-Actief" />
+            <Button fx:id="addBtn" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="3.0" layoutX="1038.0" mnemonicParsing="false" onAction="#addGebruiker" prefHeight="26.0" prefWidth="138.0" text="Gebruiker Toevoegen" textAlignment="CENTER" AnchorPane.rightAnchor="4.0" />
+            <HBox alignment="BASELINE_CENTER" layoutX="349.0" layoutY="1.0" prefHeight="26.0" prefWidth="399.0" AnchorPane.leftAnchor="349.0" AnchorPane.rightAnchor="432.0">
+               <children>
+                  <Label text="Rol: " />
+                  <ChoiceBox fx:id="rolBox" prefHeight="26.0" prefWidth="145.0">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </ChoiceBox>
+                  <CheckBox fx:id="actiefCB" mnemonicParsing="false" text="Actief">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </CheckBox>
+                  <CheckBox fx:id="nonActiefCB" mnemonicParsing="false" text="Non-Actief">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </CheckBox>
+               </children>
+            </HBox>
          </children>
       </AnchorPane>
       <TableView fx:id="gebruikersTable" prefHeight="313.0" prefWidth="600.0">
@@ -63,6 +79,9 @@
          </children>
       </HBox>
 	   </children>
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
 	</VBox>
    </children>
    <padding>
