@@ -1,7 +1,10 @@
 package gui;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+
 import domain.GebruikerController;
+import domain.LogController;
 import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.beans.property.SimpleStringProperty;
@@ -69,9 +72,13 @@ public class GebruikersListFrameController extends VBox {
 	@FXML
 	private CheckBox nonActiefCB;
 	
+	private GebruikerDTO ingelogdeGebruiker;
+	
+	private LogController logController;
+	
 
 	
-	public GebruikersListFrameController(GebruikerController controller) {
+	public GebruikersListFrameController(GebruikerController controller, GebruikerDTO gebruiker, LogController logController) {
 		dc = controller;
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GebruikersListFrame.fxml"));
         loader.setRoot(this);
@@ -81,6 +88,9 @@ public class GebruikersListFrameController extends VBox {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+        
+        ingelogdeGebruiker = gebruiker;
+        this.logController = logController;
         
         voornaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().voornaam()));
         achternaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().achternaam()));
@@ -197,7 +207,7 @@ public class GebruikersListFrameController extends VBox {
 			Parent root = loader.load();
 
 			AddOrEditGebruikerFrameController controller = loader.getController();
-			controller.initData(this.dc);
+			controller.initData(this.dc, logController, ingelogdeGebruiker);
 
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Gebruiker Toevoegen");
@@ -208,8 +218,7 @@ public class GebruikersListFrameController extends VBox {
 			dialogStage.showAndWait();
 			
 			gebruikersTable.refresh();
-
-
+			
 	    } catch (IOException e) {
 	        AlertHelper.showError("Gebruiker opslaan mislukt", e.getMessage());
 	    }
@@ -222,7 +231,7 @@ public class GebruikersListFrameController extends VBox {
 			Parent root = loader.load();
 
 			AddOrEditGebruikerFrameController controller = loader.getController();
-			controller.initData(this.dc, gebruiker);
+			controller.initData(this.dc, gebruiker, logController, ingelogdeGebruiker);
 
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Gebruiker Aanpassen");
@@ -233,7 +242,7 @@ public class GebruikersListFrameController extends VBox {
 			dialogStage.showAndWait();
 			
 			gebruikersTable.refresh();
-		
+			
 
 
 	    } catch (IOException e) {

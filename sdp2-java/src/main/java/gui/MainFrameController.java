@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 
 import domain.GebruikerController;
+import domain.LogController;
 import domain.MachineController;
 import domain.OnderhoudController;
 import domain.SiteController;
@@ -98,7 +99,7 @@ public class MainFrameController extends BorderPane {
         sitesButton.setOnAction(e -> onButtonClick(sitesButton));
         
         if(gebruiker.rol().equals(Rol.ADMINISTRATOR)) {
-            gebruikersListController = new GebruikersListFrameController(new GebruikerController());
+            gebruikersListController = new GebruikersListFrameController(new GebruikerController(), gebruiker, new LogController());
             Button gebruikersButton = new Button("Gebruikers");
             gebruikersButton.getStyleClass().add("sidebar-button");
             gebruikersButton.setOnAction(e -> onButtonClick(gebruikersButton));

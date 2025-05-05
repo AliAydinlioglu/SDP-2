@@ -1,6 +1,7 @@
 package domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,7 +77,7 @@ public class GebruikerController {
 	}
 	
 	public ObservableList<GebruikerDTO> findAll(){
-		if(gebruikerList == null) initData();
+		if(data == null) initData();
 		return sortedGebruikerList;
 	}
 	
@@ -93,17 +94,19 @@ public class GebruikerController {
 	}
 	
 	public void addGebruiker(String naam, String voornaam, LocalDate geboortedatum, String straat, String huisNr, String postcode, String stad, String land, String email, String gsm, Rol rol, boolean actief) {
-    	Gebruiker g = new GebruikerBuilder().
-				voornaam(voornaam).
-				achternaam(naam).
-				geboorteDatum(geboortedatum).
-				adres(new AdresBuilder().straat(straat).huis_nr(huisNr).stad(stad).land(land).postcode(postcode).build()).
-				email(email).
-				rol(rol).
-				gsm(gsm).
-				actief(actief).build();
+    	
 
 		try {
+			Gebruiker g = new GebruikerBuilder().
+					voornaam(voornaam).
+					achternaam(naam).
+					geboorteDatum(geboortedatum).
+					adres(new AdresBuilder().straat(straat).huis_nr(huisNr).stad(stad).land(land).postcode(postcode).build()).
+					email(email).
+					rol(rol).
+					gsm(gsm).
+					actief(actief).build();
+			
 	        gebruikerRepo.startTransaction();
 	        gebruikerRepo.insert(g);
 	        gebruikerRepo.commitTransaction();
