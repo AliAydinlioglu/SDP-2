@@ -1,10 +1,8 @@
 package domain;
 
-
 import enums.Rol;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 
 import java.time.LocalDate;
 
@@ -23,31 +21,27 @@ class GebruikerTest {
                 new Adres("Straat", "1", "1000", "Brussel", "Belgie"),
                 "jan.jansen@example.com",
                 "0499123456",
-                Rol.ADMINISTRATOR
-        );
+                Rol.ADMINISTRATOR,
+                true);
     }
 
     @Test
     void constructorShouldThrowWhenMissingRequiredFields() {
-        assertThrows(IllegalArgumentException.class, () ->
-                new Gebruiker("", "Jan", LocalDate.now(), new Adres(), "test@mail.com", "", Rol.ADMINISTRATOR)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Gebruiker("Achternaam", "", LocalDate.now(), new Adres(), "test@mail.com", "", Rol.ADMINISTRATOR)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Gebruiker("Achternaam", "Jan", null, new Adres(), "test@mail.com", "", Rol.ADMINISTRATOR)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Gebruiker("Achternaam", "Jan", LocalDate.now(), new Adres(), "", "", Rol.ADMINISTRATOR)
-        );
+        assertThrows(IllegalArgumentException.class, () -> new Gebruiker("", "Jan", LocalDate.now(), new Adres(),
+                "test@mail.com", "", Rol.ADMINISTRATOR, true));
+        assertThrows(IllegalArgumentException.class, () -> new Gebruiker("Achternaam", "", LocalDate.now(), new Adres(),
+                "test@mail.com", "", Rol.ADMINISTRATOR, true));
+        assertThrows(IllegalArgumentException.class, () -> new Gebruiker("Achternaam", "Jan", null, new Adres(),
+                "test@mail.com", "", Rol.ADMINISTRATOR, true));
+        assertThrows(IllegalArgumentException.class,
+                () -> new Gebruiker("Achternaam", "Jan", LocalDate.now(), new Adres(), "", "", Rol.ADMINISTRATOR,
+                        true));
     }
 
     @Test
     void techniekerMustHaveGsm() {
-        assertThrows(IllegalArgumentException.class, () ->
-                new Gebruiker("Achternaam", "Jan", LocalDate.now(), new Adres(), "jan@test.com", "", Rol.TECHNIEKER)
-        );
+        assertThrows(IllegalArgumentException.class, () -> new Gebruiker("Achternaam", "Jan", LocalDate.now(),
+                new Adres(), "jan@test.com", "", Rol.TECHNIEKER, true));
     }
 
     @Test
@@ -64,8 +58,8 @@ class GebruikerTest {
                 new Adres("Teststraat", "2", "2000", "Antwerpen", "Belgie"),
                 "bart@test.com",
                 "0499000000",
-                Rol.TECHNIEKER
-        );
+                Rol.TECHNIEKER,
+                true);
         assertThrows(IllegalArgumentException.class, () -> technieker.setGsm(""));
     }
 
@@ -87,7 +81,7 @@ class GebruikerTest {
 
     @Test
     void addAndRemoveSiteShouldWorkCorrectly() {
-        Site site = new Site("Test"); 
+        Site site = new Site("Test");
         gebruiker.addSite(site);
         assertTrue(gebruiker.getSitesSet().size() == 1);
 
@@ -97,9 +91,7 @@ class GebruikerTest {
 
     @Test
     void getSitesSetShouldBeUnmodifiable() {
-        assertThrows(UnsupportedOperationException.class, () ->
-                gebruiker.getSitesSet().add(new Site("Test"))
-        );
+        assertThrows(UnsupportedOperationException.class, () -> gebruiker.getSitesSet().add(new Site("Test")));
     }
 
     @Test
