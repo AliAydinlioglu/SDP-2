@@ -142,14 +142,23 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-					<filtering>false</filtering>
+				<filtering>true</filtering>
+				<includes>
+					<include>META-INF/persistence.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
 				<includes>
 					<include>**/*.fxml</include>
 					<include>**/*.css</include>
 					<include>**/*.properties</include>
-					<include>META-INF/persistence.xml</include>
 					<include>images/*</include>
 				</includes>
+				<excludes>
+					<exclude>META-INF/persistence.xml</exclude>
+				</excludes>
 			</resource>
 		</resources>
 		<plugins>
