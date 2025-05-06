@@ -15,4 +15,16 @@ public class AdresTest {
         Assertions.assertEquals("België", adres.getLand());
         Assertions.assertEquals("Teststraat 123, 9000 Gent België", adres.toString());
     }
+
+    @Test
+    public void testAdresWithNullValuesToString() {
+        Adres adres = new Adres(null, "123", null, "Gent", null);
+        Assertions.assertEquals("null 123, null Gent null", adres.toString());
+    }
+
+    @Test
+    public void testAdresWithEmptyValuesToString() {
+        Adres adres = new Adres("", "123", "", "Gent", "");
+        Assertions.assertEquals(" 123,  Gent ", adres.toString());
+    }
 }

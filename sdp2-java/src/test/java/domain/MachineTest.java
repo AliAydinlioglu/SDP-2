@@ -163,9 +163,6 @@ class MachineTest {
                 "M001", "InfoXYZ", "Hal_1", MachineStatus.DRAAIT,
                 ProductionStatus.IN_ORDE, 200, testTechnieker, 5,
                 LocalDate.of(2025, 12, 31), testSite);
-        // MachineID is auto-generated and not set in constructor, so we can't easily
-        // predict it.
-        // We will check for the presence of other key fields.
         String machineString = machine.toString();
         assertTrue(machineString.contains("Naam: M001"));
         assertTrue(machineString.contains("Info: InfoXYZ"));
