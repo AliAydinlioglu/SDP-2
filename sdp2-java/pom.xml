@@ -142,7 +142,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-					<filtering>false</filtering>
+					<filtering>true</filtering>
 				<includes>
 					<include>**/*.fxml</include>
 					<include>**/*.css</include>

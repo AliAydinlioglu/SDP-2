@@ -1,7 +1,5 @@
 package gui;
 
-import domain.Gebruiker;
-import domain.Site;
 import domain.SiteController;
 import dto.GebruikerDTO;
 import dto.SiteDTO;
@@ -28,11 +26,12 @@ public class SiteOverzichtFrameController extends VBox {
     @FXML private TableColumn<SiteDTO, Number> aantalMachinesCol;
     @FXML private Label lblStatus;
 
-    private SiteController siteController;
-    private GebruikerDTO gebruiker;
+    private final SiteController siteController;
+    private final GebruikerDTO gebruiker;
 
     public SiteOverzichtFrameController(SiteController siteController, GebruikerDTO gebruiker) {
         this.siteController = siteController;
+        this.gebruiker = gebruiker;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteOverzichtFrame.fxml"));
         loader.setRoot(this);
@@ -43,14 +42,19 @@ public class SiteOverzichtFrameController extends VBox {
             throw new RuntimeException(ex);
         }
 
+        initializeTableColumns();
+        initializeEventListeners();
+        loadSites();
+    }
+
+    private void initializeTableColumns() {
         naamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().naam()));
-        verantwoordelijkeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().verantwoordelijke().voornaam() + " " + cellData.getValue().verantwoordelijke().achternaam()));
+        verantwoordelijkeCol.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().verantwoordelijke().voornaam() + " " + cellData.getValue().verantwoordelijke().achternaam()));
         aantalMachinesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().machines().size()));
+    }
 
-        //sites ophalen
-        //siteTable.setItems(siteController.getAllSites());
-        siteTable.setItems(siteController.getSitesByUserId(gebruiker.id()));
-
+    private void initializeEventListeners() {
         siteTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 SiteDTO selectedSite = siteController.getSiteDetails(newSelection);
@@ -60,12 +64,31 @@ public class SiteOverzichtFrameController extends VBox {
             }
         });
 
+        siteTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                SiteDTO selectedSite = siteTable.getSelectionModel().getSelectedItem();
+                if (selectedSite != null) {
+                    openSiteDetailFrame(selectedSite);
+                }
+            }
+        });
+    }
+
+    private void loadSites() {
+        siteTable.setItems(siteController.getSitesByUserId(gebruiker.id()));
         if (siteController.getAllSites().isEmpty()) {
             lblStatus.setText("Geen sites gevonden.");
         }
     }
 
-    private void showSiteDetails(Site site) {
-        System.out.println("Details voor: " + site.getNaam());
+    private void openSiteDetailFrame(SiteDTO selectedSite) {
+        try {
+            SiteDetailFrameController detailFrame = new SiteDetailFrameController(siteController, selectedSite, this);
+            Scene currentScene = this.getScene();
+            currentScene.setRoot(detailFrame);
+        } catch (Exception e) {
+            AlertHelper.showError("Could not open site details.", e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
