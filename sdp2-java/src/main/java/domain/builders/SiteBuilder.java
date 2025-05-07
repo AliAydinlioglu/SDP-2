@@ -12,9 +12,8 @@ public class SiteBuilder {
 
 	private String naam;
     private Gebruiker verantwoordelijke;
-    private Set<Machine> machines = new HashSet<>();
-    
-    
+	private Set<Machine> machines = new HashSet<>();
+
     public SiteBuilder naam(String naam) {
 		if (naam == null || naam.isBlank()) {
 			throw new IllegalArgumentException("Naam mag niet leeg zijn");
@@ -24,13 +23,10 @@ public class SiteBuilder {
     }
     
     public SiteBuilder verantwoordelijke(Gebruiker verantwoordelijke) {
-		if (verantwoordelijke == null) {
-			throw new IllegalArgumentException("Verantwoordelijke mag niet leeg zijn");
-			
-		}
 		this.verantwoordelijke = verantwoordelijke;
 		return this;
     }
+
     
     public SiteBuilder machines(Set<Machine> machines) {
 		if (machines == null || machines.isEmpty()) {
@@ -39,8 +35,19 @@ public class SiteBuilder {
 		this.machines = machines;
 		return this;
     }
-    
+
     public Site build() {
-    	return new Site(naam);
-    }
+		if (this.naam == null || this.naam.isBlank()){
+			throw new IllegalStateException("Naam is niet ingesteld in de builder en is verplicht.");
+		}
+		if (this.verantwoordelijke == null) {
+			throw new IllegalStateException("Verantwoordelijke is niet ingesteld en is verplicht.");
+		 }
+
+		Site site = new Site(this.naam);
+		if (this.verantwoordelijke != null) {
+			site.setVerantwoordelijke(this.verantwoordelijke);
+		}
+		return site;
+	}
 }
