@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 
 import domain.GebruikerController;
+import domain.LogController;
 import domain.MachineController;
 import domain.OnderhoudController;
 import domain.SiteController;
@@ -46,6 +47,7 @@ public class MainFrameController extends BorderPane {
     private OnderhoudFrameController onderhoudFrameController;
     private SiteOverzichtFrameController siteOverzichtController;
     private GebruikersListFrameController gebruikersListController;
+    private LogListController logListFrameController;
 
     private Stage stage;
 
@@ -75,10 +77,14 @@ public class MainFrameController extends BorderPane {
     	
     	loggedInGebruiker.setText(gebruiker.voornaam() + " " + gebruiker.achternaam());
     	
+    	LogController logController = new LogController();
     	
-        machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker);
-        onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker, new MachineController());
+    	
+        machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker, logController);
+        onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker, new MachineController(), logController);
         siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker);
+        
+        
 
         Button machinesButton = new Button("Machines");
         Button onderhoudButton = new Button("Onderhoud");
@@ -98,11 +104,21 @@ public class MainFrameController extends BorderPane {
         sitesButton.setOnAction(e -> onButtonClick(sitesButton));
         
         if(gebruiker.rol().equals(Rol.ADMINISTRATOR)) {
-            gebruikersListController = new GebruikersListFrameController(new GebruikerController());
+            gebruikersListController = new GebruikersListFrameController(new GebruikerController(), gebruiker, logController);
             Button gebruikersButton = new Button("Gebruikers");
+            
+            logListFrameController = new LogListController(logController);
+            Button logButton = new Button("Logs");
+            
             gebruikersButton.getStyleClass().add("sidebar-button");
             gebruikersButton.setOnAction(e -> onButtonClick(gebruikersButton));
-            sidebar.getChildren().add(gebruikersButton);
+            
+            logButton.getStyleClass().add("sidebar-button");
+            logButton.setOnAction(e -> onButtonClick(logButton));
+            
+            sidebar.getChildren().addAll(gebruikersButton, logButton);
+            
+            
             
             mainView.getChildren().setAll(gebruikersListController);
             gebruikersButton.setStyle("-fx-underline: true;");
@@ -149,6 +165,8 @@ public class MainFrameController extends BorderPane {
             mainView.getChildren().setAll(siteOverzichtController);
         } else if (clickedButton.getText().equals("Gebruikers")) {
             mainView.getChildren().setAll(gebruikersListController);
+        } else if(clickedButton.getText().equals("Logs")) {
+        	mainView.getChildren().setAll(logListFrameController);
         }
     }
 

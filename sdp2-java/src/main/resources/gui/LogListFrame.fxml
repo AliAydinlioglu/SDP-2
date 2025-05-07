@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<fx:root prefWidth="1200.0" type="VBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="62.0" prefWidth="1241.0" text="Logs" textAlignment="JUSTIFY">
+         <font>
+            <Font size="34.0" />
+         </font>
+      </Label>
+      <AnchorPane prefHeight="26.0" prefWidth="600.0">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+         <children>
+            <TextField fx:id="txtFilter" onKeyReleased="#filter" prefHeight="26.0" prefWidth="224.0" promptText="Filter" />
+            <HBox alignment="BASELINE_CENTER" layoutX="349.0" layoutY="1.0" prefHeight="26.0" prefWidth="522.0" AnchorPane.leftAnchor="349.0" AnchorPane.rightAnchor="309.0">
+               <DatePicker fx:id="startDatePicker" promptText="Start date" />
+				<Label text="–" />
+				<DatePicker fx:id="endDatePicker" promptText="End date" />
+				<ComboBox fx:id="presetRangeBox" prefHeight="26.0" prefWidth="155.0" promptText="Select range">
+				    <items>
+				        <FXCollections fx:factory="observableArrayList">
+				            <String fx:value="Alle" />
+				            <String fx:value="Vandaag" />
+				            <String fx:value="Voorbije Week" />
+				            <String fx:value="Deze Week" />
+				            <String fx:value="Vorige Week" />
+				            <String fx:value="Deze Maand" />
+				            <String fx:value="Vorige Maand" />
+				        </FXCollections>
+				    </items>
+                  <HBox.margin>
+                     <Insets left="10.0" />
+                  </HBox.margin>
+				</ComboBox>
+            </HBox>
+         </children>
+      </AnchorPane>
+      <TableView fx:id="logTable" prefHeight="456.0" prefWidth="1180.0">
+        <columns>
+            <TableColumn fx:id="emailCol" editable="false" prefWidth="186.72845554351807" text="email" />
+            <TableColumn fx:id="actieCol" editable="false" prefWidth="284.5" text="actie" />
+            <TableColumn fx:id="datumCol" editable="false" prefWidth="171.5" text="Datum" />
+            <TableColumn fx:id="tijdCol" editable="false" prefWidth="163.0" text="Tijd" />
+            <TableColumn fx:id="opmerkingCol" editable="false" prefWidth="393.0" text="Opmerking" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</fx:root>

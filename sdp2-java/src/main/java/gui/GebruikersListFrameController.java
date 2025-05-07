@@ -1,10 +1,14 @@
 package gui;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+
 import domain.GebruikerController;
+import domain.LogController;
 import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -69,9 +73,13 @@ public class GebruikersListFrameController extends VBox {
 	@FXML
 	private CheckBox nonActiefCB;
 	
+	private GebruikerDTO ingelogdeGebruiker;
+	
+	private LogController logController;
+	
 
 	
-	public GebruikersListFrameController(GebruikerController controller) {
+	public GebruikersListFrameController(GebruikerController controller, GebruikerDTO gebruiker, LogController logController) {
 		dc = controller;
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GebruikersListFrame.fxml"));
         loader.setRoot(this);
@@ -82,12 +90,20 @@ public class GebruikersListFrameController extends VBox {
             throw new RuntimeException(ex);
         }
         
+        ingelogdeGebruiker = gebruiker;
+        this.logController = logController;
+        
         voornaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().voornaam()));
         achternaamCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().achternaam()));
         emailCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().email()));
         rolCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().rol().toString().toLowerCase()));
         
-        gebruikersTable.setItems(dc.findAll());
+        
+        SortedList<GebruikerDTO> sortedList = (SortedList<GebruikerDTO>) dc.findAll(); // or wrap it in a new SortedList if it's not
+        sortedList.comparatorProperty().bind(gebruikersTable.comparatorProperty());
+        gebruikersTable.setItems(sortedList);
+        
+
         
         gebruikersTable.setRowFactory(new Callback<>() {
             @Override
@@ -164,6 +180,9 @@ public class GebruikersListFrameController extends VBox {
             filter(null);
         });
         
+        gebruikersTable.setPlaceholder(new Label("Geen gebruikers gevonden voor de opgegeven filters."));
+
+        
 		
 	}	
 	
@@ -197,7 +216,7 @@ public class GebruikersListFrameController extends VBox {
 			Parent root = loader.load();
 
 			AddOrEditGebruikerFrameController controller = loader.getController();
-			controller.initData(this.dc);
+			controller.initData(this.dc, logController, ingelogdeGebruiker);
 
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Gebruiker Toevoegen");
@@ -208,8 +227,7 @@ public class GebruikersListFrameController extends VBox {
 			dialogStage.showAndWait();
 			
 			gebruikersTable.refresh();
-
-
+			
 	    } catch (IOException e) {
 	        AlertHelper.showError("Gebruiker opslaan mislukt", e.getMessage());
 	    }
@@ -222,7 +240,7 @@ public class GebruikersListFrameController extends VBox {
 			Parent root = loader.load();
 
 			AddOrEditGebruikerFrameController controller = loader.getController();
-			controller.initData(this.dc, gebruiker);
+			controller.initData(this.dc, gebruiker, logController, ingelogdeGebruiker);
 
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Gebruiker Aanpassen");
@@ -233,7 +251,7 @@ public class GebruikersListFrameController extends VBox {
 			dialogStage.showAndWait();
 			
 			gebruikersTable.refresh();
-		
+			
 
 
 	    } catch (IOException e) {

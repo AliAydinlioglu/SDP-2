@@ -1,5 +1,6 @@
 package gui;
 
+import domain.LogController;
 import domain.Machine;
 import domain.MachineController;
 import domain.OnderhoudController;
@@ -60,21 +61,24 @@ public class AddOrEditOnderhoudFrameController {
     private GebruikerDTO ingelogdeGebruiker;
     private MachineDTO machine;
     private MachineController machineController;
+    
+    private LogController logController;
 
-    public void initData(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, OnderhoudDTO geselecteerd, MachineController machineController) {
-		initData(onderhoudController, ingelogdeGebruiker, null, geselecteerd, machineController);
+    public void initData(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, OnderhoudDTO geselecteerd, MachineController machineController, LogController logController) {
+		initData(onderhoudController, ingelogdeGebruiker, null, geselecteerd, machineController, logController);
 	}
 
-    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, MachineController machineController) {
-        initData(controller, gebruiker, machine, null, machineController);
+    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, MachineController machineController, LogController logController) {
+        initData(controller, gebruiker, machine, null, machineController, logController);
     }
 
-    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, OnderhoudDTO onderhoud, MachineController machineController) {
+    public void initData(OnderhoudController controller, GebruikerDTO gebruiker, MachineDTO machine, OnderhoudDTO onderhoud, MachineController machineController, LogController logController) {
         this.onderhoudController = controller;
         this.bewerktOnderhoud = onderhoud;
         this.ingelogdeGebruiker = gebruiker;
         this.machine = machine;
         this.machineController = machineController;
+        this.logController = logController;
 
         statusBox.setItems(FXCollections.observableArrayList(OnderhoudStatus.values()));
 
@@ -120,9 +124,11 @@ public class AddOrEditOnderhoudFrameController {
                         bewerktOnderhoud.technieker()
                 );
                 onderhoudController.updateOnderhoud(updatedOnderhoud);
-                
+                logController.addLog(ingelogdeGebruiker, String.format("Onderhoud met id %d aangepast", updatedOnderhoud.id()), "");
                 if (status == OnderhoudStatus.VOLTOOID) {;
                 	machineController.stopOnderhoud(bewerktOnderhoud.machine());
+                    logController.addLog(ingelogdeGebruiker, String.format("Machine met id %d is startbaar", bewerktOnderhoud.machine().id()), "");
+
                 }
                 
             } else {
@@ -138,6 +144,8 @@ public class AddOrEditOnderhoudFrameController {
                         machine.id()
                 );
                 machineController.startOnderhoud(machine);
+                logController.addLog(ingelogdeGebruiker, String.format("Onderhoud voor machine %d aangemaakt", machine.id()), "");
+
             }
 
             ((Stage) submitBtn.getScene().getWindow()).close();

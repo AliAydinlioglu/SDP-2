@@ -1,5 +1,6 @@
 package gui;
 
+import domain.LogController;
 import domain.Machine;
 import domain.MachineController;
 import domain.Onderhoud;
@@ -42,15 +43,17 @@ public class MachineListFrameController extends VBox {
 
     private MachineController machineController;
     private OnderhoudController onderhoudController;
+    private LogController logController;
     
     private GebruikerDTO ingelogdeGebruiker;
     private MachineDTO selectedMachine;
 	private ObservableList<MachineDTO> machineList;
 
-    public MachineListFrameController(MachineController machineController, OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker) {
+    public MachineListFrameController(MachineController machineController, OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, LogController logController) {
         this.machineController = machineController;
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
+        this.logController = logController;
         
         this.machineList = machineController.getMachinesForTechnieker(ingelogdeGebruiker.id());
 
@@ -105,7 +108,7 @@ public class MachineListFrameController extends VBox {
                 Parent root = loader.load();
 
                 AddOrEditOnderhoudFrameController controller = loader.getController();
-                controller.initData(onderhoudController, ingelogdeGebruiker, selectedMachine, machineController); // Geef de geselecteerde machine mee
+                controller.initData(onderhoudController, ingelogdeGebruiker, selectedMachine, machineController, logController); // Geef de geselecteerde machine mee
 
                 Stage dialogStage = new Stage();
                 dialogStage.setTitle("Onderhoud Toevoegen");
