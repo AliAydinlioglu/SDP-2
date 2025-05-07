@@ -215,6 +215,14 @@ public class OnderhoudController {
         );
     }
     
+    public OnderhoudDTO getLaatsteOnderhoudVanMachine(int machineId) {
+        return getLaatsteVoltooideOnderhoudPerMachine().stream()
+            .filter(onderhoud -> onderhoud.machine().id() == machineId)
+            .findFirst()
+            .orElse(null);
+    }
+
+    
     public void validateOnderhoudDetails(Onderhoud onderhoud) {
         if (onderhoud.getDatum() == null || onderhoud.getStartTijd() == null || onderhoud.getEindTijd() == null) {
             throw new IllegalArgumentException("Datum, starttijd en eindtijd mogen niet leeg zijn.");

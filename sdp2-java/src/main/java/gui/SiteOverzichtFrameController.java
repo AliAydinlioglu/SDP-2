@@ -83,7 +83,7 @@ public class SiteOverzichtFrameController extends VBox {
 
     private void openSiteDetailFrame(SiteDTO selectedSite) {
         try {
-            SiteDetailFrameController detailFrame = new SiteDetailFrameController(siteController, selectedSite, this);
+            SiteDetailFrameController detailFrame = new SiteDetailFrameController(siteController, selectedSite);
             Scene currentScene = this.getScene();
             currentScene.setRoot(detailFrame);
         } catch (Exception e) {
