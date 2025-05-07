@@ -48,13 +48,13 @@ public class SiteDetailFrameController extends HBox {
     @FXML private Label lblDatumToekomstigOnderhoud;
 
     private SiteController siteController;
-    private SiteDTO selectedSite;
+    private SiteDTO site;
     private SiteOverzichtFrameController siteOverzichtFrameController;
     private OnderhoudController onderhoudController;
 
-    public SiteDetailFrameController(SiteController siteController, SiteDTO selectedSite) {
+    public SiteDetailFrameController(SiteController siteController, SiteDTO site) {
         this.siteController = siteController;
-        this.selectedSite = selectedSite;
+        this.site = site;
         this.onderhoudController = new OnderhoudController();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteDetailFrame.fxml"));
@@ -72,9 +72,29 @@ public class SiteDetailFrameController extends HBox {
     }
 
     private void initializeSiteDetails() {
-        lblSiteNaam.setText(selectedSite.naam());
-        lblVerantwoordelijke.setText(selectedSite.verantwoordelijke().voornaam() + " " + selectedSite.verantwoordelijke().achternaam());
-        lblAantalMachines.setText(String.valueOf(selectedSite.machines().size()));
+        if (site != null) {
+            lblSiteNaam.setText("Site Naam: " + site.naam());
+
+            String verantwNaam = "Niet toegewezen";
+            if (site.verantwoordelijke() != null) {
+                verantwNaam = site.verantwoordelijke().voornaam() + " " + site.verantwoordelijke().achternaam();
+            }
+            lblVerantwoordelijke.setText("Verantwoordelijke: " + verantwNaam);
+
+            int aantalMachines = (site.machines() != null) ? site.machines().size() : 0;
+            lblAantalMachines.setText("Aantal Machines: " + aantalMachines);
+
+            locatieCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().locatie()));
+            statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().status().name()));
+            productiestatusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().productieStatus().name()));
+
+            if (site.machines() != null) {
+                machineTable.setItems(FXCollections.observableArrayList(site.machines()));
+            } else {
+                machineTable.setItems(FXCollections.observableArrayList());
+            }
+
+        }
     }
     
     private void initializeMachineDetails(MachineDTO machine) {
@@ -109,7 +129,7 @@ public class SiteDetailFrameController extends HBox {
         locatieCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().locatie()));
         statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().status().name()));
         productiestatusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().productieStatus().name()));
-        machineTable.setItems(FXCollections.observableArrayList(selectedSite.machines()));
+        machineTable.setItems(FXCollections.observableArrayList(site.machines()));
     }
 
     private void initializeEventListeners() {
@@ -126,7 +146,7 @@ public class SiteDetailFrameController extends HBox {
     private void handleBackButton() {
         try {
             Stage stage = (Stage) this.getScene().getWindow();
-            MainFrameController mainFrame = new MainFrameController(selectedSite.verantwoordelijke(), stage);
+            MainFrameController mainFrame = new MainFrameController(site.verantwoordelijke(), stage);
             Scene currentScene = this.getScene();
             currentScene.setRoot(mainFrame);
         } catch (Exception e) {

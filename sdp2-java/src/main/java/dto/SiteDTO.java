@@ -4,13 +4,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import domain.Site;
+import domain.Gebruiker;
 
 public record SiteDTO(int id, String naam, GebruikerDTO verantwoordelijke, Set<MachineDTO> machines) {
     public static SiteDTO fromEntity(Site site) {
+        Gebruiker verantwEntity = site.getVerantwoordelijke();
         return new SiteDTO(
             site.getSiteId(),
             site.getNaam(),
-            GebruikerDTO.fromEntity(site.getVerantwoordelijke()),
+                (verantwEntity != null) ? GebruikerDTO.fromEntity(site.getVerantwoordelijke()) : null,
             site.getMachines().stream()
                 .map(MachineDTO::fromEntity)
                 .collect(Collectors.toSet())
