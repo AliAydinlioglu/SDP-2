@@ -5,8 +5,10 @@ import dto.GebruikerDTO;
 import dto.SiteDTO;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -15,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import utils.AlertHelper;
+
 
 import java.io.IOException;
 
@@ -68,7 +71,7 @@ public class SiteOverzichtFrameController extends VBox {
             if (event.getClickCount() == 2) {
                 SiteDTO selectedSite = siteTable.getSelectionModel().getSelectedItem();
                 if (selectedSite != null) {
-                    openSiteDetailFrame(selectedSite);
+                    openSiteDetailPopup(selectedSite);
                 }
             }
         });
@@ -81,13 +84,31 @@ public class SiteOverzichtFrameController extends VBox {
         }
     }
 
-    private void openSiteDetailFrame(SiteDTO selectedSite) {
+    private void openSiteDetailPopup(SiteDTO selectedSite) {
         try {
-            SiteDetailFrameController detailFrame = new SiteDetailFrameController(siteController, selectedSite);
-            Scene currentScene = this.getScene();
-            currentScene.setRoot(detailFrame);
+            if (this.siteController == null) {
+                AlertHelper.showError("Fout", "SiteController is niet geïnitialiseerd.");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteDetailFrame.fxml"));
+
+            SiteDetailFrameController detailController = new SiteDetailFrameController(this.siteController, selectedSite, this.gebruiker);
+            loader.setController(detailController);
+            Stage popupStage = new Stage();
+            popupStage.initModality(Modality.APPLICATION_MODAL);
+            popupStage.initOwner((Stage) siteTable.getScene().getWindow());
+            popupStage.setTitle("Site Details: " + selectedSite.naam());
+
+            Scene popupScene = new Scene(detailController);
+
+            popupScene.getStylesheets().addAll(siteTable.getScene().getStylesheets());
+
+            popupStage.setScene(popupScene);
+            popupStage.showAndWait();
+
         } catch (Exception e) {
-            AlertHelper.showError("Could not open site details.", e.getMessage());
+            AlertHelper.showError("Kon site details niet openen in popup.", e.getMessage());
             e.printStackTrace();
         }
     }
