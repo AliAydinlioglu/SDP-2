@@ -138,6 +138,11 @@ public class SiteOverzichtFrameController extends VBox {
         } else {
             System.err.println("Waarschuwing: btnSiteToevoegen is null. Controleer fx:id in SiteOverzichtFrame.fxml.");
         }
+        if (btnSiteVerwijderen != null) {
+            btnSiteVerwijderen.setOnAction(event -> handleSiteVerwijderen());
+        } else {
+            System.err.println("Waarschuwing: btnSiteVerwijderen is null.");
+        }
     }
     private void setupKnoppenAutorisatieEnBindings() {
         boolean magBeheren = gebruiker != null &&
@@ -230,6 +235,26 @@ public class SiteOverzichtFrameController extends VBox {
             e.printStackTrace();
         } catch (Exception e) {
             AlertHelper.showError("Fout", "Er is een onverwachte fout opgetreden bij het openen van het toevoeg-formulier: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private void handleSiteVerwijderen() {
+        SiteDTO selectedSite = siteTable.getSelectionModel().getSelectedItem();
+
+        if (selectedSite == null) {
+            AlertHelper.showWarning("Geen selectie", "Selecteer eerst een site om te verwijderen.");
+            return;
+        }
+        try {
+            siteController.deleteSite(selectedSite.id(), this.gebruiker);
+            lblStatus.setText("Site '" + selectedSite.naam() + "' verwijderd.");
+
+        } catch (IllegalStateException e) {
+            AlertHelper.showError("Verwijderen Mislukt", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            AlertHelper.showWarning("Verwijderen Mislukt", e.getMessage());
+        } catch (RuntimeException e) {
+            AlertHelper.showError("Fout bij verwijderen", "Kon de site niet verwijderen: " + e.getMessage());
             e.printStackTrace();
         }
     }

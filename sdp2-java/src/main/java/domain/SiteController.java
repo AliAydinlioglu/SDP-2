@@ -109,4 +109,56 @@ public class SiteController {
             throw new RuntimeException("Kon nieuwe site niet opslaan: " + e.getMessage(), e);
         }
     }
+    public void deleteSite(int siteId, GebruikerDTO ingelogdeGebruikerDto) {
+        Site siteEntity = siteDao.get(siteId);
+
+        if (siteEntity == null) {
+            System.err.println("Poging tot verwijderen van niet-bestaande site met id: " + siteId);
+            if (logController != null && ingelogdeGebruikerDto != null) {
+                logController.addLog(ingelogdeGebruikerDto, "Site Verwijderen Mislukt",
+                        String.format("Site met ID %d niet gevonden.", siteId));
+            }
+            this.siteList.removeIf(siteDto -> siteDto.id() == siteId);
+            return;
+        }
+
+        boolean canDelete;
+        try {
+            siteDao.startTransaction();
+            canDelete = siteEntity.getMachines().isEmpty();
+            siteDao.commitTransaction();
+        } catch (Exception e) {
+            siteDao.rollbackTransaction();
+            throw new RuntimeException("Kon niet controleren of site (id: " + siteId + ") verwijderd kan worden: " + e.getMessage(), e);
+        }
+
+
+        if (!canDelete) {
+            throw new IllegalStateException("Kan site '" + siteEntity.getNaam() + "' niet verwijderen, er zijn nog machines aan gekoppeld.");
+        }
+
+        try {
+            siteDao.startTransaction();
+            siteDao.delete(siteEntity);
+            siteDao.commitTransaction();
+
+            final int idToRemove = siteId;
+            boolean removed = this.siteList.removeIf(siteDto -> siteDto.id() == idToRemove);
+            if (!removed) {
+                System.err.println("Waarschuwing: Site met ID " + siteId + " was niet in de UI lijst na database delete.");
+            }
+
+            if (logController != null && ingelogdeGebruikerDto != null) {
+                logController.addLog(ingelogdeGebruikerDto, "Site Verwijderd",
+                        String.format("Site '%s' (ID: %d)", siteEntity.getNaam(), siteId));
+            }
+
+        } catch (Exception e) {
+            siteDao.rollbackTransaction();
+            if (e.getCause() instanceof java.sql.SQLIntegrityConstraintViolationException) {
+                throw new RuntimeException("Kon site niet verwijderen vanwege database restricties (bv. gekoppelde data).", e);
+            }
+            throw new RuntimeException("Kon site (id: " + siteId + ") niet verwijderen: " + e.getMessage(), e);
+        }
+    }
 }
