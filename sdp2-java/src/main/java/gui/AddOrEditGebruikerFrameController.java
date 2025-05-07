@@ -144,7 +144,10 @@ public class AddOrEditGebruikerFrameController {
                 		actief
                 		);
                 dc.updateGebruiker(bewerkteDTO);
-                logController.addLog(ingelogdeGebruiker, String.format("gebruiker aangepast met id: %d", bewerkteDTO.id()),"");
+                if(!bewerkteDTO.actief()) {
+                	logController.addLog(ingelogdeGebruiker, String.format("gebruiker met id %d op non-actief gezet ", bewerkteDTO.id()),"");
+                }
+                logController.addLog(ingelogdeGebruiker, String.format("gebruiker met id %d aangepast", bewerkteDTO.id()),"");
             } else {
                 // CREATE
                 dc.addGebruiker(naam, voornaam, geboorteDatumPicker.getValue(),

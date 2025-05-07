@@ -9,6 +9,7 @@
     <class>domain.Machine</class>
     <class>domain.Site</class>
     <class>domain.Onderhoud</class>
+    <class>domain.Log</class>
     <properties>
             <property name="jakarta.persistence.jdbc.url" value="${jdbc.url}&amp;createDatabaseIfNotExist=true"/>
             <property name="jakarta.persistence.jdbc.user" value="${jdbc.user}"/>

@@ -8,6 +8,7 @@ import domain.LogController;
 import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -97,7 +98,12 @@ public class GebruikersListFrameController extends VBox {
         emailCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().email()));
         rolCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().rol().toString().toLowerCase()));
         
-        gebruikersTable.setItems(dc.findAll());
+        
+        SortedList<GebruikerDTO> sortedList = (SortedList<GebruikerDTO>) dc.findAll(); // or wrap it in a new SortedList if it's not
+        sortedList.comparatorProperty().bind(gebruikersTable.comparatorProperty());
+        gebruikersTable.setItems(sortedList);
+        
+
         
         gebruikersTable.setRowFactory(new Callback<>() {
             @Override
@@ -173,6 +179,9 @@ public class GebruikersListFrameController extends VBox {
             }
             filter(null);
         });
+        
+        gebruikersTable.setPlaceholder(new Label("Geen gebruikers gevonden voor de opgegeven filters."));
+
         
 		
 	}	

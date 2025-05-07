@@ -1,5 +1,6 @@
 package domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 import domain.builders.LogBuilder;
 import dto.GebruikerDTO;
 import dto.LogDTO;
+import enums.Rol;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -23,8 +25,8 @@ public class LogController {
 	
 	private List<Log> data;
 	private ObservableList<LogDTO> logList;
-	private ObservableList<LogDTO> filteredLogList;
-	private ObservableList<LogDTO> sortedLogList;
+	private FilteredList<LogDTO> filteredLogList;
+	private SortedList<LogDTO> sortedLogList;
 	
 	private final Comparator<LogDTO> byFirstName = (p1, p2)
             -> p1.gebruiker().voornaam().compareToIgnoreCase(p2.gebruiker().voornaam());
@@ -91,6 +93,27 @@ public class LogController {
 			logRepo.rollbackTransaction();
 			throw new IllegalArgumentException(e.getMessage());
 		}
+	}
+	
+	public void changeFilter(String filterValue, LocalDate startDate, LocalDate endDate) {
+	    filteredLogList.setPredicate(log -> {
+	        // TEXT FILTER
+	        boolean matchesText = true;
+	        if (filterValue != null && !filterValue.isBlank()) {
+	            String lowerCaseValue = filterValue.toLowerCase();
+	            matchesText = log.gebruiker().email().toLowerCase().contains(lowerCaseValue)
+	                       || log.actie().toLowerCase().contains(lowerCaseValue);
+	        }
+
+	        // DATE FILTER
+	        boolean matchesDate = true;
+	        if (startDate != null && endDate != null) {
+	            LocalDate logDate = log.date().toLocalDate();
+	            matchesDate = !logDate.isBefore(startDate) && !logDate.isAfter(endDate);
+	        }
+
+	        return matchesText && matchesDate;
+	    });
 	}
 	
 	

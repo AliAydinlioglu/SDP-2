@@ -1,6 +1,7 @@
 package gui;
 
 import domain.Gebruiker;
+import domain.LogController;
 import domain.MachineController;
 import domain.Onderhoud;
 import domain.OnderhoudController;
@@ -51,11 +52,13 @@ public class OnderhoudFrameController extends VBox {
     private OnderhoudController onderhoudController;
     private GebruikerDTO ingelogdeGebruiker;
     private MachineController machineController;
+    private LogController logController;
     
-    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, MachineController machineController) {
+    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, MachineController machineController, LogController logcontroller) {
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
         this.machineController = machineController;
+        this.logController = logcontroller;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudFrame.fxml"));
         loader.setRoot(this);
@@ -98,7 +101,7 @@ public class OnderhoudFrameController extends VBox {
                 Parent root = loader.load();
 
                 AddOrEditOnderhoudFrameController controller = loader.getController();
-                controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd, machineController); // Geef de geselecteerde machine mee
+                controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd, machineController, logController); // Geef de geselecteerde machine mee
 
                 Stage dialogStage = new Stage();
                 dialogStage.setTitle("Onderhoud Toevoegen");
@@ -120,6 +123,7 @@ public class OnderhoudFrameController extends VBox {
         if (geselecteerd != null) {
             onderhoudController.deleteOnderhoud(geselecteerd);
             onderhoudTable.refresh();
+            logController.addLog(ingelogdeGebruiker, String.format("Onderhoud met id %d verwijderd", geselecteerd.id()),"");
         } else {
         	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te verwijderen.");
         }
