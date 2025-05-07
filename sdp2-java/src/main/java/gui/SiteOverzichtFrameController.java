@@ -1,5 +1,6 @@
 package gui;
 
+import domain.LogController;
 import domain.SiteController;
 import dto.GebruikerDTO;
 import dto.SiteDTO;
@@ -28,10 +29,12 @@ public class SiteOverzichtFrameController extends VBox {
 
     private final SiteController siteController;
     private final GebruikerDTO gebruiker;
+    private LogController logController;
 
-    public SiteOverzichtFrameController(SiteController siteController, GebruikerDTO gebruiker) {
+    public SiteOverzichtFrameController(SiteController siteController, GebruikerDTO gebruiker, LogController logController) {
         this.siteController = siteController;
         this.gebruiker = gebruiker;
+        this.logController = logController;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteOverzichtFrame.fxml"));
         loader.setRoot(this);
@@ -83,12 +86,17 @@ public class SiteOverzichtFrameController extends VBox {
 
     private void openSiteDetailFrame(SiteDTO selectedSite) {
         try {
-            SiteDetailFrameController detailFrame = new SiteDetailFrameController(siteController, selectedSite);
-            Scene currentScene = this.getScene();
-            currentScene.setRoot(detailFrame);
+            SiteDetailFrameController detailFrame = new SiteDetailFrameController(siteController, selectedSite, gebruiker, logController);
+            
+            // Zoek de MainFrameController via de huidige Scene
+            MainFrameController mainFrame = (MainFrameController) this.getScene().getRoot();
+            
+            // Update alleen de mainView van de MainFrameController
+            mainFrame.getMainView().getChildren().setAll(detailFrame);
         } catch (Exception e) {
             AlertHelper.showError("Could not open site details.", e.getMessage());
             e.printStackTrace();
         }
     }
+
 }

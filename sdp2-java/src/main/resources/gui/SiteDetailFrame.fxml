@@ -140,6 +140,7 @@
                   </HBox>
                </children>
             </VBox>
+            <Button fx:id="btnOnderhoud" mnemonicParsing="false" text="Alle onderhouden" />
          </children>
         </VBox>
     </children>

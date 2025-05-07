@@ -1,7 +1,10 @@
 package gui;
 
+import domain.LogController;
+import domain.MachineController;
 import domain.OnderhoudController;
 import domain.SiteController;
+import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
 import dto.SiteDTO;
@@ -9,12 +12,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import utils.AlertHelper;
 
@@ -33,6 +38,7 @@ public class SiteDetailFrameController extends HBox {
     @FXML private TableColumn<MachineDTO, String> productiestatusCol;
     @FXML private TableColumn<MachineDTO, String> locatieCol;
     @FXML private Button btnTerug;
+    @FXML private Button btnOnderhoud;
 
     // Labels for machine details
     @FXML private Label lblMachineNaam;
@@ -51,11 +57,17 @@ public class SiteDetailFrameController extends HBox {
     private SiteDTO selectedSite;
     private SiteOverzichtFrameController siteOverzichtFrameController;
     private OnderhoudController onderhoudController;
+    private GebruikerDTO ingelogdeGebruiker;
+    private MachineController machineController;
+    private LogController logController;
 
-    public SiteDetailFrameController(SiteController siteController, SiteDTO selectedSite) {
+    public SiteDetailFrameController(SiteController siteController, SiteDTO selectedSite, GebruikerDTO ingelogdeGebruiker, LogController logController) {
         this.siteController = siteController;
         this.selectedSite = selectedSite;
         this.onderhoudController = new OnderhoudController();
+        this.ingelogdeGebruiker = ingelogdeGebruiker;
+        this.machineController = new MachineController();
+        this.logController = logController;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteDetailFrame.fxml"));
         loader.setController(this);
@@ -121,9 +133,28 @@ public class SiteDetailFrameController extends HBox {
                 initializeOnderhoudDetails(newSelection);
             }
         });
+        
+        btnOnderhoud.setOnAction(event -> handleOnderhoudButton());
     }
 
-    private void handleBackButton() {
+    private void handleOnderhoudButton() {
+        try {
+            OnderhoudFrameController onderhoudFrameController = new OnderhoudFrameController(onderhoudController, ingelogdeGebruiker, selectedSite, logController);
+
+            // Retrieve the MainFrameController from the current scene
+            MainFrameController mainFrame = (MainFrameController) this.getScene().getRoot();
+
+            // Update only the mainView of the MainFrameController
+            mainFrame.getMainView().getChildren().setAll(onderhoudFrameController);
+        } catch (Exception e) {
+            AlertHelper.showError("Could not open the Onderhoud page.", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+
+	private void handleBackButton() {
         try {
             Stage stage = (Stage) this.getScene().getWindow();
             MainFrameController mainFrame = new MainFrameController(selectedSite.verantwoordelijke(), stage);

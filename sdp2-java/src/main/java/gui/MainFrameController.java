@@ -22,6 +22,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import lombok.Getter;
 import utils.AlertHelper;
 
 public class MainFrameController extends BorderPane {
@@ -32,6 +33,7 @@ public class MainFrameController extends BorderPane {
     @FXML
     private Label loggedInGebruiker;
     
+    @Getter
     @FXML
     private StackPane mainView;
 
@@ -81,8 +83,8 @@ public class MainFrameController extends BorderPane {
     	
     	
         machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker, logController);
-        onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker, new MachineController(), logController);
-        siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker);
+        onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker, logController);
+        siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker, logController);
         
         
 
