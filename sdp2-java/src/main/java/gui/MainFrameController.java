@@ -50,9 +50,8 @@ public class MainFrameController extends BorderPane {
     private LogListController logListFrameController;
 
     private Stage stage;
+    private GebruikerDTO gebruiker;
 
-    
-    GebruikerDTO gebruiker;
     
     public MainFrameController(GebruikerDTO gebruiker, Stage stage) {
     	
@@ -82,9 +81,7 @@ public class MainFrameController extends BorderPane {
     	
         machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker, logController);
         onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker, new MachineController(), logController);
-        siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker);
-        
-        
+        siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker, new GebruikerController(), logController);
 
         Button machinesButton = new Button("Machines");
         Button onderhoudButton = new Button("Onderhoud");
