@@ -33,8 +33,9 @@ public class MachineController {
 
     public MachineController() {
         machineDaoJpa = new MachineDaoJpa();
+        initData();
     }
-    
+
     public MachineController(MachineDao machineDaoJpa) {
         this.machineDaoJpa = machineDaoJpa;
     }
@@ -57,13 +58,14 @@ public class MachineController {
         Machine m = machineDaoJpa.get(id);
         return MachineDTO.fromEntity(m);
     }
-    
+
     protected Machine getRealMachine(int id) {
         return machineDaoJpa.get(id);
     }
 
     public ObservableList<MachineDTO> getAll() {
-        if (data == null) initData();
+        if (data == null)
+            initData();
         return sortedMachineList;
     }
 
@@ -74,39 +76,40 @@ public class MachineController {
             }
             String lowerCaseValue = filterValue.toLowerCase();
             return machine.naam().toLowerCase().contains(lowerCaseValue)
-                || (machine.locatie() != null && machine.locatie().toLowerCase().contains(lowerCaseValue))
-                || machine.status().toString().toLowerCase().contains(lowerCaseValue)
-                || Integer.toString(machine.uptime()).contains(lowerCaseValue);
+                    || (machine.locatie() != null && machine.locatie().toLowerCase().contains(lowerCaseValue))
+                    || machine.status().toString().toLowerCase().contains(lowerCaseValue)
+                    || Integer.toString(machine.uptime()).contains(lowerCaseValue);
         });
     }
 
     public void updateMachine(MachineDTO machineDTO) {
         Machine machine = data.stream()
-            .filter(m -> m.getMachineID() == machineDTO.id())
-            .findFirst()
-            .orElse(null);
-        if (machine == null) return;
-    
+                .filter(m -> m.getMachineID() == machineDTO.id())
+                .findFirst()
+                .orElse(null);
+        if (machine == null)
+            return;
+
         int index = data.indexOf(machine);
-    
+
         machine.setNaam(machineDTO.naam());
         machine.setStatus(machineDTO.status());
         machine.setLocatie(machineDTO.locatie());
         machine.setUptime(machineDTO.uptime());
-    
+
         try {
             machineDaoJpa.startTransaction();
             machineDaoJpa.update(machine);
             machineDaoJpa.commitTransaction();
-    
+
             data.set(index, machine);
             MachineDTO updatedDTO = MachineDTO.fromEntity(machine);
             MachineDTO existingDTO = machineList.stream()
-                .filter(m -> m.id() == machineDTO.id())
-                .findFirst()
-                .orElse(null);
+                    .filter(m -> m.id() == machineDTO.id())
+                    .findFirst()
+                    .orElse(null);
             machineList.set(machineList.indexOf(existingDTO), updatedDTO);
-            
+
         } catch (Exception e) {
             machineDaoJpa.rollbackTransaction();
             throw new IllegalArgumentException("Machine kon niet worden aangepast: " + e.getMessage());
@@ -139,18 +142,18 @@ public class MachineController {
             throw new IllegalArgumentException("Machine kon niet worden gedeactiveerd: " + e.getMessage());
         }
     }
-    
+
     public void deleteMachine(int machineId) {
         try {
             Machine machine = machineDaoJpa.get(machineId);
             if (machine == null) {
                 throw new IllegalArgumentException("Machine met ID " + machineId + " niet gevonden");
             }
-            
+
             machineDaoJpa.startTransaction();
             machineDaoJpa.delete(machine);
             machineDaoJpa.commitTransaction();
-            
+
             if (data != null) {
                 data.removeIf(m -> m.getMachineID() == machineId);
             }
@@ -162,25 +165,28 @@ public class MachineController {
     }
 
     public ObservableList<MachineDTO> getMachinesByStatus(MachineStatus status) {
-        if (data == null) initData();
+        if (data == null)
+            initData();
         FilteredList<MachineDTO> filteredByStatus = new FilteredList<>(machineList, m -> m.status().equals(status));
         return new SortedList<>(filteredByStatus, sortOrder);
     }
-    
+
     public ObservableList<MachineDTO> getMachinesForTechnieker(int techniekerId) {
-        if (data == null) initData();
-        FilteredList<MachineDTO> filteredByTechnieker = new FilteredList<>(machineList, 
-            machine -> machine.technieker() != null && machine.technieker().id() == techniekerId);
+        if (data == null)
+            initData();
+        FilteredList<MachineDTO> filteredByTechnieker = new FilteredList<>(machineList,
+                machine -> machine.technieker() != null && machine.technieker().id() == techniekerId);
         return new SortedList<>(filteredByTechnieker, sortOrder);
     }
-    
+
     public ObservableList<MachineDTO> getMachinesBySite(int siteId) {
-        if (data == null) initData();
-        FilteredList<MachineDTO> filteredBySite = new FilteredList<>(machineList, 
-            machine -> machine.site() != null && machine.site().id() == siteId);
+        if (data == null)
+            initData();
+        FilteredList<MachineDTO> filteredBySite = new FilteredList<>(machineList,
+                machine -> machine.site() != null && machine.site().id() == siteId);
         return new SortedList<>(filteredBySite, sortOrder);
     }
-    
+
     public List<MachineDTO> getMachinesBySiteList(List<SiteDTO> siteList) {
         List<MachineDTO> allMachines = getAll();
 
@@ -189,12 +195,13 @@ public class MachineController {
                         .anyMatch(site -> site.id() == machine.site().id()))
                 .collect(Collectors.toList());
     }
-    
+
     public void validateMachineStatus(MachineDTO machine) {
-        if (machine.status() != MachineStatus.GESTOPT_AUTO 
-                && machine.status() != MachineStatus.GESTOPT_MANUEEL 
+        if (machine.status() != MachineStatus.GESTOPT_AUTO
+                && machine.status() != MachineStatus.GESTOPT_MANUEEL
                 && machine.status() != MachineStatus.IN_ONDERHOUD) {
-            throw new IllegalArgumentException("De machine moet gestopt (automatisch of manueel) of in onderhoud zijn.");
+            throw new IllegalArgumentException(
+                    "De machine moet gestopt (automatisch of manueel) of in onderhoud zijn.");
         }
     }
 
@@ -202,16 +209,16 @@ public class MachineController {
         validateMachineStatus(machineDTO);
         Machine machine = getRealMachine(machineDTO.id());
         machine.setStatus(MachineStatus.IN_ONDERHOUD);
-        
+
         MachineDTO updatedMachine = MachineDTO.fromEntity(machine);
         updateMachine(updatedMachine);
     }
-    
+
     public void stopOnderhoud(MachineDTO machineDTO) {
         validateMachineStatus(machineDTO);
         Machine machine = getRealMachine(machineDTO.id());
         machine.setStatus(MachineStatus.STARTBAAR);
-        
+
         MachineDTO updatedMachine = MachineDTO.fromEntity(machine);
         updateMachine(updatedMachine);
     }
