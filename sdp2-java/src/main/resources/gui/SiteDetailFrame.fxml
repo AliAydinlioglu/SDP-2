@@ -9,9 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-         maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-         prefHeight="700.0" prefWidth="950.0" spacing="20.0">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="950.0" spacing="20.0" type="javafx.scene.layout.HBox" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
@@ -27,19 +25,19 @@
                 <VBox spacing="5.0"> <children>
                         <HBox spacing="10.0">
                             <children>
-                                <Label text="Naam:" minWidth="-Infinity"/>
+                                <Label minWidth="-Infinity" text="Naam:" />
                                 <Label fx:id="lblSiteNaam" />
                             </children>
                         </HBox>
                         <HBox spacing="10.0">
                             <children>
-                                <Label text="Verantwoordelijke:" minWidth="-Infinity"/>
+                                <Label minWidth="-Infinity" text="Verantwoordelijke:" />
                                 <Label fx:id="lblVerantwoordelijke" />
                             </children>
                         </HBox>
                         <HBox spacing="10.0">
                             <children>
-                                <Label text="Aantal Machines:" minWidth="-Infinity"/>
+                                <Label minWidth="-Infinity" text="Aantal Machines:" />
                                 <Label fx:id="lblAantalMachines" />
                             </children>
                         </HBox>
@@ -55,10 +53,10 @@
                 </Label>
                 <TableView fx:id="machineTable" prefHeight="250.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="naamCol" text="Naam Machine" prefWidth="150"/>
-                        <TableColumn fx:id="locatieCol" text="Locatie" prefWidth="100"/>
-                        <TableColumn fx:id="statusCol" text="Status" prefWidth="100"/>
-                        <TableColumn fx:id="productiestatusCol" text="Productie Status" prefWidth="150"/>
+                        <TableColumn fx:id="naamCol" prefWidth="150" text="Naam Machine" />
+                        <TableColumn fx:id="locatieCol" prefWidth="100" text="Locatie" />
+                        <TableColumn fx:id="statusCol" prefWidth="100" text="Status" />
+                        <TableColumn fx:id="productiestatusCol" prefWidth="150" text="Productie Status" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -67,34 +65,35 @@
             </children>
         </VBox>
 
-        <VBox prefWidth="350.0" spacing="5.0" HBox.hgrow="NEVER" style="-fx-border-color: lightgray; -fx-border-width: 0 0 0 1; -fx-padding: 0 0 0 20;">
+        <VBox prefWidth="350.0" spacing="5.0" style="-fx-border-color: lightgray; -fx-border-width: 0 0 0 1; -fx-padding: 0 0 0 20;" HBox.hgrow="NEVER">
             <children>
-                <Label text="Machine Details" fx:id="lblMachineDetailsHeader"> <font>
+                <Label fx:id="lblMachineDetailsHeader" text="Machine Details"> <font>
                         <Font name="System Bold" size="18.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="5.0" bottom="10.0"/>
+                        <Insets bottom="10.0" top="5.0" />
                     </VBox.margin>
                 </Label>
                 <VBox spacing="8.0"> <children>
-                        <HBox spacing="10.0"> <Label text="Naam:" minWidth="100"/> <Label fx:id="lblMachineNaam" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Code:" minWidth="100"/> <Label fx:id="lblMachineCode" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Locatie:" minWidth="100"/> <Label fx:id="lblMachineLoc" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Product Info:" minWidth="100"/> <Label fx:id="lblMachineProduct" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Status:" minWidth="100"/> <Label fx:id="lblMachineStatus" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Productiestatus:" minWidth="100"/> <Label fx:id="lblMachineProdStatus" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Uptime:" minWidth="100"/> <Label fx:id="lblMachineUptime" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Technieker:" minWidth="100"/> <Label fx:id="lblMachineTechnieker" /> </HBox>
-                        <Label text="Onderhoudsinformatie:" style="-fx-font-weight: bold; -fx-padding-top: 10;">
+                        <HBox spacing="10.0"> <Label minWidth="100" text="Naam:" /> <Label fx:id="lblMachineNaam" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="100" text="Code:" /> <Label fx:id="lblMachineCode" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="100" text="Locatie:" /> <Label fx:id="lblMachineLoc" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="100" text="Product Info:" /> <Label fx:id="lblMachineProduct" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="100" text="Status:" /> <Label fx:id="lblMachineStatus" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="100" text="Productiestatus:" /> <Label fx:id="lblMachineProdStatus" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="100" text="Uptime:" /> <Label fx:id="lblMachineUptime" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="100" text="Technieker:" /> <Label fx:id="lblMachineTechnieker" /> </HBox>
+                        <Label style="-fx-font-weight: bold; -fx-padding-top: 10;" text="Onderhoudsinformatie:">
                              <VBox.margin>
                                 <Insets top="5.0" />
                             </VBox.margin>
                         </Label>
-                        <HBox spacing="10.0"> <Label text="Laatste onderhoud:" minWidth="180"/> <Label fx:id="lblLaatsteOnderhoud" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Dagen sinds onderhoud:" minWidth="180"/> <Label fx:id="lblAantalDagenOnderhoud" /> </HBox>
-                        <HBox spacing="10.0"> <Label text="Volgend onderhoud:" minWidth="180"/> <Label fx:id="lblDatumToekomstigOnderhoud" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="180" text="Laatste onderhoud:" /> <Label fx:id="lblLaatsteOnderhoud" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="180" text="Dagen sinds onderhoud:" /> <Label fx:id="lblAantalDagenOnderhoud" /> </HBox>
+                        <HBox spacing="10.0"> <Label minWidth="180" text="Volgend onderhoud:" /> <Label fx:id="lblDatumToekomstigOnderhoud" /> </HBox>
                     </children>
                 </VBox>
+            <Button fx:id="btnOnderhoud" mnemonicParsing="false" text="Alle onderhouden" />
             </children>
         </VBox>
     </children>
