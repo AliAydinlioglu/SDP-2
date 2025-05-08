@@ -63,7 +63,7 @@ public class SiteDetailFrameController extends HBox {
 
     public SiteDetailFrameController(SiteController siteController, SiteDTO selectedSite, GebruikerDTO ingelogdeGebruiker, LogController logController) {
         this.siteController = siteController;
-        this.site = site;
+        this.site = selectedSite;
         this.onderhoudController = new OnderhoudController();
         this.ingelogdeGebruiker = ingelogdeGebruiker;
         this.machineController = new MachineController();
@@ -81,7 +81,6 @@ public class SiteDetailFrameController extends HBox {
         initializeSiteDetails();
         initializeMachineTableColumns();
         initializeEventListeners();
-        btnTerug.setText("Sluiten");
     }
 
     private void initializeSiteDetails() {
@@ -160,10 +159,7 @@ public class SiteDetailFrameController extends HBox {
     }
 
     private void initializeEventListeners() {
-        btnTerug.setOnAction(event -> {
-            Stage stage = (Stage) btnTerug.getScene().getWindow();
-            stage.close();
-        });
+        btnTerug.setOnAction(event -> handleBackButton());
 
         machineTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             initializeMachineDetails(newSelection);
@@ -174,8 +170,8 @@ public class SiteDetailFrameController extends HBox {
 
     private void handleOnderhoudButton() {
         try {
-            System.out.println("SiteDetail: " + selectedSite);
-            OnderhoudFrameController onderhoudFrameController = new OnderhoudFrameController(onderhoudController, ingelogdeGebruiker, selectedSite, logController);
+            System.out.println("SiteDetail: " + site);
+            OnderhoudFrameController onderhoudFrameController = new OnderhoudFrameController(onderhoudController, ingelogdeGebruiker, site, logController);
 
 
             // Retrieve the MainFrameController from the current scene
@@ -194,7 +190,7 @@ public class SiteDetailFrameController extends HBox {
 	private void handleBackButton() {
         try {
             Stage stage = (Stage) this.getScene().getWindow();
-            MainFrameController mainFrame = new MainFrameController(selectedSite.verantwoordelijke(), stage);
+            MainFrameController mainFrame = new MainFrameController(site.verantwoordelijke(), stage);
             Scene currentScene = this.getScene();
             currentScene.setRoot(mainFrame);
         } catch (Exception e) {

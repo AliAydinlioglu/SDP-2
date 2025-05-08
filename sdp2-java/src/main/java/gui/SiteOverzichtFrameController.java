@@ -168,27 +168,23 @@ public class SiteOverzichtFrameController extends VBox {
                 return;
             }
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/SiteDetailFrame.fxml"));
+            // Create the SiteDetailFrameController
+            SiteDetailFrameController detailController = new SiteDetailFrameController(
+                this.siteController, selectedSite, this.gebruiker, logController
+            );
 
-            SiteDetailFrameController detailController = new SiteDetailFrameController(this.siteController, selectedSite, this.gebruiker);
-            loader.setController(detailController);
-            Stage popupStage = new Stage();
-            popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.initOwner((Stage) siteTable.getScene().getWindow());
-            popupStage.setTitle("Site Details: " + selectedSite.naam());
+            // Retrieve the MainFrameController from the current scene
+            MainFrameController mainFrame = (MainFrameController) this.getScene().getRoot();
 
-            Scene popupScene = new Scene(detailController);
-
-            popupScene.getStylesheets().addAll(siteTable.getScene().getStylesheets());
-
-            popupStage.setScene(popupScene);
-            popupStage.showAndWait();
+            // Update the mainView of the MainFrameController
+            mainFrame.getMainView().getChildren().setAll(detailController);
 
         } catch (Exception e) {
-            AlertHelper.showError("Kon site details niet openen in popup.", e.getMessage());
+            AlertHelper.showError("Kon site details niet openen in de hoofdweergave.", e.getMessage());
             e.printStackTrace();
         }
     }
+
     private void handleSiteToevoegen() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditSiteFrame.fxml"));

@@ -83,7 +83,7 @@ public class MainFrameController extends BorderPane {
     	
         machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker, logController);
 //        onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker, logController);
-        siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker, logController);
+        siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker, new GebruikerController(), logController);
         
         
 
