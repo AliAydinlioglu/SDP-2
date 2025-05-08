@@ -59,15 +59,11 @@ public class OnderhoudFrameController extends VBox {
 	private SiteDTO selectedSite;
     
     public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, SiteDTO selectedSite, LogController logcontroller) {
-		this(onderhoudController, ingelogdeGebruiker, logcontroller);
-		this.selectedSite = selectedSite;
-	}
-    
-    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, LogController logcontroller) {
-        this.onderhoudController = onderhoudController;
+    	this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
         this.machineController = new MachineController();
         this.logController = logcontroller;
+        this.selectedSite = selectedSite;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudFrame.fxml"));
         loader.setRoot(this);
@@ -81,7 +77,27 @@ public class OnderhoudFrameController extends VBox {
         initializeTable();
         initializeForm();
         initializeEventListeners();
-    }
+	}
+    
+//    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, LogController logcontroller) {
+//        this.onderhoudController = onderhoudController;
+//        this.ingelogdeGebruiker = ingelogdeGebruiker;
+//        this.machineController = new MachineController();
+//        this.logController = logcontroller;
+//
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudFrame.fxml"));
+//        loader.setRoot(this);
+//        loader.setController(this);
+//        try {
+//            loader.load();
+//        } catch (IOException ex) {
+//            throw new RuntimeException(ex);
+//        }
+//
+//        initializeTable();
+//        initializeForm();
+//        initializeEventListeners();
+//    }
 
     private void initializeTable() {
         datumCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().datum().toString()));
@@ -92,7 +108,7 @@ public class OnderhoudFrameController extends VBox {
                         : "Onbekend"));
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().machine().naam()));
         
-        onderhoudTable.setItems(onderhoudController.filterByUser(ingelogdeGebruiker));
+        onderhoudTable.setItems(onderhoudController.getFilteredOnderhoudByUserAndSite(ingelogdeGebruiker, selectedSite.id()));
     }
     
     private void initializeEventListeners() {

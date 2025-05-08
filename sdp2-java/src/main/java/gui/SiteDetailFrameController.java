@@ -102,7 +102,7 @@ public class SiteDetailFrameController extends HBox {
 	}
     
     private void initializeOnderhoudDetails(MachineDTO machine) {
-    	OnderhoudDTO onderhoud = onderhoudController.getLaatsteOnderhoudVanMachine(machine.id());
+    	OnderhoudDTO onderhoud = onderhoudController.getLaatsteVoltooideOnderhoudVanMachine(machine.id());
     	if (onderhoud == null) {
 			lblLaatsteOnderhoud.setText("Geen onderhoud gevonden");
 			lblAantalDagenOnderhoud.setText("N/A");
@@ -139,7 +139,9 @@ public class SiteDetailFrameController extends HBox {
 
     private void handleOnderhoudButton() {
         try {
+            System.out.println("SiteDetail: " + selectedSite);
             OnderhoudFrameController onderhoudFrameController = new OnderhoudFrameController(onderhoudController, ingelogdeGebruiker, selectedSite, logController);
+
 
             // Retrieve the MainFrameController from the current scene
             MainFrameController mainFrame = (MainFrameController) this.getScene().getRoot();
