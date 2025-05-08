@@ -1,5 +1,6 @@
 package gui;
 
+import domain.LogController;
 import domain.SiteController;
 import domain.GebruikerController;
 import domain.LogController;

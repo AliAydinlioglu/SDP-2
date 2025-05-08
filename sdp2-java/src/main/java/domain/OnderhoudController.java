@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import domain.builders.OnderhoudBuilder;
@@ -215,11 +216,30 @@ public class OnderhoudController {
         );
     }
     
-    public OnderhoudDTO getLaatsteOnderhoudVanMachine(int machineId) {
+    public OnderhoudDTO getLaatsteVoltooideOnderhoudVanMachine(int machineId) {
         return getLaatsteVoltooideOnderhoudPerMachine().stream()
             .filter(onderhoud -> onderhoud.machine().id() == machineId)
             .findFirst()
             .orElse(null);
+    }
+    
+    public ObservableList<OnderhoudDTO> getFilteredOnderhoudByUserAndSite(GebruikerDTO ingelogdeGebruiker, int siteId) {
+        // Stel eerst user predicate in
+        filterByUser(ingelogdeGebruiker);
+        var userPredicate = filteredOnderhoudList.getPredicate();
+
+        // Bepaal extra filtering
+        LocalDate grensDatum = LocalDate.now().minusMonths(3);
+
+        // Combineer beide predicaten
+        filteredOnderhoudList.setPredicate(onderhoud ->
+            userPredicate.test(onderhoud) &&
+            onderhoud.status() == OnderhoudStatus.VOLTOOID &&
+            onderhoud.datum().isAfter(grensDatum) &&
+            onderhoud.machine().site().id() == siteId
+        );
+
+        return filteredOnderhoudList;
     }
 
     
