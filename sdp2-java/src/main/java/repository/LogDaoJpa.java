@@ -2,9 +2,9 @@ package repository;
 
 import domain.Log;
 
-public class LogDoaJpa extends GenericDaoJpa<Log> implements LogDoa {
+public class LogDaoJpa extends GenericDaoJpa<Log> implements LogDao {
 
-	public LogDoaJpa() {
+	public LogDaoJpa() {
 		super(Log.class);
 	}
 

@@ -4,7 +4,7 @@ import domain.Gebruiker;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
 
-public class GebruikerDaoJpa extends GenericDaoJpa<Gebruiker> implements GebruikerDoa {
+public class GebruikerDaoJpa extends GenericDaoJpa<Gebruiker> implements GebruikerDao {
 
     public GebruikerDaoJpa() {
         super(Gebruiker.class);

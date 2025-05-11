@@ -16,13 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import dto.GebruikerDTO;
 import enums.Rol;
-import repository.GebruikerDoa;
+import repository.GebruikerDao;
 
 @ExtendWith(MockitoExtension.class)
 public class GebruikerControllerTest {
 
     @Mock
-    private GebruikerDoa gebruikerRepo;
+    private GebruikerDao gebruikerRepo;
 
     @InjectMocks
     private GebruikerController dc;

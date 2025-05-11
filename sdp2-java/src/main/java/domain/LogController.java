@@ -1,7 +1,6 @@
 package domain;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,18 +8,17 @@ import java.util.stream.Collectors;
 import domain.builders.LogBuilder;
 import dto.GebruikerDTO;
 import dto.LogDTO;
-import enums.Rol;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import repository.LogDoa;
-import repository.LogDoaJpa;
+import repository.LogDao;
+import repository.LogDaoJpa;
 import utils.AlertHelper;
 
 public class LogController {
 
-	private LogDoa logRepo;
+	private LogDao logRepo;
 	private GebruikerController gebruikerController;
 	
 	private List<Log> data;
@@ -41,11 +39,11 @@ public class LogController {
 		            thenComparing(byDate);		
 	
 	public LogController() {
-		logRepo = new LogDoaJpa();
+		logRepo = new LogDaoJpa();
 		initData();
 	}
 	
-	public LogController(LogDoa repo) {
+	public LogController(LogDao repo) {
 		logRepo = repo;
 		initData();
 	}

@@ -1,7 +1,6 @@
 package domain;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,12 +14,12 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import repository.GebruikerDaoJpa;
-import repository.GebruikerDoa;
+import repository.GebruikerDao;
 import utils.AlertHelper;
 
 public class GebruikerController {
 
-	private GebruikerDoa gebruikerRepo;
+	private GebruikerDao gebruikerRepo;
 	
 	private List<Gebruiker> data;
 	private ObservableList<GebruikerDTO> gebruikerList;
@@ -46,7 +45,7 @@ public class GebruikerController {
 		gebruikerRepo = new GebruikerDaoJpa();		
 	}
 	
-	public GebruikerController(GebruikerDoa gebruikerRepo) { //voor mockito
+	public GebruikerController(GebruikerDao gebruikerRepo) { //voor mockito
 		//new PopulateDB().run();
 		this.gebruikerRepo = gebruikerRepo;		
 	}
