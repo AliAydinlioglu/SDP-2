@@ -176,7 +176,9 @@ public class MachineListFrameController extends VBox {
                 Stage dialog = new Stage();
                 dialog.setTitle("Onderhoud Toevoegen");
                 dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.initOwner(this.getScene().getWindow());
                 dialog.setScene(new Scene(root));
+                dialog.setResizable(false);
                 dialog.showAndWait();
             } catch (IOException e) {
                 AlertHelper.showError("Fout",
