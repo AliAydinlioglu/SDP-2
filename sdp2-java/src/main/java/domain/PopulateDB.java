@@ -19,6 +19,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import repository.GebruikerDaoJpa;
+import repository.LogDaoJpa;
 import repository.MachineDaoJpa;
 import repository.OnderhoudDaoJpa;
 import repository.SiteDaoJpa;
@@ -28,7 +29,7 @@ public class PopulateDB {
     private SiteDaoJpa sitedao;
     private MachineDaoJpa machinedao;
     private OnderhoudDaoJpa onderhouddao;
-    private repository.LogDaoJpa logdao;
+    private LogDaoJpa logdao;
 
     private List<Gebruiker> gebruikers = new ArrayList<>();
     private List<Site> sites = new ArrayList<>();

@@ -55,7 +55,6 @@ public class SiteDetailFrameController extends HBox {
 
     private SiteController siteController;
     private SiteDTO site;
-    private GebruikerDTO ingelogdeGebruikerVoorTerugNavigatie;
     private OnderhoudController onderhoudController;
     private GebruikerDTO ingelogdeGebruiker;
     private MachineController machineController;
@@ -190,7 +189,7 @@ public class SiteDetailFrameController extends HBox {
 	private void handleBackButton() {
         try {
             Stage stage = (Stage) this.getScene().getWindow();
-            MainFrameController mainFrame = new MainFrameController(site.verantwoordelijke(), stage);
+            MainFrameController mainFrame = new MainFrameController(ingelogdeGebruiker, stage);
             Scene currentScene = this.getScene();
             currentScene.setRoot(mainFrame);
         } catch (Exception e) {
