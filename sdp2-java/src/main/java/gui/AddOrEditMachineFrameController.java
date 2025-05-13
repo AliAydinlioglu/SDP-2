@@ -1,5 +1,7 @@
 package gui;
 
+import java.time.LocalDate;
+
 import domain.Machine;
 import domain.MachineController;
 import dto.GebruikerDTO;
@@ -9,11 +11,14 @@ import enums.MachineStatus;
 import enums.ProductionStatus;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import utils.AlertHelper;
-
-import java.time.LocalDate;
 
 public class AddOrEditMachineFrameController {
 

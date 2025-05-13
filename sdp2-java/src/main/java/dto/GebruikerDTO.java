@@ -2,7 +2,6 @@ package dto;
 
 import java.time.LocalDate;
 
-import domain.Adres;
 import domain.Gebruiker;
 import enums.Rol;
 

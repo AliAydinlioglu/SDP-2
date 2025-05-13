@@ -1,7 +1,6 @@
 package gui;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 import domain.GebruikerController;
 import domain.LogController;
