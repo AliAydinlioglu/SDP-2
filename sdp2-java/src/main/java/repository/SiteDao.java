@@ -1,9 +1,8 @@
 package repository;
 
-import domain.Site;
-import jakarta.persistence.EntityNotFoundException;
-
 import java.util.List;
+
+import domain.Site;
 
 public interface SiteDao extends GenericDao<Site>{
     public long countMachinesForSite(int siteId);

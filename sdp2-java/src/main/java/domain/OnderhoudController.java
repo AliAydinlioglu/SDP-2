@@ -1,18 +1,9 @@
 package domain;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
-import repository.OnderhoudDao;
-import repository.OnderhoudDaoJpa;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import domain.builders.OnderhoudBuilder;
@@ -20,9 +11,14 @@ import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
 import dto.SiteDTO;
-import enums.MachineStatus;
 import enums.OnderhoudStatus;
 import enums.Rol;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import repository.OnderhoudDao;
+import repository.OnderhoudDaoJpa;
 
 public class OnderhoudController {
 	

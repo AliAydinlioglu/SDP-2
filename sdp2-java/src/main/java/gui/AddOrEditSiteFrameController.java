@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.stream.Collectors;
+
 import domain.GebruikerController;
 import domain.LogController;
 import domain.SiteController;
@@ -19,8 +21,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import utils.AlertHelper;
-
-import java.util.stream.Collectors;
 
 public class AddOrEditSiteFrameController {
 

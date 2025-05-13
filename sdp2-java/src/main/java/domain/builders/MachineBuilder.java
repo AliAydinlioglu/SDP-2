@@ -7,13 +7,6 @@ import domain.Machine;
 import domain.Site;
 import enums.MachineStatus;
 import enums.ProductionStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Transient;
 
 public class MachineBuilder {
 	

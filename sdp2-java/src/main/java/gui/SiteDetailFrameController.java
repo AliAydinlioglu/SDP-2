@@ -1,5 +1,9 @@
 package gui;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 import domain.LogController;
 import domain.MachineController;
 import domain.OnderhoudController;
@@ -12,20 +16,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import utils.AlertHelper;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 public class SiteDetailFrameController extends HBox {
 

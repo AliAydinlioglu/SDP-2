@@ -1,9 +1,12 @@
 package gui;
 
-import domain.Gebruiker;
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import domain.LogController;
 import domain.MachineController;
-import domain.Onderhoud;
 import domain.OnderhoudController;
 import domain.SiteController;
 import dto.GebruikerDTO;
@@ -11,26 +14,20 @@ import dto.OnderhoudDTO;
 import dto.SiteDTO;
 import enums.OnderhoudStatus;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.AlertHelper;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OnderhoudFrameController extends VBox {
 	

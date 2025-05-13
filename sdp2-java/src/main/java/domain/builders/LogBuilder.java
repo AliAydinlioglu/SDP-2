@@ -1,7 +1,5 @@
 package domain.builders;
 
-import java.time.LocalDateTime;
-
 import domain.Gebruiker;
 import domain.Log;
 

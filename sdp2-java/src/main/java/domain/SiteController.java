@@ -1,15 +1,15 @@
 package domain;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import domain.builders.SiteBuilder;
+import dto.GebruikerDTO;
+import dto.SiteDTO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import repository.SiteDao;
 import repository.SiteDaoJpa;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import domain.builders.SiteBuilder;
-import dto.GebruikerDTO;
-import dto.SiteDTO;
 
 public class SiteController {
 

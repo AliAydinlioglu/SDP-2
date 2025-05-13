@@ -1,21 +1,22 @@
 package gui;
 
-import domain.LogController;
-import domain.SiteController;
+import java.io.IOException;
+
 import domain.GebruikerController;
 import domain.LogController;
-import enums.Rol;
+import domain.SiteController;
 import dto.GebruikerDTO;
 import dto.SiteDTO;
+import enums.Rol;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -23,12 +24,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.scene.Scene;
-import utils.AlertHelper;
 import javafx.stage.Window;
-
-
-import java.io.IOException;
+import utils.AlertHelper;
 
 public class SiteOverzichtFrameController extends VBox {
 

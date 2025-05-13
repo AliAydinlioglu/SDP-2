@@ -1,7 +1,12 @@
 package gui;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import domain.LogController;
-import domain.Machine;
 import domain.MachineController;
 import domain.OnderhoudController;
 import dto.GebruikerDTO;
@@ -11,20 +16,13 @@ import enums.OnderhoudStatus;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import utils.AlertHelper;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AddOrEditOnderhoudFrameController {
 

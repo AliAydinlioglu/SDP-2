@@ -1,17 +1,18 @@
 package gui;
 
-import java.time.LocalDateTime;
-
-import domain.Adres;
 import domain.GebruikerController;
 import domain.LogController;
 import dto.AdresDTO;
 import dto.GebruikerDTO;
 import enums.Rol;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import utils.AlertHelper;

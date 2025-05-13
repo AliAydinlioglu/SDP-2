@@ -1,8 +1,6 @@
 package gui;
 
-// replace VBox with StackPane:
-
-import javafx.scene.layout.StackPane;
+import java.io.IOException;
 
 import domain.LogController;
 import domain.MachineController;
@@ -26,8 +24,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.AlertHelper;
-
-import java.io.IOException;
 
 public class MachineListFrameController extends VBox {
 
