@@ -239,17 +239,21 @@ public class SiteOverzichtFrameController extends VBox {
             AlertHelper.showWarning("Geen selectie", "Selecteer eerst een site om te verwijderen.");
             return;
         }
-        try {
-            siteController.deleteSite(selectedSite.id(), this.gebruiker);
-            lblStatus.setText("Site '" + selectedSite.naam() + "' verwijderd.");
+        boolean bevestigd = AlertHelper.showConfirmationAndWait("Site Verwijderen",
+                "Zeker dat u site '" + selectedSite.naam() + "' wilt verwijderen?");
+        if (bevestigd) {
+            try {
+                siteController.deleteSite(selectedSite.id(), this.gebruiker);
+                lblStatus.setText("Site '" + selectedSite.naam() + "' verwijderd.");
 
-        } catch (IllegalStateException e) {
-            AlertHelper.showError("Verwijderen Mislukt", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            AlertHelper.showWarning("Verwijderen Mislukt", e.getMessage());
-        } catch (RuntimeException e) {
-            AlertHelper.showError("Fout bij verwijderen", "Kon de site niet verwijderen: " + e.getMessage());
-            e.printStackTrace();
+            } catch (IllegalStateException e) {
+                AlertHelper.showError("Verwijderen Mislukt", e.getMessage());
+            } catch (IllegalArgumentException e) {
+                AlertHelper.showWarning("Verwijderen Mislukt", e.getMessage());
+            } catch (RuntimeException e) {
+                AlertHelper.showError("Fout bij verwijderen", "Kon de site niet verwijderen: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
