@@ -10,36 +10,35 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
 
-<fx:root type="VBox" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root styleClass="site-view-container" type="VBox" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" >
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
    <children>
-      <Label text="Overzicht Sites">
+      <Label text="Overzicht Sites" styleClass="site-main-header-label, site-overview-header">
          <font>
-            <Font name="System Bold" size="18.0" />
+            <Font name="System Bold" size="24.0" />
          </font>
       </Label>
-      <TableView fx:id="siteTable" prefHeight="300.0" VBox.vgrow="ALWAYS">
+      <TableView fx:id="siteTable" prefHeight="450.0" VBox.vgrow="NEVER" styleClass="site-table">
         <columns>
-          <TableColumn fx:id="naamCol" prefWidth="200.0" text="Naam Site" />
-          <TableColumn fx:id="verantwoordelijkeCol" prefWidth="200.0" text="Naam Verantwoordelijke" />
+          <TableColumn fx:id="naamCol" prefWidth="150.0" text="Naam Site" />
+          <TableColumn fx:id="verantwoordelijkeCol" prefWidth="150.0" text="Naam Verantwoordelijke" />
           <TableColumn fx:id="aantalMachinesCol" prefWidth="150.0" text="Aantal Machines" style="-fx-alignment: CENTER-RIGHT;"/>
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <HBox spacing="10.0" alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+      <HBox  fx:id="buttonContainer" spacing="10.0" alignment="CENTER" VBox.vgrow="NEVER">
           <children>
-              <Button fx:id="btnSiteToevoegen" text="Site Toevoegen" />
-              <Button fx:id="btnSiteVerwijderen" text="Site Verwijderen" />
+              <Button fx:id="btnSiteToevoegen" text="Site Toevoegen" styleClass="site-button, site-add-button"/>
+              <Button fx:id="btnSiteVerwijderen" text="Site Verwijderen" styleClass="site-button, site-delete-button" />
           </children>
           <VBox.margin>
               <Insets top="10.0"/>
           </VBox.margin>
       </HBox>
-      <Label fx:id="lblStatus" text="" />
-       <Label fx:id="lblStatus" text="" />
+      <Label fx:id="lblStatus" text="" styleClass="site-status-label"/>
    </children>
 </fx:root>
