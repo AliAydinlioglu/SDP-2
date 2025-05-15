@@ -14,11 +14,13 @@ import dto.OnderhoudDTO;
 import dto.SiteDTO;
 import enums.OnderhoudStatus;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -27,6 +29,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import utils.AlertHelper;
 
 public class OnderhoudFrameController extends VBox {
@@ -48,12 +51,16 @@ public class OnderhoudFrameController extends VBox {
     @FXML private Button btnEdit;
     @FXML private Button btnDelete;
     @FXML private Button btnTerug;
+    @FXML private CheckBox laatsteCB;
+    @FXML private CheckBox minderDanDrieMaandenCB;
+    @FXML private ComboBox<OnderhoudStatus> statusFilterBox;
 
     private OnderhoudController onderhoudController;
     private GebruikerDTO ingelogdeGebruiker;
     private MachineController machineController;
     private LogController logController;
 	private SiteDTO selectedSite;
+	
     
     public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, SiteDTO selectedSite, LogController logcontroller) {
     	this.onderhoudController = onderhoudController;
@@ -72,29 +79,8 @@ public class OnderhoudFrameController extends VBox {
         }
 
         initializeTable();
-        initializeForm();
         initializeEventListeners();
 	}
-    
-//    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, LogController logcontroller) {
-//        this.onderhoudController = onderhoudController;
-//        this.ingelogdeGebruiker = ingelogdeGebruiker;
-//        this.machineController = new MachineController();
-//        this.logController = logcontroller;
-//
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudFrame.fxml"));
-//        loader.setRoot(this);
-//        loader.setController(this);
-//        try {
-//            loader.load();
-//        } catch (IOException ex) {
-//            throw new RuntimeException(ex);
-//        }
-//
-//        initializeTable();
-//        initializeForm();
-//        initializeEventListeners();
-//    }
 
     private void initializeTable() {
         datumCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().datum().toString()));
@@ -105,17 +91,38 @@ public class OnderhoudFrameController extends VBox {
                         : "Onbekend"));
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().machine().naam()));
         
-        onderhoudTable.setItems(onderhoudController.getFilteredOnderhoudByUserAndSite(ingelogdeGebruiker, selectedSite.id()));
+        ObservableList<OnderhoudDTO> onderhoudLijst = onderhoudController.filterOnderhoud(false, false, OnderhoudStatus.VOLTOOID, ingelogdeGebruiker, selectedSite.id());
+        onderhoudTable.setItems(onderhoudLijst);
     }
     
     private void initializeEventListeners() {
-		btnTerug.setOnAction(event -> handleBackButton());
-	}
-
-	private void initializeForm() {
-
+        btnTerug.setOnAction(event -> handleBackButton());
         btnEdit.setOnAction(event -> editOnderhoud());
         btnDelete.setOnAction(event -> deleteOnderhoud());
+
+        laatsteCB.setSelected(true);
+        minderDanDrieMaandenCB.setSelected(true);
+
+        statusFilterBox.getItems().add(null); // Add "All Statuses" option
+        statusFilterBox.getItems().addAll(OnderhoudStatus.values());
+        statusFilterBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(OnderhoudStatus status) {
+                return status == null ? "Alle Statussen" : status.name();
+            }
+
+            @Override
+            public OnderhoudStatus fromString(String string) {
+                return null; // Not needed
+            }
+        });
+        statusFilterBox.setValue(OnderhoudStatus.VOLTOOID); // Default to "All Statuses"
+        statusFilterBox.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+
+        laatsteCB.selectedProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+        minderDanDrieMaandenCB.selectedProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+
+        applyFilters();
     }
 
     private void handleBackButton() {
@@ -175,36 +182,14 @@ public class OnderhoudFrameController extends VBox {
         }
     }
     
-//    public List<OnderhoudDTO> getFilteredOnderhouden() {
-//        // Onderhouden van de gebruiker
-//        List<OnderhoudDTO> onderhoudenGebruiker = onderhoudController.filterByUser(ingelogdeGebruiker);
-//        
-//        System.out.println(onderhoudenGebruiker);
-//
-//        // Gemeenschappelijke onderhouden van de laatste 3 maanden en de gebruiker
-//        List<OnderhoudDTO> onderhouden3Maanden = onderhoudController.getVoltooideOnderhoudLaatste3Maanden();
-//        List<OnderhoudDTO> gemeenschappelijkeOnderhouden = onderhoudenGebruiker.stream()
-//                .filter(onderhouden3Maanden::contains)
-//                .collect(Collectors.toList());
-//        
-//        System.out.println(onderhouden3Maanden);
-//        System.out.println(gemeenschappelijkeOnderhouden);
-//
-//        // Onderhouden van laatst voltooid die alleen voorkomen in die van de gebruiker
-//        List<OnderhoudDTO> onderhoudenLaatstVoltooid = onderhoudController.getLaatsteVoltooideOnderhoudPerMachine();
-//        List<OnderhoudDTO> uniekeOnderhouden = onderhoudenLaatstVoltooid.stream()
-//                .filter(onderhoud -> !gemeenschappelijkeOnderhouden.contains(onderhoud))
-//                .collect(Collectors.toList());
-//        
-//        System.out.println(onderhoudenLaatstVoltooid);
-//        System.out.println(uniekeOnderhouden);
-//
-//        // Voeg de unieke onderhouden toe aan de gemeenschappelijke lijst
-//        gemeenschappelijkeOnderhouden.addAll(uniekeOnderhouden);
-//        
-//        System.out.println(gemeenschappelijkeOnderhouden);
-//
-//        return gemeenschappelijkeOnderhouden;
-//    }
+    private void applyFilters() {
+        boolean laatste = laatsteCB.isSelected();
+        boolean minderDanDrieMaanden = minderDanDrieMaandenCB.isSelected();
+        OnderhoudStatus selectedStatus = statusFilterBox.getValue();
+
+        onderhoudTable.setItems(onderhoudController.filterOnderhoud(
+            laatste, minderDanDrieMaanden, selectedStatus, ingelogdeGebruiker, selectedSite.id()
+        ));
+    }
 
 }

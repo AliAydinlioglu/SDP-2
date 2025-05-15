@@ -168,7 +168,7 @@ public class SiteDetailFrameController extends HBox {
     private void handleOnderhoudButton() {
         try {
             System.out.println("SiteDetail: " + site);
-            OnderhoudFrameController onderhoudFrameController = new OnderhoudFrameController(onderhoudController, ingelogdeGebruiker, site, logController);
+            OnderhoudFrameController onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), ingelogdeGebruiker, site, logController);
 
 
             // Retrieve the MainFrameController from the current scene
