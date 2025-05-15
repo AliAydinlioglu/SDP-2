@@ -91,14 +91,22 @@ public class OnderhoudFrameController extends VBox {
                         : "Onbekend"));
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().machine().naam()));
         
-        ObservableList<OnderhoudDTO> onderhoudLijst = onderhoudController.filterOnderhoud(false, false, OnderhoudStatus.VOLTOOID, ingelogdeGebruiker, selectedSite.id());
-        onderhoudTable.setItems(onderhoudLijst);
+        onderhoudTable.setItems(onderhoudController.getAllOnderhoud());
     }
     
     private void initializeEventListeners() {
         btnTerug.setOnAction(event -> handleBackButton());
         btnEdit.setOnAction(event -> editOnderhoud());
         btnDelete.setOnAction(event -> deleteOnderhoud());
+        
+        onderhoudTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) { // Double-click
+                OnderhoudDTO selectedOnderhoud = onderhoudTable.getSelectionModel().getSelectedItem();
+                if (selectedOnderhoud != null) {
+                    openOnderhoudDetail(selectedOnderhoud);
+                }
+            }
+        });
 
         laatsteCB.setSelected(true);
         minderDanDrieMaandenCB.setSelected(true);
@@ -143,33 +151,60 @@ public class OnderhoudFrameController extends VBox {
             e.printStackTrace();
         }
 	}
+    
+    private void openOnderhoudDetail(OnderhoudDTO onderhoud) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudDetailFrame.fxml"));
+            Parent root = loader.load();
+
+            OnderhoudDetailFrameController controller = loader.getController();
+            controller.initData(onderhoud, onderhoudController, logController, ingelogdeGebruiker);
+
+            Stage detailStage = new Stage();
+            detailStage.setTitle("Onderhoud Details");
+            detailStage.initModality(Modality.APPLICATION_MODAL);
+            detailStage.initOwner(this.getScene().getWindow());
+            detailStage.setScene(new Scene(root));
+            detailStage.setResizable(false);
+            detailStage.showAndWait();
+        } catch (IOException e) {
+            AlertHelper.showError("Fout", "Kan onderhoud details niet openen: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 
     @FXML
     private void editOnderhoud() {
         OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
-        if (geselecteerd != null) {
-            try {
-            	FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
-                Parent root = loader.load();
+        if (geselecteerd == null) {
+            AlertHelper.showWarning("Geen onderhoud geselecteerd", "Selecteer een onderhoud om te bewerken.");
+            return;
+        }
 
-                AddOrEditOnderhoudFrameController controller = loader.getController();
-                controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd, machineController, logController); // Geef de geselecteerde machine mee
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
+            Parent root = loader.load();
 
-                Stage dialogStage = new Stage();
-                dialogStage.setTitle("Onderhoud Toevoegen");
-                dialogStage.initModality(Modality.APPLICATION_MODAL);
-                dialogStage.setScene(new Scene(root));
-                dialogStage.showAndWait();
-            	onderhoudTable.refresh();
-            	
-            } catch (Exception e) {
-            	AlertHelper.showError("Onderhoud bewerken mislukt", e.getMessage());
-            }
-        } else {
-        	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te bewerken.");
+            AddOrEditOnderhoudFrameController controller = loader.getController();
+            controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd, machineController, logController);
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Onderhoud Bewerken");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(this.getScene().getWindow());
+            dialog.setScene(new Scene(root));
+            dialog.setResizable(false);
+            dialog.showAndWait();
+
+            onderhoudTable.refresh();
+            applyFilters();
+        } catch (IOException e) {
+            AlertHelper.showError("Fout", "Kan onderhoud niet bewerken: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
 
     private void deleteOnderhoud() {
         OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
@@ -177,6 +212,7 @@ public class OnderhoudFrameController extends VBox {
             onderhoudController.deleteOnderhoud(geselecteerd);
             onderhoudTable.refresh();
             logController.addLog(ingelogdeGebruiker, String.format("Onderhoud met id %d verwijderd", geselecteerd.id()),"");
+            applyFilters();
         } else {
         	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te verwijderen.");
         }
