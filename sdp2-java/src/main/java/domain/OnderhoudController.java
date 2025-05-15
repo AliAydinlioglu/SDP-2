@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import domain.builders.OnderhoudBuilder;
@@ -140,6 +141,50 @@ public class OnderhoudController {
 	    	throw new IllegalArgumentException(e.getMessage());
 	    }
     }
+    
+    public ObservableList<OnderhoudDTO> filterOnderhoud(boolean laatste, boolean minderDanDrieMaanden, OnderhoudStatus statusFilter, GebruikerDTO ingelogdeGebruiker, int siteId) {
+        filteredOnderhoudList.setPredicate(onderhoud -> {
+            boolean matchesStatus = true;
+            boolean matchesDrieMaanden = true;
+            boolean matchesUserAndSite = true;
+
+            // Filter by status
+            if (statusFilter != null) {
+                matchesStatus = onderhoud.status() == statusFilter;
+            }
+
+            // Filter for "Minder dan 3 Maanden"
+            if (minderDanDrieMaanden) {
+                matchesDrieMaanden = onderhoud.datum().isAfter(LocalDate.now().minusMonths(3));
+            }
+
+            // Filter by user role and site
+            if (ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE) {
+                matchesUserAndSite = onderhoud.machine().site().id() == siteId;
+            } else if (ingelogdeGebruiker.rol() == Rol.TECHNIEKER) {
+                matchesUserAndSite = onderhoud.technieker().id() == ingelogdeGebruiker.id();
+            }
+
+            return matchesStatus && matchesDrieMaanden && matchesUserAndSite;
+        });
+
+        // If "Laatste" is selected, show only the latest maintenance per machine
+        if (laatste) {
+            return FXCollections.observableArrayList(
+                filteredOnderhoudList.stream()
+                    .collect(Collectors.groupingBy(o -> o.machine().id()))
+                    .values().stream()
+                    .map(list -> list.stream().max(Comparator.comparing(OnderhoudDTO::datum)).orElse(null))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList())
+            );
+        }
+
+        return filteredOnderhoudList;
+    }
+
+
+
 
     public ObservableList<OnderhoudDTO> changeFilter(String filterValue) {
         return FXCollections.observableArrayList(
@@ -224,14 +269,9 @@ public class OnderhoudController {
         filterByUser(ingelogdeGebruiker);
         var userPredicate = filteredOnderhoudList.getPredicate();
 
-        // Bepaal extra filtering
-        LocalDate grensDatum = LocalDate.now().minusMonths(3);
-
         // Combineer beide predicaten
         filteredOnderhoudList.setPredicate(onderhoud ->
             userPredicate.test(onderhoud) &&
-            onderhoud.status() == OnderhoudStatus.VOLTOOID &&
-            onderhoud.datum().isAfter(grensDatum) &&
             onderhoud.machine().site().id() == siteId
         );
 

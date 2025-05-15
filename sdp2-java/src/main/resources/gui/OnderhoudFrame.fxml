@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.CheckBox?>
 
 <fx:root type="VBox" xmlns="http://javafx.com/javafx/21"
 	xmlns:fx="http://javafx.com/fxml/1" spacing="10.0">
@@ -24,6 +25,15 @@
 				<Font name="System Bold" size="18.0" />
 			</font>
 		</Label>
+		<HBox spacing="10.0" alignment="CENTER">
+			<CheckBox fx:id="laatsteCB"
+				text="Laatste" />
+			<CheckBox fx:id="minderDanDrieMaandenCB"
+				text="Minder dan 3 Maanden" />
+			<Label text="Filter op Status" />
+			<ComboBox fx:id="statusFilterBox" promptText="Alle statussen" />
+		</HBox>
+
 		<TableView fx:id="onderhoudTable" prefHeight="300.0"
 			VBox.vgrow="ALWAYS">
 			<columns>

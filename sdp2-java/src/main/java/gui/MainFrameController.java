@@ -82,26 +82,22 @@ public class MainFrameController extends BorderPane {
     	
     	
         machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker, logController);
-//        onderhoudFrameController = new OnderhoudFrameController(new OnderhoudController(), gebruiker, logController);
         siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker, new GebruikerController(), logController);
         
         
 
         Button machinesButton = new Button("Machines");
-        Button onderhoudButton = new Button("Onderhoud");
         Button sitesButton = new Button("Sites");
 
-        sidebar.getChildren().addAll(sitesButton, machinesButton, onderhoudButton);
+        sidebar.getChildren().addAll(sitesButton, machinesButton);
         
         machinesButton.getStyleClass().add("sidebar-button");
-        onderhoudButton.getStyleClass().add("sidebar-button");
         sitesButton.getStyleClass().add("sidebar-button");
         
         sidebar.setPadding(new Insets(20));
         root.setLeft(sidebar);
 
         machinesButton.setOnAction(e -> onButtonClick(machinesButton));
-        onderhoudButton.setOnAction(e -> onButtonClick(onderhoudButton));
         sitesButton.setOnAction(e -> onButtonClick(sitesButton));
         
         if(gebruiker.rol().equals(Rol.ADMINISTRATOR)) {
