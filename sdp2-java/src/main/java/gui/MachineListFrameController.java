@@ -276,22 +276,13 @@ public class MachineListFrameController extends VBox {
         selectedMachine = machineTable.getSelectionModel().getSelectedItem();
         MachineDTO priviousMachine = machineController.getMachine(selectedMachine.id());
         if (selectedMachine == null) {
-            javafx.scene.control.Alert warningAlert = new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.WARNING);
-            warningAlert.setTitle("Geen machine geselecteerd");
-            warningAlert.setHeaderText(null);
-            warningAlert.setContentText("Selecteer een machine om te verwijderen.");
-            warningAlert.showAndWait();
+            AlertHelper.showWarning("Geen selectie", "Selecteer eerst een machine om te verwijderen.");
             return;
         }
-        javafx.scene.control.Alert confirmAlert = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Machine verwijderen");
-        confirmAlert.setHeaderText(null);
-        confirmAlert.setContentText("Weet u zeker dat u machine \"" + selectedMachine.naam() + "\" wilt verwijderen?");
+        boolean bevestigd = AlertHelper.showConfirmationAndWait("Machine Verwijderen",
+                "Zeker dat u machine '" + selectedMachine.naam() + "' wilt verwijderen?");
 
-
-        if (confirmAlert.showAndWait().filter(response -> response == javafx.scene.control.ButtonType.OK).isPresent()) {
+        if (bevestigd) {
             try {
                 machineController.deleteMachine(selectedMachine.id());
 
@@ -300,21 +291,17 @@ public class MachineListFrameController extends VBox {
                             ingelogdeGebruiker.voornaam() + " " + ingelogdeGebruiker.achternaam());
                 }
 
-                javafx.scene.control.Alert infoAlert = new javafx.scene.control.Alert(
-                        javafx.scene.control.Alert.AlertType.INFORMATION);
-                infoAlert.setTitle("Machine verwijderd");
-                infoAlert.setHeaderText(null);
-                infoAlert.setContentText("Machine \"" + priviousMachine.naam() + "\" is verwijderd.");
-                infoAlert.showAndWait();
+                AlertHelper.showConfirmationAndWait("Machine verwijderd",
+                        "Machine '" + priviousMachine.naam() + "' is verwijderd.");
 
                 refreshMachineList();
-            } catch (Exception e) {
-                javafx.scene.control.Alert errorAlert = new javafx.scene.control.Alert(
-                        javafx.scene.control.Alert.AlertType.ERROR);
-                errorAlert.setTitle("Fout bij verwijderen");
-                errorAlert.setHeaderText(null);
-                errorAlert.setContentText("Kan machine niet verwijderen: " + e.getMessage());
-                errorAlert.showAndWait();
+            } catch (IllegalStateException e) {
+                AlertHelper.showError("Verwijderen Mislukt", e.getMessage());
+            } catch (IllegalArgumentException e) {
+                AlertHelper.showWarning("Verwijderen Mislukt", e.getMessage());
+            } catch (RuntimeException e) {
+                AlertHelper.showError("Fout bij verwijderen", "Kon de machine niet verwijderen: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
