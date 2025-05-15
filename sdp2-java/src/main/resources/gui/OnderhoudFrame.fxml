@@ -26,12 +26,12 @@
 			</font>
 		</Label>
 		<HBox spacing="10.0" alignment="CENTER">
-			<CheckBox fx:id="laatsteCB"
-				text="Laatste" />
+			<ComboBox fx:id="statusFilterBox"
+				promptText="Alle statussen" />
+			<CheckBox fx:id="laatsteCB" text="Laatste" />
 			<CheckBox fx:id="minderDanDrieMaandenCB"
 				text="Minder dan 3 Maanden" />
 			<Label text="Filter op Status" />
-			<ComboBox fx:id="statusFilterBox" promptText="Alle statussen" />
 		</HBox>
 
 		<TableView fx:id="onderhoudTable" prefHeight="300.0"
