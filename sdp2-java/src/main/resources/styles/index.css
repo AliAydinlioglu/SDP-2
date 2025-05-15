@@ -97,6 +97,7 @@
 .table-view.site-table .table-row-cell:selected {
     -fx-background-color: #B22222;
 }
+
 .table-view.site-table .table-row-cell:selected .table-cell {
     -fx-text-fill: white;
 }
@@ -121,9 +122,9 @@
     -fx-text-fill: #FF0000;
 }
 
-.site-button, .site-add-button, .site-delete-button {
+.site-button, .site-add-button, .site-delete-button, .site-change-button {
     -fx-background-radius: 5px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0.1, 2, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.1, 2, 2);
     -fx-pref-height: 60px;
     -fx-pref-width: 200px;
     -fx-font-size: 20px;
@@ -133,18 +134,24 @@
 
 .site-add-button {
     -fx-background-color: #28A745;
-    -fx-border-color: #1E7E34;
+    -fx-border-color: #4D0000;
+    -fx-text-fill: white;
 }
+
 .site-add-button:hover {
-    -fx-background-color: #2E7D32;
+    -fx-background-color: #218838;
+    -fx-border-color: #1C0000;
 }
 
 .site-delete-button {
     -fx-background-color: #FF0000;
     -fx-border-color: #4D0000;
+    -fx-text-fill: white;
 }
+
 .site-delete-button:hover {
-    -fx-background-color: #B71C1C;
+    -fx-background-color: #C70000;
+    -fx-border-color: #1C0000;
 }
 
 .site-detail-main-header {

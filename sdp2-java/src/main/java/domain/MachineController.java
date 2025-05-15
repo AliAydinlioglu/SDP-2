@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.SiteDTO;
 import javafx.collections.FXCollections;
@@ -13,11 +14,14 @@ import javafx.collections.transformation.SortedList;
 import repository.MachineDao;
 import repository.MachineDaoJpa;
 import enums.MachineStatus;
+import enums.Rol;
 import utils.AlertHelper;
 
 public class MachineController {
 
     private MachineDao machineDaoJpa;
+    private SiteController siteController;
+    private GebruikerController gebruikerController;
 
     private List<Machine> data;
     private ObservableList<MachineDTO> machineList;
@@ -33,11 +37,74 @@ public class MachineController {
 
     public MachineController() {
         machineDaoJpa = new MachineDaoJpa();
+        siteController = new SiteController();
+        gebruikerController = new GebruikerController();
         initData();
     }
 
     public MachineController(MachineDao machineDaoJpa) {
         this.machineDaoJpa = machineDaoJpa;
+        this.siteController = new SiteController();
+        this.gebruikerController = new GebruikerController();
+    }
+
+    /**
+     * Returns all sites for use in dropdowns
+     * @return ObservableList of SiteDTO.SiteSummaryDTO objects
+     */
+    public ObservableList<SiteDTO.SiteSummaryDTO> getAllSites() {
+        // Convert SiteDTO to SiteSummaryDTO
+        ObservableList<SiteDTO> sites = siteController.getAllSites();
+        return FXCollections.observableArrayList(
+                sites.stream()
+                        .map(site -> new SiteDTO.SiteSummaryDTO(site.id(), site.naam()))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    /**
+     * Returns all technicians (users with TECHNIEKER role) for use in dropdowns
+     * @return ObservableList of GebruikerDTO objects
+     */
+    public ObservableList<GebruikerDTO> getAllTechnicians() {
+        ObservableList<GebruikerDTO> allUsers = gebruikerController.findAll();
+        return allUsers.filtered(user -> user.rol() == Rol.TECHNIEKER && user.actief());
+    }
+
+    /**
+     * Adds a new machine from a DTO
+     * @param machineDTO The DTO containing the machine data
+     */
+    public void addMachineFromDTO(MachineDTO machineDTO) {
+        try {
+            // Get the real objects from the controllers
+            Gebruiker technieker = gebruikerController.getRealGebruiker(machineDTO.technieker().id());
+
+            // For the site, we'll use a workaround since we don't have direct access to the Site entity
+            // We'll create a temporary Site object with the ID from the DTO
+            Site site = new Site();
+            site.setSiteId(machineDTO.site().id());
+            site.setNaam(machineDTO.site().naam());
+
+            // Create a new Machine object
+            Machine machine = new Machine(
+                    machineDTO.naam(),
+                    machineDTO.productInfo(),
+                    machineDTO.locatie(),
+                    machineDTO.status(),
+                    machineDTO.productieStatus(),
+                    machineDTO.uptime(),
+                    technieker,
+                    machineDTO.dagenSindsOnderhoud(),
+                    machineDTO.volgendOnderhoud(),
+                    site
+            );
+
+            // Add the machine
+            addMachine(machine);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Machine kon niet worden toegevoegd: " + e.getMessage());
+        }
     }
 
     private void initData() {

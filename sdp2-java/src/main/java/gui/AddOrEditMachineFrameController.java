@@ -2,42 +2,47 @@ package gui;
 
 import java.time.LocalDate;
 
-import domain.Machine;
+import domain.GebruikerController;
 import domain.MachineController;
+import domain.SiteController;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.SiteDTO;
 import enums.MachineStatus;
 import enums.ProductionStatus;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import utils.AlertHelper;
 
 public class AddOrEditMachineFrameController {
 
     @FXML
-    private TextField txtNaam;
+    private ComboBox<SiteDTO.SiteSummaryDTO> cboSite;
+    @FXML
+    private TextField machineIdField;
+    @FXML
+    private TextField machineLocationField;
     @FXML
     private TextField txtProductInfo;
     @FXML
-    private TextField txtLocatie;
+    private ComboBox<MachineStatus> machineStatusComboBox;
     @FXML
-    private ComboBox<MachineStatus> cboStatus;
-    @FXML
-    private ComboBox<ProductionStatus> cboProductieStatus;
+    private ComboBox<ProductionStatus> productionStatusComboBox;
     @FXML
     private Spinner<Integer> spnUptime;
     @FXML
-    private DatePicker dpVolgendOnderhoud;
+    private ComboBox<GebruikerDTO> cboTechnician;
     @FXML
-    private ComboBox<SiteDTO> cboSite;
+    private Label lblLastMaintenanceDate;
+    @FXML
+    private Hyperlink hlLastMaintenanceDetails;
+    @FXML
+    private Label lblDaysSinceMaintenance;
+    @FXML
+    private DatePicker dpVolgendOnderhoud;
     @FXML
     private Button btnOpslaan;
     @FXML
@@ -48,99 +53,107 @@ public class AddOrEditMachineFrameController {
     private GebruikerDTO ingelogdeGebruiker;
     private boolean isEditMode = false;
 
-    public void initData(MachineController machineController, MachineDTO existingMachine, GebruikerDTO ingelogdeGebruiker) {
-        this.machineController = machineController;
-        this.existingMachine = existingMachine;
-        this.ingelogdeGebruiker = ingelogdeGebruiker;
-        this.isEditMode = (existingMachine != null);
-
+    public void initData(MachineController mc, MachineDTO m, GebruikerDTO user) {
+        this.machineController = mc;
+        this.existingMachine = m;
+        this.ingelogdeGebruiker = user;
+        this.isEditMode = (m != null);
         initializeControls();
-        
-        if (isEditMode) {
-            populateFields();
-        }
+        if (isEditMode) populateFields();
     }
 
     private void initializeControls() {
-        cboStatus.setItems(FXCollections.observableArrayList(MachineStatus.values()));
-        cboStatus.getSelectionModel().selectFirst();
-        
-        cboProductieStatus.setItems(FXCollections.observableArrayList(ProductionStatus.values()));
-        cboProductieStatus.getSelectionModel().selectFirst();
-        
-        SpinnerValueFactory<Integer> valueFactory =
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000000, 0);
-        spnUptime.setValueFactory(valueFactory);
-        
+        // Load sites from MachineController
+        cboSite.setItems(machineController.getAllSites());
+
+        // Set up status comboboxes with Dutch tooltips
+        machineStatusComboBox.setItems(FXCollections.observableArrayList(MachineStatus.values()));
+        machineStatusComboBox.setTooltip(new Tooltip("Status van de machine: Draait, Gestopt (auto of manueel), etc."));
+
+        productionStatusComboBox.setItems(FXCollections.observableArrayList(ProductionStatus.values()));
+        productionStatusComboBox.setTooltip(new Tooltip("Productiestatus: Gezond, Nood aan onderhoud, Falend"));
+
+        // Load technicians from MachineController
+        cboTechnician.setItems(machineController.getAllTechnicians());
+
+        // Set up uptime spinner
+        SpinnerValueFactory<Integer> vf = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0);
+        spnUptime.setValueFactory(vf);
+
+        // Set default next maintenance date to 1 month from now
         dpVolgendOnderhoud.setValue(LocalDate.now().plusMonths(1));
-        
-        btnOpslaan.setOnAction(e -> saveHandler());
-        btnAnnuleren.setOnAction(e -> ((Stage) btnAnnuleren.getScene().getWindow()).close());
-        
-        cboSite.setItems(FXCollections.observableArrayList());
+
+        // Set up maintenance details link
+        // This would typically open a details view for the maintenance
+        hlLastMaintenanceDetails.setOnAction(e -> {
+            if (existingMachine != null) {
+                // This method needs to be implemented in MachineController
+                // machineController.openMaintenanceDetails(existingMachine.id());
+                AlertHelper.showInfo("Onderhoud Details", "Details voor onderhoud van machine " + existingMachine.id());
+            }
+        });
+
+        // Set up button actions
+        btnOpslaan.setOnAction(e -> handleOpslaan());
+        btnAnnuleren.setOnAction(e -> closeStage());
     }
 
     private void populateFields() {
-        txtNaam.setText(existingMachine.naam());
+        cboSite.setValue(existingMachine.site());
+        machineIdField.setText(String.valueOf(existingMachine.id()));
+        machineLocationField.setText(existingMachine.locatie());
         txtProductInfo.setText(existingMachine.productInfo());
-        txtLocatie.setText(existingMachine.locatie());
-        cboStatus.setValue(existingMachine.status());
-        cboProductieStatus.setValue(existingMachine.productieStatus());
+        machineStatusComboBox.setValue(existingMachine.status());
+        productionStatusComboBox.setValue(existingMachine.productieStatus());
         spnUptime.getValueFactory().setValue(existingMachine.uptime());
-        
-        if (existingMachine.volgendOnderhoud() != null) {
+        cboTechnician.setValue(existingMachine.technieker());
+        // compute last maintenance date & days since
+        LocalDate last = LocalDate.now().minusDays(existingMachine.dagenSindsOnderhoud());
+        lblLastMaintenanceDate.setText(last.toString());
+        lblDaysSinceMaintenance.setText(String.valueOf(existingMachine.dagenSindsOnderhoud()));
+        if (existingMachine.volgendOnderhoud() != null)
             dpVolgendOnderhoud.setValue(existingMachine.volgendOnderhoud());
-        }
-        
-        if (existingMachine.site() != null) {
+    }
+
+    @FXML
+    private void handleOpslaan() {
+        try {
+            // Create a DTO with the form data
+            MachineDTO dto = new MachineDTO(
+                    isEditMode ? existingMachine.id() : 0,
+                    machineIdField.getText(),
+                    txtProductInfo.getText(),
+                    machineLocationField.getText(),
+                    machineStatusComboBox.getValue(),
+                    productionStatusComboBox.getValue(),
+                    spnUptime.getValue(),
+                    isEditMode ? existingMachine.dagenSindsOnderhoud() : 0,
+                    dpVolgendOnderhoud.getValue(),
+                    cboTechnician.getValue(),
+                    cboSite.getValue()
+            );
+
+            // Use the controller to update or add the machine
+            if (isEditMode) {
+                machineController.updateMachine(dto);
+                AlertHelper.showInfo("Bijgewerkt", "Machine bijgewerkt.");
+            } else {
+                // Use the addMachineFromDTO method to add a new machine
+                machineController.addMachineFromDTO(dto);
+                AlertHelper.showInfo("Toegevoegd", "Machine toegevoegd.");
+            }
+            closeStage();
+        } catch (Exception ex) {
+            AlertHelper.showError("Fout", ex.getMessage());
         }
     }
 
-    private void saveHandler() {
-        try {
-            if (txtNaam.getText().trim().isEmpty()) {
-                AlertHelper.showError("Invoerfout", "Naam is verplicht.");
-                return;
-            }
-            
-            if (isEditMode) {
-                MachineDTO updatedMachine = new MachineDTO(
-                        existingMachine.id(),
-                        txtNaam.getText(),
-                        txtProductInfo.getText(),
-                        txtLocatie.getText(),
-                        cboStatus.getValue(),
-                        cboProductieStatus.getValue(),
-                        spnUptime.getValue(),
-                        existingMachine.dagenSindsOnderhoud(),
-                        dpVolgendOnderhoud.getValue(),
-                        existingMachine.technieker(),
-                        existingMachine.site()
-                );
-                
-                machineController.updateMachine(updatedMachine);
-                AlertHelper.showInfo("Machine bijgewerkt", "Machine \"" + updatedMachine.naam() + "\" is bijgewerkt.");
-            } else {
-                Machine newMachine = new Machine(
-                        txtNaam.getText(),
-                        txtProductInfo.getText(),
-                        txtLocatie.getText(),
-                        cboStatus.getValue(),
-                        cboProductieStatus.getValue(),
-                        spnUptime.getValue(),
-                        null,
-                        0,
-                        dpVolgendOnderhoud.getValue(),
-                        null
-                );
-                
-                machineController.addMachine(newMachine);
-                AlertHelper.showInfo("Machine toegevoegd", "Machine \"" + newMachine.getNaam() + "\" is toegevoegd.");
-            }
-            
-            ((Stage) btnOpslaan.getScene().getWindow()).close();
-        } catch (Exception e) {
-            AlertHelper.showError("Fout", e.getMessage());
-        }
+    @FXML
+    void handleAnnuleren(ActionEvent event) {
+        closeStage();
+    }
+
+    private void closeStage() {
+        ((Stage) btnAnnuleren.getScene().getWindow()).close();
     }
 }

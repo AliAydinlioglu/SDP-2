@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -56,18 +57,20 @@ public class MachineListFrameController extends VBox {
     private ObservableList<MachineDTO> machineList;
 
     public MachineListFrameController(MachineController machineController,
-                                      OnderhoudController onderhoudController,
-                                      GebruikerDTO ingelogdeGebruiker,
-                                      LogController logController) {
+            OnderhoudController onderhoudController,
+            GebruikerDTO ingelogdeGebruiker,
+            LogController logController) {
         this.machineController = machineController;
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
         this.logController = logController;
 
-        if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
+        if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR || ingelogdeGebruiker.rol() == Rol.MANAGER) {
             this.machineList = machineController.getAll();
-        } else {
+        } else if (ingelogdeGebruiker.rol() == Rol.TECHNIEKER) {
             this.machineList = machineController.getMachinesForTechnieker(ingelogdeGebruiker.id());
+        } else {
+            this.machineList = machineController.getAll();
         }
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MachineListFrame.fxml"));
@@ -91,13 +94,23 @@ public class MachineListFrameController extends VBox {
                     if (newSel != null) {
                         this.selectedMachine = machineController.getMachine(newSel.id());
                         lblStatus.setText("Geselecteerd: "
-                                + selectedMachine.naam()
+                                + (this.selectedMachine != null ? this.selectedMachine.naam() : newSel.naam())
                                 + " - Status: "
-                                + selectedMachine.status());
+                                + (this.selectedMachine != null ? this.selectedMachine.status() : newSel.status()));
                     } else {
+                        this.selectedMachine = null;
                         lblStatus.setText("");
                     }
                 });
+
+        machineTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                MachineDTO clickedMachine = machineTable.getSelectionModel().getSelectedItem();
+                if (clickedMachine != null) {
+                    openMachineDetailPopup(machineController.getMachine(clickedMachine.id()));
+                }
+            }
+        });
 
         if (machineList.isEmpty()) {
             lblStatus.setText("Geen machines gevonden.");
@@ -107,30 +120,31 @@ public class MachineListFrameController extends VBox {
     }
 
     private void initializeForm() {
-        if (ingelogdeGebruiker.rol() != Rol.TECHNIEKER &&
-                ingelogdeGebruiker.rol() != Rol.ADMINISTRATOR) {
-            addOnderhoudBtn.setVisible(false);
-            addMachineBtn.setVisible(false);
-            updateMachineBtn.setVisible(false);
-            removeMachineBtn.setVisible(false);
-        }
+        boolean canManageMachines = ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR
+                || ingelogdeGebruiker.rol() == Rol.MANAGER;
+        boolean canAddOnderhoud = ingelogdeGebruiker.rol() == Rol.TECHNIEKER || canManageMachines;
+
+        addMachineBtn.setVisible(canManageMachines);
+        addMachineBtn.setManaged(canManageMachines);
+
+        updateMachineBtn.setVisible(canManageMachines);
+        updateMachineBtn.setManaged(canManageMachines);
+
+        removeMachineBtn.setVisible(canManageMachines);
+        removeMachineBtn.setManaged(canManageMachines);
+
+        addOnderhoudBtn.setVisible(canAddOnderhoud);
+        addOnderhoudBtn.setManaged(canAddOnderhoud);
+
         addOnderhoudBtn.setOnAction(e -> addOnderhoud());
         addMachineBtn.setOnAction(e -> addMachine());
         updateMachineBtn.setOnAction(e -> updateMachine());
         removeMachineBtn.setOnAction(e -> removeMachine());
 
-        updateMachineBtn.setDisable(true);
-        removeMachineBtn.setDisable(true);
-
-        machineTable.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((obs, oldSel, newSel) -> {
-                    boolean hasSelection = newSel != null;
-                    updateMachineBtn.setDisable(!hasSelection);
-                    removeMachineBtn.setDisable(!hasSelection);
-                });
+        updateMachineBtn.disableProperty().bind(machineTable.getSelectionModel().selectedItemProperty().isNull());
+        removeMachineBtn.disableProperty().bind(machineTable.getSelectionModel().selectedItemProperty().isNull());
+        addOnderhoudBtn.disableProperty().bind(machineTable.getSelectionModel().selectedItemProperty().isNull());
     }
-
 
     private void refreshMachineList() {
         if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
@@ -149,8 +163,31 @@ public class MachineListFrameController extends VBox {
         }
     }
 
+    private void openMachineDetailPopup(MachineDTO machineToDisplay) {
+        if (machineToDisplay == null) {
+            AlertHelper.showWarning("Machine Details", "Geselecteerde machine kon niet worden geladen.");
+            return;
+        }
+        try {
+            MachineDetailFrameController detailController = new MachineDetailFrameController(
+                    this.machineController,
+                    this.onderhoudController,
+                    machineToDisplay,
+                    this.ingelogdeGebruiker,
+                    this.logController);
+
+            MainFrameController mainFrame = (MainFrameController) this.getScene().getRoot();
+            mainFrame.getMainView().getChildren().setAll(detailController);
+
+        } catch (Exception e) {
+            AlertHelper.showError("Kon machine details niet openen.", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     private void addOnderhoud() {
+        selectedMachine = machineTable.getSelectionModel().getSelectedItem();
         if (selectedMachine == null) {
             AlertHelper.showWarning("Geen machine geselecteerd",
                     "Selecteer een machine om onderhoud toe te voegen.");
@@ -159,8 +196,7 @@ public class MachineListFrameController extends VBox {
                     "Onderhoud kan niet worden toegevoegd terwijl de machine draait.");
         } else {
             try {
-                FXMLLoader loader =
-                        new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
                 Parent root = loader.load();
                 AddOrEditOnderhoudFrameController controller = loader.getController();
                 controller.initData(onderhoudController,
@@ -186,6 +222,7 @@ public class MachineListFrameController extends VBox {
 
     @FXML
     private void updateMachine() {
+        selectedMachine = machineTable.getSelectionModel().getSelectedItem();
         if (selectedMachine == null) {
             AlertHelper.showWarning("Geen machine geselecteerd",
                     "Selecteer een machine om te bewerken.");
@@ -236,37 +273,44 @@ public class MachineListFrameController extends VBox {
 
     @FXML
     private void removeMachine() {
+        selectedMachine = machineTable.getSelectionModel().getSelectedItem();
+        MachineDTO priviousMachine = machineController.getMachine(selectedMachine.id());
         if (selectedMachine == null) {
-            javafx.scene.control.Alert warningAlert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+            javafx.scene.control.Alert warningAlert = new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.WARNING);
             warningAlert.setTitle("Geen machine geselecteerd");
             warningAlert.setHeaderText(null);
             warningAlert.setContentText("Selecteer een machine om te verwijderen.");
             warningAlert.showAndWait();
             return;
         }
-        javafx.scene.control.Alert confirmAlert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
+        javafx.scene.control.Alert confirmAlert = new javafx.scene.control.Alert(
+                javafx.scene.control.Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Machine verwijderen");
         confirmAlert.setHeaderText(null);
         confirmAlert.setContentText("Weet u zeker dat u machine \"" + selectedMachine.naam() + "\" wilt verwijderen?");
+
 
         if (confirmAlert.showAndWait().filter(response -> response == javafx.scene.control.ButtonType.OK).isPresent()) {
             try {
                 machineController.deleteMachine(selectedMachine.id());
 
                 if (logController != null) {
-                    logController.addLog(ingelogdeGebruiker,"Machine verwijderd: " + selectedMachine.naam(),
+                    logController.addLog(ingelogdeGebruiker, "Machine verwijderd: " + priviousMachine.naam(),
                             ingelogdeGebruiker.voornaam() + " " + ingelogdeGebruiker.achternaam());
                 }
 
-                javafx.scene.control.Alert infoAlert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                javafx.scene.control.Alert infoAlert = new javafx.scene.control.Alert(
+                        javafx.scene.control.Alert.AlertType.INFORMATION);
                 infoAlert.setTitle("Machine verwijderd");
                 infoAlert.setHeaderText(null);
-                infoAlert.setContentText("Machine \"" + selectedMachine.naam() + "\" is verwijderd.");
+                infoAlert.setContentText("Machine \"" + priviousMachine.naam() + "\" is verwijderd.");
                 infoAlert.showAndWait();
 
                 refreshMachineList();
             } catch (Exception e) {
-                javafx.scene.control.Alert errorAlert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                javafx.scene.control.Alert errorAlert = new javafx.scene.control.Alert(
+                        javafx.scene.control.Alert.AlertType.ERROR);
                 errorAlert.setTitle("Fout bij verwijderen");
                 errorAlert.setHeaderText(null);
                 errorAlert.setContentText("Kan machine niet verwijderen: " + e.getMessage());
