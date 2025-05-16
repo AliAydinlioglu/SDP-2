@@ -31,20 +31,23 @@ public class MainFrameController extends BorderPane {
     private Button logUitBtn;
 
     @FXML
+    private Button notificationsBtn; // Added this line
+
+    @FXML
     private Label loggedInGebruiker;
-    
+
     @Getter
     @FXML
     private StackPane mainView;
 
     @FXML
     private VBox sidebar;
-    
+
     @FXML
     private BorderPane root;
-    
+
     private Button selectedButton;
-    
+
     private MachineListFrameController machineListController;
     private OnderhoudFrameController onderhoudFrameController;
     private SiteOverzichtFrameController siteOverzichtController;
@@ -54,80 +57,77 @@ public class MainFrameController extends BorderPane {
     private Stage stage;
     private GebruikerDTO gebruiker;
 
-    
     public MainFrameController(GebruikerDTO gebruiker, Stage stage) {
-    	
-    	this.stage = stage;
-    	this.gebruiker = gebruiker;
-    	
-    	FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainFrame.fxml"));
-		loader.setRoot(this);
-		loader.setController(this);
-		try {
-			loader.load();
-		} catch (IOException ex) {
-			throw new RuntimeException(ex);
-		}
+
+        this.stage = stage;
         this.gebruiker = gebruiker;
-    	
-    	
-    	init();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainFrame.fxml"));
+        loader.setRoot(this);
+        loader.setController(this);
+        try {
+            loader.load();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        this.gebruiker = gebruiker;
+
+        init();
     }
 
     private void init() {
-    	
-    	loggedInGebruiker.setText(gebruiker.voornaam() + " " + gebruiker.achternaam());
-    	
-    	LogController logController = new LogController();
-    	
-    	
-        machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(), gebruiker, logController);
-        siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker, new GebruikerController(), logController);
-        
-        
+
+        loggedInGebruiker.setText(gebruiker.voornaam() + " " + gebruiker.achternaam());
+
+        LogController logController = new LogController();
+
+        machineListController = new MachineListFrameController(new MachineController(), new OnderhoudController(),
+                gebruiker, logController);
+        siteOverzichtController = new SiteOverzichtFrameController(new SiteController(), gebruiker,
+                new GebruikerController(), logController);
 
         Button machinesButton = new Button("Machines");
         Button sitesButton = new Button("Sites");
 
         sidebar.getChildren().addAll(sitesButton, machinesButton);
-        
+
         machinesButton.getStyleClass().add("sidebar-button");
         sitesButton.getStyleClass().add("sidebar-button");
-        
+
         sidebar.setPadding(new Insets(20));
         root.setLeft(sidebar);
 
         machinesButton.setOnAction(e -> onButtonClick(machinesButton));
         sitesButton.setOnAction(e -> onButtonClick(sitesButton));
-        
-        if(gebruiker.rol().equals(Rol.ADMINISTRATOR)) {
-            gebruikersListController = new GebruikersListFrameController(new GebruikerController(), gebruiker, logController);
+
+        if (gebruiker.rol().equals(Rol.ADMINISTRATOR)) {
+            gebruikersListController = new GebruikersListFrameController(new GebruikerController(), gebruiker,
+                    logController);
             Button gebruikersButton = new Button("Gebruikers");
-            
+
             logListFrameController = new LogListController(logController);
             Button logButton = new Button("Logs");
-            
+
             gebruikersButton.getStyleClass().add("sidebar-button");
             gebruikersButton.setOnAction(e -> onButtonClick(gebruikersButton));
-            
+
             logButton.getStyleClass().add("sidebar-button");
             logButton.setOnAction(e -> onButtonClick(logButton));
-            
+
             sidebar.getChildren().addAll(gebruikersButton, logButton);
-            
-            
-            
+
             mainView.getChildren().setAll(gebruikersListController);
             gebruikersButton.setStyle("-fx-underline: true;");
             selectedButton = gebruikersButton;
 
         } else {
-        	mainView.getChildren().setAll(siteOverzichtController);
+            mainView.getChildren().setAll(siteOverzichtController);
             sitesButton.setStyle("-fx-underline: true;");
             selectedButton = sitesButton;
         }
-        
-        ImageView logoView = new ImageView(new Image(getClass().getResource("/images/delaware-logo-opengraph.png").toExternalForm()));
+
+        ImageView logoView = new ImageView(
+                new Image(getClass().getResource("/images/delaware-logo-opengraph.png").toExternalForm()));
 
         // Optional styling
         logoView.setFitWidth(75); // increased size
@@ -142,7 +142,6 @@ public class MainFrameController extends BorderPane {
         // Add spacer and image to sidebar
         sidebar.getChildren().addAll(spacer, logoView);
 
-        
     }
 
     private void onButtonClick(Button clickedButton) {
@@ -162,25 +161,41 @@ public class MainFrameController extends BorderPane {
             mainView.getChildren().setAll(siteOverzichtController);
         } else if (clickedButton.getText().equals("Gebruikers")) {
             mainView.getChildren().setAll(gebruikersListController);
-        } else if(clickedButton.getText().equals("Logs")) {
-        	mainView.getChildren().setAll(logListFrameController);
+        } else if (clickedButton.getText().equals("Logs")) {
+            mainView.getChildren().setAll(logListFrameController);
         }
     }
 
     @FXML
     void LogOut(ActionEvent event) {
-    	boolean confirmed = AlertHelper.showConfirmationAndWait("Bevestiging", "Weet je zeker dat je wilt uitloggen?");
-        
-        if (!confirmed) return; 
-    	
-    	Scene scene = new Scene(new LoginFrameController(new GebruikerController(), stage));
-    	
-    	stage.setScene(scene);
-    	stage.setFullScreen(false);
-    	stage.setTitle("Login");
-        
+        boolean confirmed = AlertHelper.showConfirmationAndWait("Bevestiging", "Weet je zeker dat je wilt uitloggen?");
+
+        if (!confirmed)
+            return;
+
+        Scene scene = new Scene(new LoginFrameController(new GebruikerController(), stage));
+
+        stage.setScene(scene);
+        stage.setFullScreen(false);
+        stage.setTitle("Login");
+
     }
 
+    @FXML
+    void showNotifications(ActionEvent event) {
+        // Create a new empty StackPane or any other layout for the notifications tab
+        StackPane notificationsView = new StackPane();
+        // You can add content to notificationsView if needed, like a label "No new
+        // notifications"
+        // Label noNotificationsLabel = new Label("No new notifications");
+        // notificationsView.getChildren().add(noNotificationsLabel);
+        mainView.getChildren().setAll(notificationsView);
 
+        // Optionally, if you have a sidebar and want to deselect any active button:
+        if (selectedButton != null) {
+            selectedButton.setStyle("-fx-underline: false;");
+            selectedButton = null; // Or handle selection state appropriately
+        }
+    }
 
 }
