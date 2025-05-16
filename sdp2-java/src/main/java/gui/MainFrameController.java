@@ -13,12 +13,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -135,14 +137,16 @@ public class MainFrameController extends BorderPane {
         logoView.setSmooth(true);
         logoView.setCache(true);
 
-        // Spacer to push logo to bottom
         VBox spacer = new VBox();
         VBox.setVgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
 
-        // Add spacer and image to sidebar
-        sidebar.getChildren().addAll(spacer, logoView);
+        HBox logoContainer = new HBox(logoView);
+        logoContainer.setAlignment(Pos.CENTER);
 
-        
+        sidebar.getChildren().addAll(spacer, logoContainer);
+
+
+
     }
 
     private void onButtonClick(Button clickedButton) {

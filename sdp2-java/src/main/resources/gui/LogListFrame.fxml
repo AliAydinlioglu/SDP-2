@@ -14,13 +14,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root prefWidth="1200.0" type="VBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root stylesheets="@/styles/general.css" styleClass="container-main" prefWidth="1200.0" type="VBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-         <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="62.0" prefWidth="1241.0" text="Logs" textAlignment="JUSTIFY">
-         <font>
-            <Font size="34.0" />
-         </font>
-      </Label>
+         <Label alignment="CENTER" textAlignment="CENTER" maxWidth="Infinity" text="Logs"
+            styleClass="label-header-log">
+         </Label>
       <AnchorPane prefHeight="26.0" prefWidth="600.0">
          <VBox.margin>
             <Insets bottom="10.0" />
@@ -50,7 +48,7 @@
             </HBox>
          </children>
       </AnchorPane>
-      <TableView fx:id="logTable" prefHeight="456.0" prefWidth="1180.0">
+      <TableView fx:id="logTable" prefHeight="456.0" prefWidth="1180.0" styleClass="table-view-general">
         <columns>
             <TableColumn fx:id="emailCol" editable="false" prefWidth="186.72845554351807" text="email" />
             <TableColumn fx:id="actieCol" editable="false" prefWidth="284.5" text="actie" />

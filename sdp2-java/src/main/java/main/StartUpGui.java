@@ -17,7 +17,10 @@ public class StartUpGui extends Application {
         Scene loginScene = new Scene(loginView, 400, 300); // You can change width/height as needed
         primaryStage.setTitle("Login");
         primaryStage.setScene(loginScene);
-        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreen(false);
+
+        primaryStage.setMinWidth(300);
+        primaryStage.setMinHeight(320);
         
 //        primaryStage.setOnCloseRequest((WindowEvent event) -> {
 //			System.out.println("Application closed");

@@ -118,7 +118,7 @@ public class GebruikersListFrameController extends VBox {
                         } else if (!gebruiker.actief()) {
                             // Only apply grey background if not selected
                             if (!isSelected()) {
-                                setStyle("-fx-background-color: #e0e0e0;");
+                                setStyle("-fx-background-color: grey;");
                             } else {
                                 setStyle(""); // clear style so selection color shows
                             }
