@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import domain.builders.OnderhoudBuilder;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
@@ -67,7 +66,7 @@ public class OnderhoudController {
         try {
         	
             Gebruiker technieker = new GebruikerController().getRealGebruiker(techniekerId); // Assuming this method exists
-            Onderhoud onderhoud = new OnderhoudBuilder()
+            Onderhoud onderhoud = Onderhoud.builder()
                     .datum(datum)
                     .startTijd(startTijd)
                     .eindTijd(eindTijd)

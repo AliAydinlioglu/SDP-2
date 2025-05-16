@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import domain.builders.AdresBuilder;
-import domain.builders.GebruikerBuilder;
 import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.collections.FXCollections;
@@ -96,11 +94,11 @@ public class GebruikerController {
     	
 
 		try {
-			Gebruiker g = new GebruikerBuilder().
+			Gebruiker g = Gebruiker.builder().
 					voornaam(voornaam).
 					achternaam(naam).
 					geboorteDatum(geboortedatum).
-					adres(new AdresBuilder().straat(straat).huis_nr(huisNr).stad(stad).land(land).postcode(postcode).build()).
+					adres(Adres.builder().straat(straat).huis_nr(huisNr).stad(stad).land(land).postcode(postcode).build()).
 					email(email).
 					rol(rol).
 					gsm(gsm).
@@ -191,7 +189,7 @@ public class GebruikerController {
 	    g.setVoornaam(bewerkteDTO.voornaam());
 	    g.setAchternaam(bewerkteDTO.achternaam());
 	    g.setGeboorteDatum(bewerkteDTO.geboortedatum());
-	    g.setAdres(new AdresBuilder()
+	    g.setAdres(Adres.builder()
 	            .straat(bewerkteDTO.adres().straat())
 	            .huis_nr(bewerkteDTO.adres().huis_nr())
 	            .postcode(bewerkteDTO.adres().postcode())

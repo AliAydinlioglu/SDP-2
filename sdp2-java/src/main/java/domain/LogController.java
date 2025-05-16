@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import domain.builders.LogBuilder;
 import dto.GebruikerDTO;
 import dto.LogDTO;
 import javafx.collections.FXCollections;
@@ -75,7 +74,7 @@ public class LogController {
 	public void addLog(GebruikerDTO g, String actie, String opmerking) {
 		Gebruiker gebruiker = gebruikerController.getRealGebruiker(g.id());
 		try {
-			Log l = new LogBuilder()
+			Log l = Log.builder()
 					.actie(actie)
 					.gebruiker(gebruiker)
 					.opmerking(opmerking)
