@@ -144,7 +144,7 @@ public class SiteOverzichtFrameController extends VBox {
     }
     private void setupKnoppenAutorisatieEnBindings() {
         boolean magBeheren = gebruiker != null &&
-                (gebruiker.rol() == Rol.ADMINISTRATOR || gebruiker.rol() == Rol.MANAGER);
+                (gebruiker.rol() == Rol.VERANTWOORDELIJKE || gebruiker.rol() == Rol.MANAGER);
 
         if (btnSiteToevoegen != null) {
             btnSiteToevoegen.setVisible(magBeheren);
@@ -256,5 +256,7 @@ public class SiteOverzichtFrameController extends VBox {
             }
         }
     }
+
+
 
 }

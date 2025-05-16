@@ -91,8 +91,6 @@ public class MainFrameController extends BorderPane {
         Button machinesButton = new Button("Machines");
         Button sitesButton = new Button("Sites");
 
-        sidebar.getChildren().addAll(sitesButton, machinesButton);
-        
         machinesButton.getStyleClass().add("sidebar-button");
         sitesButton.getStyleClass().add("sidebar-button");
         
@@ -101,6 +99,11 @@ public class MainFrameController extends BorderPane {
 
         machinesButton.setOnAction(e -> onButtonClick(machinesButton));
         sitesButton.setOnAction(e -> onButtonClick(sitesButton));
+
+        if (gebruiker.rol().equals(Rol.MANAGER) || gebruiker.rol().equals(Rol.VERANTWOORDELIJKE)) {
+            sidebar.getChildren().add(sitesButton);
+        }
+        sidebar.getChildren().add(machinesButton);
         
         if(gebruiker.rol().equals(Rol.ADMINISTRATOR)) {
             gebruikersListController = new GebruikersListFrameController(new GebruikerController(), gebruiker, logController);
@@ -124,9 +127,17 @@ public class MainFrameController extends BorderPane {
             selectedButton = gebruikersButton;
 
         } else {
-        	mainView.getChildren().setAll(siteOverzichtController);
-            sitesButton.setStyle("-fx-underline: true;");
-            selectedButton = sitesButton;
+            if (sidebar.getChildren().contains(sitesButton) && (gebruiker.rol().equals(Rol.MANAGER) || gebruiker.rol().equals(Rol.VERANTWOORDELIJKE))) {
+                mainView.getChildren().setAll(siteOverzichtController);
+                sitesButton.setStyle("-fx-underline: true;");
+                selectedButton = sitesButton;
+            } else if (sidebar.getChildren().contains(machinesButton)) {
+                mainView.getChildren().setAll(machineListController);
+                machinesButton.setStyle("-fx-underline: true;");
+                selectedButton = machinesButton;
+            } else {
+                mainView.getChildren().setAll(new Label("U heeft geen toegang tot de beschikbare modules."));
+            }
         }
         
         ImageView logoView = new ImageView(new Image(getClass().getResource("/images/delaware-logo-opengraph.png").toExternalForm()));
@@ -163,7 +174,9 @@ public class MainFrameController extends BorderPane {
         } else if (clickedButton.getText().equals("Onderhoud")) {
             mainView.getChildren().setAll(onderhoudFrameController);
         } else if (clickedButton.getText().equals("Sites")) {
-            mainView.getChildren().setAll(siteOverzichtController);
+            if (gebruiker.rol().equals(Rol.MANAGER) || gebruiker.rol().equals(Rol.VERANTWOORDELIJKE)) {
+                mainView.getChildren().setAll(siteOverzichtController);
+            }
         } else if (clickedButton.getText().equals("Gebruikers")) {
             mainView.getChildren().setAll(gebruikersListController);
         } else if(clickedButton.getText().equals("Logs")) {
