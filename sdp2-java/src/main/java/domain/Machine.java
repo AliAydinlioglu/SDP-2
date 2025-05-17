@@ -51,7 +51,7 @@ public class Machine implements Serializable {
     @Column(name = "info")
     private String naam;
 
-    @Transient // Tell JPA to ignore this field for database operations
+    @Column(name = "product_info")
     private String productInfo;
 
     @Column(name = "locatie")

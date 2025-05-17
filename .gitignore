@@ -15,3 +15,5 @@ target
 sdp2-java/src/main/resources/config/dev.properties
 
 sdp2-java/src/main/resources/config/prod.properties
+
+sdp2-java/config/database.properties

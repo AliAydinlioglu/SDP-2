@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="491.0" prefWidth="600" spacing="20" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AddOrEditGebruikerFrameController">
+<VBox alignment="CENTER" prefHeight="491.0" prefWidth="600" stylesheets="@/styles/general.css" spacing="20" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AddOrEditGebruikerFrameController">
     
     <children>
         <Label fx:id="hoofdLabel" prefHeight="23.0" prefWidth="168.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Gebruiker Aanmaken" />
@@ -77,13 +77,13 @@
         </GridPane>
       <FlowPane alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#Cancel" prefWidth="150.0" text="Cancel" styleClass="gebruiker-add-cancel">
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#Cancel" prefWidth="150.0" text="Cancel" styleClass="delete">
                <FlowPane.margin>
                   <Insets right="20.0" />
                </FlowPane.margin>
             </Button>
       
-              <Button fx:id="submitBtn" onAction="#addGebruiker" prefWidth="150" text="Toevoegen" styleClass="gebruiker-add-btn"/>
+              <Button fx:id="submitBtn" onAction="#addGebruiker" prefWidth="150" text="Toevoegen" styleClass="add"/>
          </children>
          <VBox.margin>
             <Insets />
