@@ -16,12 +16,14 @@ import repository.MachineDaoJpa;
 import enums.MachineStatus;
 import enums.Rol;
 import utils.AlertHelper;
+import domain.builders.NotificatieBuilder;
 
 public class MachineController {
 
     private MachineDao machineDaoJpa;
     private SiteController siteController;
     private GebruikerController gebruikerController;
+    private NotificatiesController notificatiesController;
 
     private List<Machine> data;
     private ObservableList<MachineDTO> machineList;
@@ -39,6 +41,7 @@ public class MachineController {
         machineDaoJpa = new MachineDaoJpa();
         siteController = new SiteController();
         gebruikerController = new GebruikerController();
+        notificatiesController = new NotificatiesController();
         initData();
     }
 
@@ -46,10 +49,12 @@ public class MachineController {
         this.machineDaoJpa = machineDaoJpa;
         this.siteController = new SiteController();
         this.gebruikerController = new GebruikerController();
+        this.notificatiesController = new NotificatiesController();
     }
 
     /**
      * Returns all sites for use in dropdowns
+     * 
      * @return ObservableList of SiteDTO.SiteSummaryDTO objects
      */
     public ObservableList<SiteDTO.SiteSummaryDTO> getAllSites() {
@@ -58,12 +63,12 @@ public class MachineController {
         return FXCollections.observableArrayList(
                 sites.stream()
                         .map(site -> new SiteDTO.SiteSummaryDTO(site.id(), site.naam()))
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
     }
 
     /**
      * Returns all technicians (users with TECHNIEKER role) for use in dropdowns
+     * 
      * @return ObservableList of GebruikerDTO objects
      */
     public ObservableList<GebruikerDTO> getAllTechnicians() {
@@ -73,6 +78,7 @@ public class MachineController {
 
     /**
      * Adds a new machine from a DTO
+     * 
      * @param machineDTO The DTO containing the machine data
      */
     public void addMachineFromDTO(MachineDTO machineDTO) {
@@ -80,7 +86,8 @@ public class MachineController {
             // Get the real objects from the controllers
             Gebruiker technieker = gebruikerController.getRealGebruiker(machineDTO.technieker().id());
 
-            // For the site, we'll use a workaround since we don't have direct access to the Site entity
+            // For the site, we'll use a workaround since we don't have direct access to the
+            // Site entity
             // We'll create a temporary Site object with the ID from the DTO
             Site site = new Site();
             site.setSiteId(machineDTO.site().id());
@@ -97,8 +104,7 @@ public class MachineController {
                     technieker,
                     machineDTO.dagenSindsOnderhoud(),
                     machineDTO.volgendOnderhoud(),
-                    site
-            );
+                    site);
 
             // Add the machine
             addMachine(machine);
@@ -159,6 +165,8 @@ public class MachineController {
 
         int index = data.indexOf(machine);
 
+        MachineStatus oldStatus = machine.getStatus();
+
         machine.setNaam(machineDTO.naam());
         machine.setStatus(machineDTO.status());
         machine.setLocatie(machineDTO.locatie());
@@ -175,7 +183,13 @@ public class MachineController {
                     .filter(m -> m.id() == machineDTO.id())
                     .findFirst()
                     .orElse(null);
-            machineList.set(machineList.indexOf(existingDTO), updatedDTO);
+            if (existingDTO != null) {
+                machineList.set(machineList.indexOf(existingDTO), updatedDTO);
+            }
+
+            if (isMachineStopped(machine.getStatus()) && !isMachineStopped(oldStatus)) {
+                createMachineStatusNotification(machine, "Machine Gestopt");
+            }
 
         } catch (Exception e) {
             machineDaoJpa.rollbackTransaction();
@@ -200,10 +214,34 @@ public class MachineController {
 
     public void deactivateMachine(Machine machine) {
         try {
+            MachineStatus oldStatus = machine.getStatus();
             machine.setStatus(MachineStatus.GESTOPT_AUTO);
             machineDaoJpa.startTransaction();
             machineDaoJpa.update(machine);
             machineDaoJpa.commitTransaction();
+
+            MachineDTO dtoInList = machineList.stream()
+                    .filter(mDto -> mDto.id() == machine.getMachineID())
+                    .findFirst().orElse(null);
+            if (dtoInList != null) {
+                int dtoIndex = machineList.indexOf(dtoInList);
+                machineList.set(dtoIndex, MachineDTO.fromEntity(machine));
+            }
+            int dataIndex = data.indexOf(machine);
+            if (dataIndex != -1) {
+                data.set(dataIndex, machine);
+            } else {
+                for (int i = 0; i < data.size(); i++) {
+                    if (data.get(i).getMachineID() == machine.getMachineID()) {
+                        data.set(i, machine);
+                        break;
+                    }
+                }
+            }
+
+            if (!isMachineStopped(oldStatus)) {
+                createMachineStatusNotification(machine, "Machine Automatisch Gestopt");
+            }
         } catch (Exception e) {
             machineDaoJpa.rollbackTransaction();
             throw new IllegalArgumentException("Machine kon niet worden gedeactiveerd: " + e.getMessage());
@@ -277,16 +315,60 @@ public class MachineController {
         Machine machine = getRealMachine(machineDTO.id());
         machine.setStatus(MachineStatus.IN_ONDERHOUD);
 
-        MachineDTO updatedMachine = MachineDTO.fromEntity(machine);
-        updateMachine(updatedMachine);
+        updateMachine(MachineDTO.fromEntity(machine));
     }
 
     public void stopOnderhoud(MachineDTO machineDTO) {
-        validateMachineStatus(machineDTO);
         Machine machine = getRealMachine(machineDTO.id());
+        if (machine.getStatus() != MachineStatus.IN_ONDERHOUD) {
+            throw new IllegalArgumentException("Machine is niet in onderhoud.");
+        }
         machine.setStatus(MachineStatus.STARTBAAR);
 
-        MachineDTO updatedMachine = MachineDTO.fromEntity(machine);
-        updateMachine(updatedMachine);
+        updateMachine(MachineDTO.fromEntity(machine));
+    }
+
+    private boolean isMachineStopped(MachineStatus status) {
+        return status == MachineStatus.GESTOPT_AUTO || status == MachineStatus.GESTOPT_MANUEEL;
+    }
+
+    private void createMachineStatusNotification(Machine machine, String titel) {
+        String message = String.format("Machine '%s' (ID: %d) in site '%s' is nu %s.",
+                machine.getNaam(),
+                machine.getMachineID(),
+                machine.getSite() != null ? machine.getSite().getNaam() : "Onbekend",
+                machine.getStatus().toString().toLowerCase());
+
+        List<Gebruiker> gebruikersToNotify = new java.util.ArrayList<>();
+
+        Gebruiker assignedTechnieker = machine.getTechnieker();
+        if (assignedTechnieker != null &&
+                (assignedTechnieker.getRol() == Rol.TECHNIEKER ||
+                        assignedTechnieker.getRol() == Rol.VERANTWOORDELIJKE ||
+                        assignedTechnieker.getRol() == Rol.MANAGER)) {
+            gebruikersToNotify.add(assignedTechnieker);
+        }
+
+        List<GebruikerDTO> allUsersDTO = gebruikerController.findAll();
+        for (GebruikerDTO userDTO : allUsersDTO) {
+            if (userDTO.rol() == Rol.VERANTWOORDELIJKE || userDTO.rol() == Rol.MANAGER) {
+                Gebruiker user = gebruikerController.getRealGebruiker(userDTO.id());
+                if (user != null
+                        && gebruikersToNotify.stream().noneMatch(g -> g.getGebruikerID() == user.getGebruikerID())) {
+                    gebruikersToNotify.add(user);
+                }
+            }
+        }
+
+        for (Gebruiker ontvanger : gebruikersToNotify) {
+            Notificatie notificatie = new NotificatieBuilder()
+                    .titel(titel)
+                    .message(message)
+                    .ontvanger(ontvanger)
+                    .itemType("MACHINE")
+                    .itemId(machine.getMachineID())
+                    .build();
+            notificatiesController.addNotificatie(notificatie);
+        }
     }
 }

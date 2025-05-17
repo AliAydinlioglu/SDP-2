@@ -10,23 +10,20 @@ public class StartUpGui extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-    	GebruikerController gebruikerController = new GebruikerController();
+        GebruikerController gebruikerController = new GebruikerController();
 
         LoginFrameController loginView = new LoginFrameController(gebruikerController, primaryStage);
 
         Scene loginScene = new Scene(loginView, 400, 300); // You can change width/height as needed
         primaryStage.setTitle("Login");
         primaryStage.setScene(loginScene);
-        primaryStage.setFullScreen(false);
+        primaryStage.setMaximized(true);
 
-        primaryStage.setMinWidth(300);
-        primaryStage.setMinHeight(320);
-        
-//        primaryStage.setOnCloseRequest((WindowEvent event) -> {
-//			System.out.println("Application closed");
-//			System.exit(0);
-//		});
-//        
+        // primaryStage.setOnCloseRequest((WindowEvent event) -> {
+        // System.out.println("Application closed");
+        // System.exit(0);
+        // });
+        //
         primaryStage.show();
     }
 

@@ -27,19 +27,18 @@ import jakarta.persistence.Table;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Gebruiker.findByEmail",
-                query = """
-                        SELECT g
-                        FROM Gebruiker g
-                        WHERE g.email = :gebruikerEmail
-                        
-                        """)
+        @NamedQuery(name = "Gebruiker.findByEmail", query = """
+                SELECT g
+                FROM Gebruiker g
+                WHERE g.email = :gebruikerEmail
+
+                """)
 })
 @Getter
 @Setter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(exclude = {"gebruikerID", "sites", "onderhouden", "machines"})
+@EqualsAndHashCode(exclude = { "gebruikerID", "sites", "onderhouden", "machines" })
 public class Gebruiker implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -79,10 +78,10 @@ public class Gebruiker implements Serializable {
     @Setter(AccessLevel.NONE)
     private Set<Machine> machines = new HashSet<Machine>();
 
-
     private static final Argon2PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 131072, 6);
 
-    public Gebruiker(String voornaam, String achternaam, LocalDate geboortedatum, Adres adres, String email, String gsm, Rol rol, boolean actief) {
+    public Gebruiker(String voornaam, String achternaam, LocalDate geboortedatum, Adres adres, String email, String gsm,
+            Rol rol, boolean actief) {
         if (achternaam.isBlank() || voornaam.isBlank() || geboortedatum == null || adres == null) {
             throw new IllegalArgumentException("Alle velden (behalve gsm) moeten ingevuld zijn.");
         }
@@ -95,8 +94,8 @@ public class Gebruiker implements Serializable {
         setGsm(gsm);
         setActief(actief);
 
-
-        // wachtwoord = "012345678"; // Placeholder, wachtwoord moet nog goed worden ingesteld
+        // wachtwoord = "012345678"; // Placeholder, wachtwoord moet nog goed worden
+        // ingesteld
         setWachtwoord("012345678");
 
     }
@@ -107,7 +106,6 @@ public class Gebruiker implements Serializable {
         }
         this.email = email;
     }
-
 
     public void setGsm(String gsm) {
         if (rol.equals(Rol.TECHNIEKER) && (gsm == null || gsm.isBlank())) {
@@ -148,13 +146,14 @@ public class Gebruiker implements Serializable {
         return Collections.unmodifiableSet(sites);
     }
 
-    public boolean getActief() {
+    public boolean isActief() {
         return actief;
     }
 
     @Override
     public String toString() {
-        return String.format("%s %s (%s) - %s | Status: %s", voornaam, achternaam, rol, email, actief ? "Actief" : "Inactief");
+        return String.format("%s %s (%s) - %s | Status: %s", voornaam, achternaam, rol, email,
+                actief ? "Actief" : "Inactief");
     }
 
     public static class Builder {
@@ -242,6 +241,5 @@ public class Gebruiker implements Serializable {
     public static Builder builder() {
         return new Builder();
     }
-
 
 }

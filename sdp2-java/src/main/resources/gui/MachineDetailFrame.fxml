@@ -72,18 +72,18 @@
             </children>
         </HBox>
 
-        <HBox prefWidth="350.0" spacing="5.0" style="-fx-border-color: lightgray; -fx-border-width: 0 0 0 1; -fx-padding: 0 0 0 20;" HBox.hgrow="NEVER">
+        <HBox prefWidth="450.0" spacing="5.0" style="-fx-border-color: lightgray; -fx-border-width: 0 0 0 1; -fx-padding: 0 0 0 20;" HBox.hgrow="NEVER">
             <children>
-                <Label fx:id="lblMachineDetailsHeader" text="Machine Details" styleClass="site-main-header-label site-detail-main-header">
-                    <font>
-                        <Font name="System Bold" size="18.0"/>
-                    </font>
-                    <VBox.margin>
-                        <Insets bottom="10.0" top="5.0"/>
-                    </VBox.margin>
-                </Label>
-                <VBox spacing="8.0">
+                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                     <children>
+                        <Label fx:id="lblMachineDetailsHeader" text="Machine Details" styleClass="site-main-header-label site-detail-main-header">
+                            <font>
+                                <Font name="System Bold" size="18.0"/>
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="10.0" top="5.0"/>
+                            </VBox.margin>
+                        </Label>
                         <HBox spacing="10.0">
                             <Label minWidth="100" text="Naam:" styleClass="site-detail-field-label"/>
                             <Label fx:id="lblMachineNaam" styleClass="site-detail-value-label"/>
@@ -129,9 +129,29 @@
                             <Label minWidth="180" text="Volgend onderhoud:" styleClass="site-detail-field-label"/>
                             <Label fx:id="lblVolgendOnderhoud" styleClass="site-detail-value-label"/>
                         </HBox>
+                        <Label text="Onderhoudsgeschiedenis:" styleClass="site-detail-field-label">
+                            <VBox.margin>
+                                <Insets top="15.0" bottom="5.0"/>
+                            </VBox.margin>
+                        </Label>
+                        <TableView fx:id="onderhoudTable" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="onderhoudDatumCol" prefWidth="100.0" text="Datum"/>
+                                <TableColumn fx:id="onderhoudStatusCol" prefWidth="100.0" text="Status"/>
+                                <TableColumn fx:id="onderhoudTechniekerCol" prefWidth="120.0" text="Technieker"/>
+                                <TableColumn fx:id="onderhoudRedenCol" prefWidth="150.0" text="Reden"/>
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            </columnResizePolicy>
+                        </TableView>
+                        <Button fx:id="btnOnderhoud" styleClass="site-button" mnemonicParsing="false" text="Alle onderhouden">
+                            <VBox.margin>
+                                <Insets top="10.0"/>
+                            </VBox.margin>
+                        </Button>
                     </children>
                 </VBox>
-                <Button fx:id="btnOnderhoud" styleClass="site-button" mnemonicParsing="false" text="Alle onderhouden"/>
             </children>
         </HBox>
     </children>
