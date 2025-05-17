@@ -54,19 +54,19 @@ public class AddOrEditGebruikerFrameController {
 
     @FXML
     private TextField voornaamField;
-    
+
     @FXML
     private Label hoofdLabel;
 
     @FXML
     private Button cancelBtn;
-    
+
     @FXML
     private CheckBox actiefBox;
 
     private GebruikerController dc;
     private GebruikerDTO bewerkteGebruiker; // null if creating new
-    
+
     private GebruikerDTO ingelogdeGebruiker;
     private LogController logController;
 
@@ -74,7 +74,8 @@ public class AddOrEditGebruikerFrameController {
         initData(controller, null, logController, ingelogdeGebruiker);
     }
 
-    public void initData(GebruikerController controller, GebruikerDTO gebruiker, LogController logController, GebruikerDTO ingelogdeGebruiker) {
+    public void initData(GebruikerController controller, GebruikerDTO gebruiker, LogController logController,
+            GebruikerDTO ingelogdeGebruiker) {
         this.dc = controller;
         this.bewerkteGebruiker = gebruiker;
         this.logController = logController;
@@ -82,18 +83,21 @@ public class AddOrEditGebruikerFrameController {
 
         rolBox.getItems().addAll(Rol.values());
         rolBox.setConverter(new StringConverter<Rol>() {
-			
-			@Override
-			public String toString(Rol rol) {
-				return rol.toString().toLowerCase();
 
-			}
+            @Override
+            public String toString(Rol rol) {
+                if (rol == null) {
+                    return ""; // Or any other default string for null
+                }
+                return rol.toString().toLowerCase();
 
-			@Override
-			public Rol fromString(String string) {
-				return null;
-			}
-		});
+            }
+
+            @Override
+            public Rol fromString(String string) {
+                return null;
+            }
+        });
 
         if (gebruiker != null) {
             voornaamField.setText(gebruiker.voornaam());
@@ -108,11 +112,10 @@ public class AddOrEditGebruikerFrameController {
             geboorteDatumPicker.setValue(gebruiker.geboortedatum());
             rolBox.setValue(gebruiker.rol());
             actiefBox.setSelected(gebruiker.actief());
-            
 
             submitBtn.setText("Opslaan");
             emailField.setDisable(true); // Optional: disable editing email
-            
+
             hoofdLabel.setText("Gebruiker Aanpassen");
         }
     }
@@ -134,37 +137,37 @@ public class AddOrEditGebruikerFrameController {
         try {
             if (bewerkteGebruiker != null) {
                 GebruikerDTO bewerkteDTO = new GebruikerDTO(
-                		bewerkteGebruiker.id(),
-                		voornaam,
-                		naam,
-                		geboorteDatumPicker.getValue(),
-                		new AdresDTO(straat, huisNr, postcode, stad, land),
-                		email,
-                		gsm,
-                		rol,
-                		actief
-                		);
+                        bewerkteGebruiker.id(),
+                        voornaam,
+                        naam,
+                        geboorteDatumPicker.getValue(),
+                        new AdresDTO(straat, huisNr, postcode, stad, land),
+                        email,
+                        gsm,
+                        rol,
+                        actief);
                 dc.updateGebruiker(bewerkteDTO);
-                if(!bewerkteDTO.actief()) {
-                	logController.addLog(ingelogdeGebruiker, String.format("gebruiker met id %d op non-actief gezet ", bewerkteDTO.id()),"");
+                if (!bewerkteDTO.actief()) {
+                    logController.addLog(ingelogdeGebruiker,
+                            String.format("gebruiker met id %d op non-actief gezet ", bewerkteDTO.id()), "");
                 }
-                logController.addLog(ingelogdeGebruiker, String.format("gebruiker met id %d aangepast", bewerkteDTO.id()),"");
+                logController.addLog(ingelogdeGebruiker,
+                        String.format("gebruiker met id %d aangepast", bewerkteDTO.id()), "");
             } else {
                 // CREATE
                 dc.addGebruiker(naam, voornaam, geboorteDatumPicker.getValue(),
                         straat, huisNr, postcode, stad, land, email, gsm, rol, actief);
-                
+
                 logController.addLog(ingelogdeGebruiker, "gebruiker aangemaakt met email: %s", email);
             }
             ((Stage) submitBtn.getScene().getWindow()).close();
 
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
             AlertHelper.showError("Gebruiker opslaan mislukt", e.getMessage());
             return;
         }
 
-        
     }
 
     @FXML
