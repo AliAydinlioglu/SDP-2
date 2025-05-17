@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import domain.builders.NotificatieBuilder;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
@@ -386,63 +385,23 @@ public class OnderhoudController {
         }
     }
 
-    private void createOnderhoudNotification(Onderhoud onderhoud, String titel, Gebruiker siteVerantwoordelijke) {
-        Machine machine = onderhoud.getMachine();
-        String machineNaam = machine != null ? machine.getNaam() : "Onbekende machine";
-        int machineId = machine != null ? machine.getMachineID() : 0;
-        String siteNaam = (machine != null && machine.getSite() != null) ? machine.getSite().getNaam()
-                : "Onbekende site";
-
+    private void createOnderhoudNotification(Onderhoud onderhoud, String titel, Gebruiker ontvanger) {
+        if (ontvanger == null) {
+            return;
+        }
         String message = String.format(
-                "Onderhoud (ID: %d) voor machine '%s' (ID: %d) op site '%s' is %s. Gepland op %s.",
-                onderhoud.getOnderhoudId(),
-                machineNaam,
-                machineId,
-                siteNaam,
-                onderhoud.getStatus().toString().toLowerCase(),
-                onderhoud.getDatum().toString());
+                "Details: Datum: %s, Start: %s, Machine: %s",
+                onderhoud.getDatum(),
+                onderhoud.getStartTijd(),
+                onderhoud.getMachine().getNaam());
 
-        List<Gebruiker> gebruikersToNotify = new java.util.ArrayList<>();
-
-        Gebruiker assignedTechniekerOnderhoud = onderhoud.getTechnieker();
-        if (assignedTechniekerOnderhoud != null) {
-            gebruikersToNotify.add(assignedTechniekerOnderhoud);
-        }
-
-        if (machine != null && machine.getTechnieker() != null) {
-            Gebruiker machineTechnieker = machine.getTechnieker();
-            if (gebruikersToNotify.stream().noneMatch(g -> g.getGebruikerID() == machineTechnieker.getGebruikerID())) {
-                gebruikersToNotify.add(machineTechnieker);
-            }
-        }
-
-        if (siteVerantwoordelijke != null) {
-            if (gebruikersToNotify.stream()
-                    .noneMatch(g -> g.getGebruikerID() == siteVerantwoordelijke.getGebruikerID())) {
-                gebruikersToNotify.add(siteVerantwoordelijke);
-            }
-        }
-
-        List<GebruikerDTO> allUsersDTO = gebruikerController.findAll();
-        for (GebruikerDTO userDTO : allUsersDTO) {
-            if (userDTO.rol() == Rol.MANAGER) {
-                Gebruiker manager = gebruikerController.getRealGebruiker(userDTO.id());
-                if (manager != null
-                        && gebruikersToNotify.stream().noneMatch(g -> g.getGebruikerID() == manager.getGebruikerID())) {
-                    gebruikersToNotify.add(manager);
-                }
-            }
-        }
-
-        for (Gebruiker ontvanger : gebruikersToNotify) {
-            Notificatie notificatie = new NotificatieBuilder()
-                    .titel(titel)
-                    .message(message)
-                    .ontvanger(ontvanger)
-                    .itemType("ONDERHOUD")
-                    .itemId(onderhoud.getOnderhoudId())
-                    .build();
-            notificatiesController.addNotificatie(notificatie);
-        }
+        Notificatie notificatie = Notificatie.builder()
+                .titel(titel)
+                .message(message)
+                .ontvanger(ontvanger)
+                .itemType("Onderhoud")
+                .itemId(onderhoud.getOnderhoudId())
+                .build();
+        notificatiesController.addNotificatie(notificatie);
     }
 }

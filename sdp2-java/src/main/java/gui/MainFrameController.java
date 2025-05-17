@@ -175,7 +175,8 @@ public class MainFrameController extends BorderPane {
             }
         }
 
-        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/images/delaware-logo-opengraph.png")));
+        ImageView logoView = new ImageView(
+                new Image(getClass().getResourceAsStream("/images/delaware-logo-opengraph.png")));
         logoView.setFitHeight(100);
         logoView.setFitWidth(150);
         logoView.setPreserveRatio(true);
