@@ -1,5 +1,7 @@
 package domain;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,11 +15,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import enums.MachineStatus;
 import enums.OnderhoudStatus;
 import enums.ProductionStatus;
 import enums.Rol;
+import enums.NotificatieStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -26,6 +30,8 @@ import repository.LogDaoJpa;
 import repository.MachineDaoJpa;
 import repository.OnderhoudDaoJpa;
 import repository.SiteDaoJpa;
+import repository.NotificatieDaoJpa;
+import domain.builders.NotificatieBuilder;
 
 public class PopulateDB {
     private GebruikerDaoJpa gebruikerdao;
@@ -33,18 +39,23 @@ public class PopulateDB {
     private MachineDaoJpa machinedao;
     private OnderhoudDaoJpa onderhouddao;
     private LogDaoJpa logdao;
+    private NotificatieDaoJpa notificatieDao;
 
     private List<Gebruiker> gebruikers = new ArrayList<>();
     private List<Site> sites = new ArrayList<>();
     private List<Machine> machines = new ArrayList<>();
 
-    private String jdbcUrl = "jdbc:mysql://localhost:3306";
-    private String jdbcUser = "root";
-    private String jdbcPassword = "root";
+    private String jdbcUrl;
+    private String jdbcUser;
+    private String jdbcPassword;
     private String schemaName = "local_sdp2";
     private String persistenceUnitName = "sdp2";
 
     public void run() {
+        if (!loadConfig()) {
+            System.err.println("Failed to load database configuration. Aborting seeding process.");
+            return;
+        }
         if (!resetAndCreateSchema()) {
             System.err.println("Database schema reset failed. Aborting seeding process.");
             return;
@@ -55,7 +66,26 @@ public class PopulateDB {
         createMachines();
         createOnderhoud();
         createLogs();
+        createNotificaties();
         System.out.println("Database succesvol gereset en gevuld met vereenvoudigde testgegevens.");
+    }
+
+    private boolean loadConfig() {
+        Properties props = new Properties();
+        try (InputStream input = PopulateDB.class.getClassLoader().getResourceAsStream("config/dev.properties")) {
+            if (input == null) {
+                System.err.println("Sorry, unable to find config/dev.properties");
+                return false;
+            }
+            props.load(input);
+            this.jdbcUrl = props.getProperty("db.url");
+            this.jdbcUser = props.getProperty("db.user");
+            this.jdbcPassword = props.getProperty("db.password");
+            return true;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     private boolean resetAndCreateSchema() {
@@ -82,7 +112,7 @@ public class PopulateDB {
             }
             System.out.println("Attempting to create schema '" + schemaName + "' using direct JDBC as a fallback...");
             try (Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
-                 java.sql.Statement statement = connection.createStatement()) {
+                    java.sql.Statement statement = connection.createStatement()) {
                 statement.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName);
                 System.out.println("Schema '" + schemaName + "' successfully ensured/created via JDBC.");
                 return true;
@@ -107,97 +137,127 @@ public class PopulateDB {
         machinedao = new MachineDaoJpa();
         onderhouddao = new OnderhoudDaoJpa();
         logdao = new repository.LogDaoJpa();
+        notificatieDao = new NotificatieDaoJpa();
     }
 
     private void createGebruikers() {
         this.gebruikers.clear();
         gebruikerdao.startTransaction();
         try {
-            // Administrators
             createAndAddGebruiker("Jan", "Janssens", LocalDate.of(1980, 1, 15),
-                    "Korenmarkt", "45", "9000", "Gent", "België", "jan.janssens@bedrijf.be", "0471234567", Rol.ADMINISTRATOR, true);
+                    "Korenmarkt", "45", "9000", "Gent", "België", "jan.janssens@bedrijf.be", "0471234567",
+                    Rol.ADMINISTRATOR, true);
             createAndAddGebruiker("Pieter", "De Smet", LocalDate.of(1985, 3, 21),
-                    "Antwerpsesteenweg", "112", "9040", "Sint-Amandsberg", "België", "pieter.desmet@bedrijf.be", "0472345678", Rol.ADMINISTRATOR, true);
+                    "Antwerpsesteenweg", "112", "9040", "Sint-Amandsberg", "België", "pieter.desmet@bedrijf.be",
+                    "0472345678", Rol.ADMINISTRATOR, true);
             createAndAddGebruiker("Sophie", "Martens", LocalDate.of(1978, 11, 7),
-                    "Bosstraat", "18", "8500", "Kortrijk", "België", "sophie.martens@bedrijf.be", "0473456789", Rol.ADMINISTRATOR, false);
-
-            // Managers
+                    "Bosstraat", "18", "8500", "Kortrijk", "België", "sophie.martens@bedrijf.be", "0473456789",
+                    Rol.ADMINISTRATOR, false);
             createAndAddGebruiker("Bart", "Peeters", LocalDate.of(1975, 6, 12),
-                    "Leiekaai", "27", "9000", "Gent", "België", "bart.peeters@bedrijf.be", "0474567890", Rol.MANAGER, false);
+                    "Leiekaai", "27", "9000", "Gent", "België", "bart.peeters@bedrijf.be", "0474567890", Rol.MANAGER,
+                    false);
             createAndAddGebruiker("Els", "Vandenberghe", LocalDate.of(1982, 4, 30),
-                    "Keizer Karelstraat", "83", "9000", "Gent", "België", "els.vandenberghe@bedrijf.be", "0475678901", Rol.MANAGER, true);
+                    "Keizer Karelstraat", "83", "9000", "Gent", "België", "els.vandenberghe@bedrijf.be", "0475678901",
+                    Rol.MANAGER, true);
             createAndAddGebruiker("Michel", "Dupont", LocalDate.of(1979, 9, 18),
-                    "Avenue Louise", "120", "1050", "Brussel", "België", "michel.dupont@bedrijf.be", "0476789012", Rol.MANAGER, true);
+                    "Avenue Louise", "120", "1050", "Brussel", "België", "michel.dupont@bedrijf.be", "0476789012",
+                    Rol.MANAGER, true);
             createAndAddGebruiker("Tom", "Wouters", LocalDate.of(1984, 2, 25),
-                    "Meir", "15", "2000", "Antwerpen", "België", "tom.wouters@bedrijf.be", "0477890123", Rol.MANAGER, true);
+                    "Meir", "15", "2000", "Antwerpen", "België", "tom.wouters@bedrijf.be", "0477890123", Rol.MANAGER,
+                    true);
             createAndAddGebruiker("Karen", "Verhoeven", LocalDate.of(1981, 7, 14),
-                    "Bondgenotenlaan", "42", "3000", "Leuven", "België", "karen.verhoeven@bedrijf.be", "0478901234", Rol.MANAGER, true);
-
-            // Verantwoordelijken
+                    "Bondgenotenlaan", "42", "3000", "Leuven", "België", "karen.verhoeven@bedrijf.be", "0478901234",
+                    Rol.MANAGER, true);
             createAndAddGebruiker("Luc", "Vermeulen", LocalDate.of(1977, 8, 8),
-                    "Oudburg", "7", "9000", "Gent", "België", "luc.vermeulen@bedrijf.be", "0479012345", Rol.VERANTWOORDELIJKE, false);
+                    "Oudburg", "7", "9000", "Gent", "België", "luc.vermeulen@bedrijf.be", "0479012345",
+                    Rol.VERANTWOORDELIJKE, false);
             createAndAddGebruiker("Eva", "Jacobs", LocalDate.of(1983, 5, 19),
-                    "Vrijdagmarkt", "22", "9000", "Gent", "België", "eva.jacobs@bedrijf.be", "0480123456", Rol.VERANTWOORDELIJKE, true);
+                    "Vrijdagmarkt", "22", "9000", "Gent", "België", "eva.jacobs@bedrijf.be", "0480123456",
+                    Rol.VERANTWOORDELIJKE, true);
             createAndAddGebruiker("Marc", "Devos", LocalDate.of(1976, 12, 3),
-                    "Veldstraat", "88", "9000", "Gent", "België", "marc.devos@bedrijf.be", "0481234567", Rol.VERANTWOORDELIJKE, true);
+                    "Veldstraat", "88", "9000", "Gent", "België", "marc.devos@bedrijf.be", "0481234567",
+                    Rol.VERANTWOORDELIJKE, true);
             createAndAddGebruiker("Julie", "Van Damme", LocalDate.of(1986, 10, 27),
-                    "Nationalestraat", "35", "2000", "Antwerpen", "België", "julie.vandamme@bedrijf.be", "0482345678", Rol.VERANTWOORDELIJKE, true);
+                    "Nationalestraat", "35", "2000", "Antwerpen", "België", "julie.vandamme@bedrijf.be", "0482345678",
+                    Rol.VERANTWOORDELIJKE, true);
             createAndAddGebruiker("Dirk", "Coppens", LocalDate.of(1973, 9, 9),
-                    "Lippenslaan", "102", "8300", "Knokke", "België", "dirk.coppens@bedrijf.be", "0483456789", Rol.VERANTWOORDELIJKE, true);
+                    "Lippenslaan", "102", "8300", "Knokke", "België", "dirk.coppens@bedrijf.be", "0483456789",
+                    Rol.VERANTWOORDELIJKE, true);
             createAndAddGebruiker("Annemie", "Peeters", LocalDate.of(1980, 4, 22),
-                    "Brusselsesteenweg", "155", "9090", "Melle", "België", "annemie.peeters@bedrijf.be", "0484567890", Rol.VERANTWOORDELIJKE, true);
-
-            // Techniekers
+                    "Brusselsesteenweg", "155", "9090", "Melle", "België", "annemie.peeters@bedrijf.be", "0484567890",
+                    Rol.VERANTWOORDELIJKE, true);
             createAndAddGebruiker("Koen", "Mertens", LocalDate.of(1988, 2, 14),
-                    "Dampoortstraat", "63", "9000", "Gent", "België", "koen.mertens@bedrijf.be", "0485678901", Rol.TECHNIEKER, true);
+                    "Dampoortstraat", "63", "9000", "Gent", "België", "koen.mertens@bedrijf.be", "0485678901",
+                    Rol.TECHNIEKER, true);
             createAndAddGebruiker("Saskia", "Willems", LocalDate.of(1990, 6, 6),
-                    "Hoogstraat", "29", "9000", "Gent", "België", "saskia.willems@bedrijf.be", "0486789012", Rol.TECHNIEKER, true);
+                    "Hoogstraat", "29", "9000", "Gent", "België", "saskia.willems@bedrijf.be", "0486789012",
+                    Rol.TECHNIEKER, true);
             createAndAddGebruiker("David", "Verlinden", LocalDate.of(1985, 11, 23),
-                    "Sint-Pietersnieuwstraat", "130", "9000", "Gent", "België", "david.verlinden@bedrijf.be", "0487890123", Rol.TECHNIEKER, true);
+                    "Sint-Pietersnieuwstraat", "130", "9000", "Gent", "België", "david.verlinden@bedrijf.be",
+                    "0487890123", Rol.TECHNIEKER, true);
             createAndAddGebruiker("Nancy", "Maes", LocalDate.of(1982, 3, 31),
-                    "Lange Munt", "18", "9000", "Gent", "België", "nancy.maes@bedrijf.be", "0488901234", Rol.TECHNIEKER, true);
+                    "Lange Munt", "18", "9000", "Gent", "België", "nancy.maes@bedrijf.be", "0488901234", Rol.TECHNIEKER,
+                    true);
             createAndAddGebruiker("Jeroen", "De Sutter", LocalDate.of(1984, 8, 17),
-                    "Noorderlaan", "75", "2030", "Antwerpen", "België", "jeroen.desutter@bedrijf.be", "0489012345", Rol.TECHNIEKER, true);
+                    "Noorderlaan", "75", "2030", "Antwerpen", "België", "jeroen.desutter@bedrijf.be", "0489012345",
+                    Rol.TECHNIEKER, true);
             createAndAddGebruiker("Tine", "Van Hecke", LocalDate.of(1987, 5, 25),
-                    "Zeedijk", "201", "8400", "Oostende", "België", "tine.vanhecke@bedrijf.be", "0490123456", Rol.TECHNIEKER, true);
+                    "Zeedijk", "201", "8400", "Oostende", "België", "tine.vanhecke@bedrijf.be", "0490123456",
+                    Rol.TECHNIEKER, true);
             createAndAddGebruiker("Thomas", "Janssen", LocalDate.of(1989, 7, 12),
-                    "Ambachtenlaan", "34", "3001", "Heverlee", "België", "thomas.janssen@bedrijf.be", "0491234567", Rol.TECHNIEKER, true);
+                    "Ambachtenlaan", "34", "3001", "Heverlee", "België", "thomas.janssen@bedrijf.be", "0491234567",
+                    Rol.TECHNIEKER, true);
             createAndAddGebruiker("Maaike", "Bastiaens", LocalDate.of(1986, 9, 9),
-                    "Tiensestraat", "66", "3000", "Leuven", "België", "maaike.bastiaens@bedrijf.be", "0492345678", Rol.TECHNIEKER, true);
+                    "Tiensestraat", "66", "3000", "Leuven", "België", "maaike.bastiaens@bedrijf.be", "0492345678",
+                    Rol.TECHNIEKER, true);
             createAndAddGebruiker("Steven", "De Wolf", LocalDate.of(1983, 12, 5),
-                    "Grote Markt", "48", "8900", "Ieper", "België", "steven.dewolf@bedrijf.be", "0493456789", Rol.TECHNIEKER, true);
+                    "Grote Markt", "48", "8900", "Ieper", "België", "steven.dewolf@bedrijf.be", "0493456789",
+                    Rol.TECHNIEKER, true);
             createAndAddGebruiker("Liesbeth", "Bosmans", LocalDate.of(1991, 1, 28),
-                    "Diestsestraat", "142", "3000", "Leuven", "België", "liesbeth.bosmans@bedrijf.be", "0494567890", Rol.TECHNIEKER, true);
-
-            // Gewone gebruikers
+                    "Diestsestraat", "142", "3000", "Leuven", "België", "liesbeth.bosmans@bedrijf.be", "0494567890",
+                    Rol.TECHNIEKER, true);
             createAndAddGebruiker("Filip", "Lemmens", LocalDate.of(1980, 7, 11),
-                    "Vlaanderenstraat", "54", "9000", "Gent", "België", "filip.lemmens@bedrijf.be", "0495678901", Rol.GEBRUIKER, true);
+                    "Vlaanderenstraat", "54", "9000", "Gent", "België", "filip.lemmens@bedrijf.be", "0495678901",
+                    Rol.GEBRUIKER, true);
             createAndAddGebruiker("Nathalie", "Claes", LocalDate.of(1985, 4, 2),
-                    "Overpoortstraat", "92", "9000", "Gent", "België", "nathalie.claes@bedrijf.be", "0496789012", Rol.GEBRUIKER, true);
+                    "Overpoortstraat", "92", "9000", "Gent", "België", "nathalie.claes@bedrijf.be", "0496789012",
+                    Rol.GEBRUIKER, true);
             createAndAddGebruiker("Stef", "Van den Broeck", LocalDate.of(1988, 8, 19),
-                    "Kortrijksesteenweg", "302", "9000", "Gent", "België", "stef.vandenbroeck@bedrijf.be", "0497890123", Rol.GEBRUIKER, false);
+                    "Kortrijksesteenweg", "302", "9000", "Gent", "België", "stef.vandenbroeck@bedrijf.be", "0497890123",
+                    Rol.GEBRUIKER, false);
             createAndAddGebruiker("Heidi", "Van Hove", LocalDate.of(1979, 10, 15),
-                    "Kammerstraat", "17", "9000", "Gent", "België", "heidi.vanhove@bedrijf.be", "0498901234", Rol.GEBRUIKER, false);
+                    "Kammerstraat", "17", "9000", "Gent", "België", "heidi.vanhove@bedrijf.be", "0498901234",
+                    Rol.GEBRUIKER, false);
             createAndAddGebruiker("Maarten", "De Vos", LocalDate.of(1983, 5, 22),
-                    "Dampoortstraat", "45", "9000", "Gent", "België", "maarten.devos@bedrijf.be", "0499012345", Rol.GEBRUIKER, true);
+                    "Dampoortstraat", "45", "9000", "Gent", "België", "maarten.devos@bedrijf.be", "0499012345",
+                    Rol.GEBRUIKER, true);
             createAndAddGebruiker("Eline", "Verschueren", LocalDate.of(1990, 3, 14),
-                    "Brabantdam", "78", "9000", "Gent", "België", "eline.verschueren@bedrijf.be", "0491123456", Rol.GEBRUIKER, true);
+                    "Brabantdam", "78", "9000", "Gent", "België", "eline.verschueren@bedrijf.be", "0491123456",
+                    Rol.GEBRUIKER, true);
             createAndAddGebruiker("Thomas", "Verschaeve", LocalDate.of(1987, 9, 8),
-                    "Korenmarkt", "12", "9000", "Gent", "België", "thomas.verschaeve@bedrijf.be", "0492234567", Rol.GEBRUIKER, true);
+                    "Korenmarkt", "12", "9000", "Gent", "België", "thomas.verschaeve@bedrijf.be", "0492234567",
+                    Rol.GEBRUIKER, true);
             createAndAddGebruiker("Lotte", "Verhaeghe", LocalDate.of(1982, 11, 30),
-                    "Veldstraat", "97", "9000", "Gent", "België", "lotte.verhaeghe@bedrijf.be", "0493345678", Rol.GEBRUIKER, false);
+                    "Veldstraat", "97", "9000", "Gent", "België", "lotte.verhaeghe@bedrijf.be", "0493345678",
+                    Rol.GEBRUIKER, false);
             createAndAddGebruiker("Michiel", "Coppens", LocalDate.of(1991, 2, 17),
-                    "Hoogpoort", "23", "9000", "Gent", "België", "michiel.coppens@bedrijf.be", "0494456789", Rol.GEBRUIKER, true);
+                    "Hoogpoort", "23", "9000", "Gent", "België", "michiel.coppens@bedrijf.be", "0494456789",
+                    Rol.GEBRUIKER, true);
             createAndAddGebruiker("Sarah", "Vandenberghe", LocalDate.of(1984, 6, 25),
-                    "Langemunt", "35", "9000", "Gent", "België", "sarah.vandenberghe@bedrijf.be", "0495567890", Rol.GEBRUIKER, false);
+                    "Langemunt", "35", "9000", "Gent", "België", "sarah.vandenberghe@bedrijf.be", "0495567890",
+                    Rol.GEBRUIKER, false);
             createAndAddGebruiker("Jeroen", "Vermeulen", LocalDate.of(1986, 4, 9),
-                    "Onderbergen", "68", "9000", "Gent", "België", "jeroen.vermeulen@bedrijf.be", "0496678901", Rol.GEBRUIKER, true);
+                    "Onderbergen", "68", "9000", "Gent", "België", "jeroen.vermeulen@bedrijf.be", "0496678901",
+                    Rol.GEBRUIKER, true);
             createAndAddGebruiker("Elke", "Van Daele", LocalDate.of(1989, 8, 12),
-                    "Sint-Pietersplein", "42", "9000", "Gent", "België", "elke.vandaele@bedrijf.be", "0497789012", Rol.GEBRUIKER, true);
+                    "Sint-Pietersplein", "42", "9000", "Gent", "België", "elke.vandaele@bedrijf.be", "0497789012",
+                    Rol.GEBRUIKER, true);
             createAndAddGebruiker("Pieter-Jan", "Maertens", LocalDate.of(1981, 12, 5),
-                    "Nederkouter", "56", "9000", "Gent", "België", "pieterjan.maertens@bedrijf.be", "0498890123", Rol.GEBRUIKER, false);
+                    "Nederkouter", "56", "9000", "Gent", "België", "pieterjan.maertens@bedrijf.be", "0498890123",
+                    Rol.GEBRUIKER, false);
             createAndAddGebruiker("Emma", "Declercq", LocalDate.of(1992, 1, 19),
-                    "Savaanstraat", "88", "9000", "Gent", "België", "emma.declercq@bedrijf.be", "0499901234", Rol.GEBRUIKER, true);
+                    "Savaanstraat", "88", "9000", "Gent", "België", "emma.declercq@bedrijf.be", "0499901234",
+                    Rol.GEBRUIKER, true);
 
             gebruikerdao.commitTransaction();
             System.out.println("Alle gebruikers aangemaakt: " + this.gebruikers.size() + " gebruikers in totaal.");
@@ -208,8 +268,8 @@ public class PopulateDB {
     }
 
     private void createAndAddGebruiker(String voornaam, String familienaam, LocalDate geboortedatum,
-                                       String straat, String huisnr, String postcode, String stad, String land,
-                                       String email, String telefoon, Rol rol, boolean actief) {
+            String straat, String huisnr, String postcode, String stad, String land,
+            String email, String telefoon, Rol rol, boolean actief) {
         Gebruiker gebruiker = new Gebruiker(voornaam, familienaam, geboortedatum,
                 new Adres(straat, huisnr, postcode, stad, land), email, telefoon, rol, actief);
         this.gebruikers.add(gebruiker);
@@ -281,8 +341,10 @@ public class PopulateDB {
                     .filter(g -> g.getRol() == Rol.TECHNIEKER)
                     .collect(java.util.stream.Collectors.toList());
 
-            if (admins.isEmpty()) admins.add(this.gebruikers.get(0));
-            if (techniekers.isEmpty()) techniekers.add(this.gebruikers.get(0));
+            if (admins.isEmpty())
+                admins.add(this.gebruikers.get(0));
+            if (techniekers.isEmpty())
+                techniekers.add(this.gebruikers.get(0));
 
             for (Site site : this.sites) {
                 int aantalMachines = determineNumberOfMachinesForSite(site.getNaam());
@@ -314,7 +376,8 @@ public class PopulateDB {
         }
     }
 
-    private void generateMachinesForSite(Site site, int aantalMachines, List<Gebruiker> admins, List<Gebruiker> techniekers) {
+    private void generateMachinesForSite(Site site, int aantalMachines, List<Gebruiker> admins,
+            List<Gebruiker> techniekers) {
         String sitePrefix = generateSitePrefix(site.getNaam());
         List<String> machineTypes = getMachineTypesForSite(site.getNaam());
         List<String> locaties = getLocationsForSite(site.getNaam());
@@ -346,21 +409,36 @@ public class PopulateDB {
     }
 
     private String generateSitePrefix(String siteNaam) {
-        if (siteNaam.contains("Hoofdzetel")) return "HG";
-        if (siteNaam.contains("Productie") && siteNaam.contains("Antwerpen")) return "PA";
-        if (siteNaam.contains("Distributie")) return "DB";
-        if (siteNaam.contains("R&D")) return "RD";
-        if (siteNaam.contains("Logistiek")) return "LK";
-        if (siteNaam.contains("Productielijn") && siteNaam.contains("Hasselt")) return "PH";
-        if (siteNaam.contains("Assemblage")) return "AM";
-        if (siteNaam.contains("Verpakking")) return "VA";
-        if (siteNaam.contains("Test")) return "TB";
-        if (siteNaam.contains("Onderhoud")) return "OO";
-        if (siteNaam.contains("Kwaliteit")) return "KG";
-        if (siteNaam.contains("Magazijn")) return "MS";
-        if (siteNaam.contains("Amsterdam")) return "AMS";
-        if (siteNaam.contains("Rotterdam")) return "RTD";
-        if (siteNaam.contains("Eindhoven")) return "EHV";
+        if (siteNaam.contains("Hoofdzetel"))
+            return "HG";
+        if (siteNaam.contains("Productie") && siteNaam.contains("Antwerpen"))
+            return "PA";
+        if (siteNaam.contains("Distributie"))
+            return "DB";
+        if (siteNaam.contains("R&D"))
+            return "RD";
+        if (siteNaam.contains("Logistiek"))
+            return "LK";
+        if (siteNaam.contains("Productielijn") && siteNaam.contains("Hasselt"))
+            return "PH";
+        if (siteNaam.contains("Assemblage"))
+            return "AM";
+        if (siteNaam.contains("Verpakking"))
+            return "VA";
+        if (siteNaam.contains("Test"))
+            return "TB";
+        if (siteNaam.contains("Onderhoud"))
+            return "OO";
+        if (siteNaam.contains("Kwaliteit"))
+            return "KG";
+        if (siteNaam.contains("Magazijn"))
+            return "MS";
+        if (siteNaam.contains("Amsterdam"))
+            return "AMS";
+        if (siteNaam.contains("Rotterdam"))
+            return "RTD";
+        if (siteNaam.contains("Eindhoven"))
+            return "EHV";
 
         String[] woorden = siteNaam.split(" ");
         StringBuilder prefix = new StringBuilder();
@@ -368,7 +446,8 @@ public class PopulateDB {
             if (!woord.isEmpty()) {
                 prefix.append(Character.toUpperCase(woord.charAt(0)));
             }
-            if (prefix.length() >= 3) break;
+            if (prefix.length() >= 3)
+                break;
         }
         return prefix.toString();
     }
@@ -560,25 +639,38 @@ public class PopulateDB {
         double random = Math.random();
 
         if (siteNaam.contains("Test") || siteNaam.contains("R&D") || siteNaam.contains("Onderhoud")) {
-            if (random < 0.4) return MachineStatus.DRAAIT;
-            else if (random < 0.55) return MachineStatus.GESTOPT_MANUEEL;
-            else if (random < 0.7) return MachineStatus.GESTOPT_AUTO;
-            else if (random < 0.9) return MachineStatus.IN_ONDERHOUD;
-            else return MachineStatus.STARTBAAR;
-        }
-        else if (siteNaam.contains("Productie") || siteNaam.contains("Assemblage")) {
-            if (random < 0.7) return MachineStatus.DRAAIT;
-            else if (random < 0.8) return MachineStatus.GESTOPT_MANUEEL;
-            else if (random < 0.9) return MachineStatus.GESTOPT_AUTO;
-            else if (random < 0.95) return MachineStatus.IN_ONDERHOUD;
-            else return MachineStatus.STARTBAAR;
-        }
-        else {
-            if (random < 0.6) return MachineStatus.DRAAIT;
-            else if (random < 0.7) return MachineStatus.GESTOPT_MANUEEL;
-            else if (random < 0.8) return MachineStatus.GESTOPT_AUTO;
-            else if (random < 0.9) return MachineStatus.IN_ONDERHOUD;
-            else return MachineStatus.STARTBAAR;
+            if (random < 0.4)
+                return MachineStatus.DRAAIT;
+            else if (random < 0.55)
+                return MachineStatus.GESTOPT_MANUEEL;
+            else if (random < 0.7)
+                return MachineStatus.GESTOPT_AUTO;
+            else if (random < 0.9)
+                return MachineStatus.IN_ONDERHOUD;
+            else
+                return MachineStatus.STARTBAAR;
+        } else if (siteNaam.contains("Productie") || siteNaam.contains("Assemblage")) {
+            if (random < 0.7)
+                return MachineStatus.DRAAIT;
+            else if (random < 0.8)
+                return MachineStatus.GESTOPT_MANUEEL;
+            else if (random < 0.9)
+                return MachineStatus.GESTOPT_AUTO;
+            else if (random < 0.95)
+                return MachineStatus.IN_ONDERHOUD;
+            else
+                return MachineStatus.STARTBAAR;
+        } else {
+            if (random < 0.6)
+                return MachineStatus.DRAAIT;
+            else if (random < 0.7)
+                return MachineStatus.GESTOPT_MANUEEL;
+            else if (random < 0.8)
+                return MachineStatus.GESTOPT_AUTO;
+            else if (random < 0.9)
+                return MachineStatus.IN_ONDERHOUD;
+            else
+                return MachineStatus.STARTBAAR;
         }
     }
 
@@ -587,21 +679,28 @@ public class PopulateDB {
 
         if (status == MachineStatus.IN_ONDERHOUD) {
             return random < 0.7 ? ProductionStatus.FALEND : ProductionStatus.NOOD_AAN_ONDERHOUD;
-        }
-        else if (status == MachineStatus.GESTOPT_AUTO || status == MachineStatus.GESTOPT_MANUEEL) {
-            if (random < 0.4) return ProductionStatus.IN_ORDE;
-            else if (random < 0.7) return ProductionStatus.NOOD_AAN_ONDERHOUD;
-            else return ProductionStatus.FALEND;
-        }
-        else {
+        } else if (status == MachineStatus.GESTOPT_AUTO || status == MachineStatus.GESTOPT_MANUEEL) {
+            if (random < 0.4)
+                return ProductionStatus.IN_ORDE;
+            else if (random < 0.7)
+                return ProductionStatus.NOOD_AAN_ONDERHOUD;
+            else
+                return ProductionStatus.FALEND;
+        } else {
             if (siteNaam.contains("Test") || siteNaam.contains("R&D")) {
-                if (random < 0.6) return ProductionStatus.IN_ORDE;
-                else if (random < 0.9) return ProductionStatus.NOOD_AAN_ONDERHOUD;
-                else return ProductionStatus.FALEND;
+                if (random < 0.6)
+                    return ProductionStatus.IN_ORDE;
+                else if (random < 0.9)
+                    return ProductionStatus.NOOD_AAN_ONDERHOUD;
+                else
+                    return ProductionStatus.FALEND;
             } else {
-                if (random < 0.85) return ProductionStatus.IN_ORDE;
-                else if (random < 0.95) return ProductionStatus.NOOD_AAN_ONDERHOUD;
-                else return ProductionStatus.FALEND;
+                if (random < 0.85)
+                    return ProductionStatus.IN_ORDE;
+                else if (random < 0.95)
+                    return ProductionStatus.NOOD_AAN_ONDERHOUD;
+                else
+                    return ProductionStatus.FALEND;
             }
         }
     }
@@ -633,15 +732,14 @@ public class PopulateDB {
             } else if (!techniekers.isEmpty()) {
                 return techniekers.get((int) (Math.random() * techniekers.size()));
             }
-        }
-        else if (siteNaam.contains("Onderhoud") || siteNaam.contains("Productie") || siteNaam.contains("Assemblage")) {
+        } else if (siteNaam.contains("Onderhoud") || siteNaam.contains("Productie")
+                || siteNaam.contains("Assemblage")) {
             if (random < 0.8 && !techniekers.isEmpty()) {
                 return techniekers.get((int) (Math.random() * techniekers.size()));
             } else if (!admins.isEmpty()) {
                 return admins.get((int) (Math.random() * admins.size()));
             }
-        }
-        else {
+        } else {
             if (random < 0.5 && !techniekers.isEmpty()) {
                 return techniekers.get((int) (Math.random() * techniekers.size()));
             } else if (!admins.isEmpty()) {
@@ -687,7 +785,7 @@ public class PopulateDB {
             }
 
             List<Gebruiker> techniekers = this.gebruikers.stream()
-                    .filter(g -> g.getRol() == Rol.TECHNIEKER && g.getActief())
+                    .filter(g -> g.getRol() == Rol.TECHNIEKER && g.isActief())
                     .collect(java.util.stream.Collectors.toList());
 
             if (techniekers.isEmpty()) {
@@ -720,7 +818,8 @@ public class PopulateDB {
             }
 
             onderhouddao.commitTransaction();
-            System.out.println("Alle onderhoudsrecords aangemaakt: " + totaalAantalOnderhoudRecords + " records in totaal.");
+            System.out.println(
+                    "Alle onderhoudsrecords aangemaakt: " + totaalAantalOnderhoudRecords + " records in totaal.");
 
         } catch (Exception e) {
             System.err.println("Fout bij het aanmaken van onderhoudsrecords: " + e.getMessage());
@@ -802,7 +901,8 @@ public class PopulateDB {
         }
 
         String titel = genereerOnderhoudTitel(machine.getNaam(), onderhoudType);
-        String resultaat = genereerOnderhoudResultaat(onderhoudType, machine.getProductieStatus(), isToekomstig, status);
+        String resultaat = genereerOnderhoudResultaat(onderhoudType, machine.getProductieStatus(), isToekomstig,
+                status);
         String opmerkingen = genereerOnderhoudOpmerkingen(onderhoudType, machine.getProductieStatus(), isToekomstig);
 
         Onderhoud onderhoud = new Onderhoud(
@@ -814,8 +914,7 @@ public class PopulateDB {
                 resultaat,
                 opmerkingen,
                 status,
-                machine.getMachineID()
-        );
+                machine.getMachineID());
 
         onderhouddao.insert(onderhoud);
     }
@@ -838,8 +937,7 @@ public class PopulateDB {
                 "Hydrauliek controle",
                 "Veiligheidstest",
                 "Prestatietest",
-                "Installatie upgrades"
-        );
+                "Installatie upgrades");
 
         if (machine.getProductieStatus() == ProductionStatus.FALEND) {
             if (Math.random() < 0.7) {
@@ -848,8 +946,7 @@ public class PopulateDB {
                         "Noodreparatie",
                         "Vervanging onderdeel",
                         "Elektrische controle",
-                        "Hydrauliek controle"
-                ));
+                        "Hydrauliek controle"));
             }
         }
 
@@ -861,8 +958,7 @@ public class PopulateDB {
                         "Preventief onderhoud",
                         "Kalibratie",
                         "Olie verversen",
-                        "Smeren"
-                ));
+                        "Smeren"));
             }
         }
 
@@ -926,7 +1022,7 @@ public class PopulateDB {
     }
 
     private String genereerOnderhoudResultaat(String onderhoudType, ProductionStatus status,
-                                              boolean isToekomstig, OnderhoudStatus onderhoudStatus) {
+            boolean isToekomstig, OnderhoudStatus onderhoudStatus) {
         if (isToekomstig) {
             if (onderhoudStatus == OnderhoudStatus.IN_UITVOERING) {
                 return "In uitvoering";
@@ -944,16 +1040,14 @@ public class PopulateDB {
                         "Kritieke problemen opgelost",
                         "Noodreparatie uitgevoerd",
                         "Defecte onderdelen vervangen",
-                        "Gedeeltelijk hersteld"
-                ));
+                        "Gedeeltelijk hersteld"));
             } else {
                 return getRandomElement(Arrays.asList(
                         "Meerdere problemen geconstateerd",
                         "Kritieke punten geïdentificeerd",
                         "Verdere reparatie nodig",
                         "Niet optimaal functionerend",
-                        "Afwijkende waardes gemeten"
-                ));
+                        "Afwijkende waardes gemeten"));
             }
         } else if (status == ProductionStatus.NOOD_AAN_ONDERHOUD) {
             return getRandomElement(Arrays.asList(
@@ -961,16 +1055,14 @@ public class PopulateDB {
                     "Onderhoudspunten geïdentificeerd",
                     "Normale slijtage verholpen",
                     "Prestaties verbeterd",
-                    "Klein defect verholpen"
-            ));
+                    "Klein defect verholpen"));
         } else {
             return getRandomElement(Arrays.asList(
                     "Volledig uitgevoerd",
                     "Normaal resultaat",
                     "Alles in orde",
                     "Geen problemen gevonden",
-                    "Optimale conditie"
-            ));
+                    "Optimale conditie"));
         }
     }
 
@@ -982,24 +1074,21 @@ public class PopulateDB {
                         "Noodreparatie ingepland wegens aanhoudende problemen met aandrijving.",
                         "Complete revisie vereist. Technisch team met specialisatie ingepland.",
                         "Vervanging van defecte besturingselementen en kalibratie van sensoren.",
-                        "Geplande correctie van meerdere kritieke problemen. Machine zal enkele dagen offline zijn."
-                ));
+                        "Geplande correctie van meerdere kritieke problemen. Machine zal enkele dagen offline zijn."));
             } else if (status == ProductionStatus.NOOD_AAN_ONDERHOUD) {
                 return getRandomElement(Arrays.asList(
                         "Periodiek onderhoud ingepland. Focus op versleten componenten.",
                         "Preventieve vervanging van slijtage-onderdelen. Normale downtime verwacht.",
                         "Kalibratie van belangrijke componenten en controle van algemene conditie.",
                         "Technicus zal meerdere systemen controleren op basis van laatste inspectierapport.",
-                        "Standaard onderhoudsbeurt met extra aandacht voor hydraulieksysteem."
-                ));
+                        "Standaard onderhoudsbeurt met extra aandacht voor hydraulieksysteem."));
             } else {
                 return getRandomElement(Arrays.asList(
                         "Routinematige controle en afstelling volgens onderhoudsschema.",
                         "Periodiek onderhoud volgens fabrieksspecificaties.",
                         "Update van besturingssoftware naar nieuwste versie.",
                         "Standaard inspectie en preventief onderhoud van alle systeemcomponenten.",
-                        "Geplande kalibratie en algemene controle. Minimale downtime verwacht."
-                ));
+                        "Geplande kalibratie en algemene controle. Minimale downtime verwacht."));
             }
         }
 
@@ -1012,16 +1101,14 @@ public class PopulateDB {
                         "Noodreparatie aan hydraulisch systeem uitgevoerd. Meerdere lekkages gedicht en defecte klep vervangen. Druk nu stabiel maar monitoring vereist.",
                         "Besturingssysteem gerepareerd na elektrisch defect. Meerdere sensoren vervangen en bedrading vernieuwd waar nodig. Systeem herstart en gekalibreerd.",
                         "Grote scheuren in het frame gerepareerd door lassen en verstevigen. Structurele integriteit tijdelijk hersteld. Complete revisie aanbevolen binnen 3 maanden.",
-                        "Kritieke oververhitting verholpen door reiniging koelsysteem en vervanging van koelvloeistof. Temperatuursensoren opnieuw afgesteld. Extra koeling geïnstalleerd."
-                ));
+                        "Kritieke oververhitting verholpen door reiniging koelsysteem en vervanging van koelvloeistof. Temperatuursensoren opnieuw afgesteld. Extra koeling geïnstalleerd."));
             } else {
                 return getRandomElement(Arrays.asList(
                         "Inspectie toont ernstige slijtage van meerdere kerncomponenten. Gedetailleerd rapport opgesteld met aanbevelingen voor directe reparatie.",
                         "Algehele toestand van machine is kritiek. Meerdere systemen functioneren onder minimale specificaties. Productielimieten aanbevolen.",
                         "Kalibratie niet mogelijk wegens mechanische problemen. Sensoren geven onbetrouwbare metingen. Mechanische reparatie vereist voor verdere afstelling.",
                         "Controle toont dat eerder gerepareerde componenten opnieuw falen. Structureel probleem geïdentificeerd in het ontwerp. Leverancier gecontacteerd.",
-                        "Test resulteerde in onmiddellijke shutdown wegens veiligheidsrisico's. Elektrische bedrading vertoont tekenen van oververhitting en sluiting."
-                ));
+                        "Test resulteerde in onmiddellijke shutdown wegens veiligheidsrisico's. Elektrische bedrading vertoont tekenen van oververhitting en sluiting."));
             }
         } else if (status == ProductionStatus.NOOD_AAN_ONDERHOUD) {
             return getRandomElement(Arrays.asList(
@@ -1029,16 +1116,14 @@ public class PopulateDB {
                     "Hydraulisch systeem functioneert binnen parameters maar olieniveau laag. Bijgevuld en filters vervangen. Kleine lekkage geïdentificeerd.",
                     "Mechanische delen vertonen verwachte slijtage. Alles gesmeerd en afgesteld. Aanbevolen om lagers te controleren bij volgend onderhoud.",
                     "Prestaties licht onder optimaal niveau. Software parameters aangepast voor betere efficiëntie. Monitoring aanbevolen.",
-                    "Routinecontrole toont enkele afwijkingen binnen acceptabele grenzen. Sensoren opnieuw gekalibreerd. Systeem getest en functioneel."
-            ));
+                    "Routinecontrole toont enkele afwijkingen binnen acceptabele grenzen. Sensoren opnieuw gekalibreerd. Systeem getest en functioneel."));
         } else {
             return getRandomElement(Arrays.asList(
-                    "Algemene conditie is uitstekend. Alle systemen functioneren volgens specificaties. Routine onderhoud uitgevoerd.",
+                    "Algemene conditie is uitstekend. Alle systemen functioneren volgens specificaties.",
                     "Preventief onderhoud compleet. Filters vervangen, systemen gesmeerd, software gecontroleerd. Geen afwijkingen gevonden.",
                     "Kalibratie succesvol. Alle parameters vallen binnen optimale bereik. Testrun uitgevoerd met uitstekende resultaten.",
                     "Inspectie toont geen abnormale slijtage. Machine in perfecte staat. Reguliere onderhoudswerkzaamheden uitgevoerd.",
-                    "Software update geïnstalleerd. Nieuwe functies getest en werkend. Gebruikersdocumentatie bijgewerkt en beschikbaar gemaakt."
-            ));
+                    "Software update geïnstalleerd. Nieuwe functies getest en werkend. Gebruikersdocumentatie bijgewerkt en beschikbaar gemaakt."));
         }
     }
 
@@ -1078,18 +1163,21 @@ public class PopulateDB {
 
             for (Gebruiker admin : admins) {
                 if (Math.random() < 0.8) {
-                    Log loginLog = new Log(admin, "Login", "Admin login op " + LocalDateTime.now().minusDays((int) (Math.random() * 14)).truncatedTo(java.time.temporal.ChronoUnit.SECONDS));
+                    Log loginLog = new Log(admin, "Login", "Admin login op " + LocalDateTime.now()
+                            .minusDays((int) (Math.random() * 14)).truncatedTo(java.time.temporal.ChronoUnit.SECONDS));
                     logdao.insert(loginLog);
                     totalLogs++;
 
                     if (Math.random() < 0.7) {
-                        Log gebruikerLog = new Log(admin, "Gebruikersbeheer", "Nieuwe gebruiker toegevoegd: " + getRandomElement(this.gebruikers).getEmail());
+                        Log gebruikerLog = new Log(admin, "Gebruikersbeheer",
+                                "Nieuwe gebruiker toegevoegd: " + getRandomElement(this.gebruikers).getEmail());
                         logdao.insert(gebruikerLog);
                         totalLogs++;
                     }
 
                     if (Math.random() < 0.6) {
-                        Log machineLog = new Log(admin, "Machineconfiguratie", "Instellingen bijgewerkt voor machine " + getRandomElement(this.machines).getNaam());
+                        Log machineLog = new Log(admin, "Machineconfiguratie",
+                                "Instellingen bijgewerkt voor machine " + getRandomElement(this.machines).getNaam());
                         logdao.insert(machineLog);
                         totalLogs++;
                     }
@@ -1098,12 +1186,14 @@ public class PopulateDB {
 
             for (Gebruiker verantwoordelijke : verantwoordelijken) {
                 if (Math.random() < 0.7) {
-                    Log loginLog = new Log(verantwoordelijke, "Login", "Verantwoordelijke login op " + LocalDateTime.now().minusDays((int) (Math.random() * 10)).truncatedTo(ChronoUnit.SECONDS));
+                    Log loginLog = new Log(verantwoordelijke, "Login", "Verantwoordelijke login op " + LocalDateTime
+                            .now().minusDays((int) (Math.random() * 10)).truncatedTo(ChronoUnit.SECONDS));
                     logdao.insert(loginLog);
                     totalLogs++;
 
                     if (Math.random() < 0.6) {
-                        Log rapportLog = new Log(verantwoordelijke, "Rapport bekeken", "Maandelijks onderhoudsrapport gecontroleerd");
+                        Log rapportLog = new Log(verantwoordelijke, "Rapport bekeken",
+                                "Maandelijks onderhoudsrapport gecontroleerd");
                         logdao.insert(rapportLog);
                         totalLogs++;
                     }
@@ -1112,21 +1202,24 @@ public class PopulateDB {
 
             for (Gebruiker technieker : techniekers) {
                 if (Math.random() < 0.9) {
-                    Log loginLog = new Log(technieker, "Login", "Technieker login op " + LocalDateTime.now().minusDays((int) (Math.random() * 10)).truncatedTo(ChronoUnit.SECONDS));
+                    Log loginLog = new Log(technieker, "Login", "Technieker login op " + LocalDateTime.now()
+                            .minusDays((int) (Math.random() * 10)).truncatedTo(ChronoUnit.SECONDS));
                     logdao.insert(loginLog);
                     totalLogs++;
 
                     if (Math.random() < 0.8) {
                         Machine machine = getRandomElement(this.machines);
                         Log onderhoudLog = new Log(technieker, "Onderhoud uitgevoerd",
-                                "Routine onderhoud op " + machine.getNaam() + " afgerond. " + getRandomOnderhoudOpmerkingen(false));
+                                "Routine onderhoud op " + machine.getNaam() + " afgerond. "
+                                        + getRandomOnderhoudOpmerkingen(false));
                         logdao.insert(onderhoudLog);
                         totalLogs++;
                     }
 
                     if (Math.random() < 0.4) {
                         Log storingLog = new Log(technieker, "Storing verholpen",
-                                "Storing opgelost op " + getRandomElement(this.machines).getNaam() + ". " + getRandomOnderhoudOpmerkingen(true));
+                                "Storing opgelost op " + getRandomElement(this.machines).getNaam() + ". "
+                                        + getRandomOnderhoudOpmerkingen(true));
                         logdao.insert(storingLog);
                         totalLogs++;
                     }
@@ -1135,12 +1228,14 @@ public class PopulateDB {
 
             for (Gebruiker manager : managers) {
                 if (Math.random() < 0.6) {
-                    Log loginLog = new Log(manager, "Login", "Manager login op " + LocalDateTime.now().minusDays((int) (Math.random() * 5)).truncatedTo(ChronoUnit.SECONDS));
+                    Log loginLog = new Log(manager, "Login", "Manager login op "
+                            + LocalDateTime.now().minusDays((int) (Math.random() * 5)).truncatedTo(ChronoUnit.SECONDS));
                     logdao.insert(loginLog);
                     totalLogs++;
 
                     if (Math.random() < 0.5) {
-                        Log rapportLog = new Log(manager, "Rapport geëxporteerd", "Productierapport geëxporteerd voor analyse");
+                        Log rapportLog = new Log(manager, "Rapport geëxporteerd",
+                                "Productierapport geëxporteerd voor analyse");
                         logdao.insert(rapportLog);
                         totalLogs++;
                     }
@@ -1158,7 +1253,8 @@ public class PopulateDB {
                 logdao.insert(backupLog);
                 totalLogs++;
 
-                Log securityLog = new Log(adminUser, "Security alert", "Meerdere mislukte inlogpogingen gedetecteerd van IP 192.168.1.35");
+                Log securityLog = new Log(adminUser, "Security alert",
+                        "Meerdere mislukte inlogpogingen gedetecteerd van IP 192.168.1.35");
                 logdao.insert(securityLog);
                 totalLogs++;
             }
@@ -1180,17 +1276,406 @@ public class PopulateDB {
                     "Elektrisch probleem opgelost door bedrading te herstellen.",
                     "Vastgelopen componenten losgemaakt en gesmeerd.",
                     "Software reset uitgevoerd na kritieke fout.",
-                    "Hydraulisch lek gedicht en vloeistof bijgevuld."
-            ));
+                    "Hydraulisch lek gedicht en vloeistof bijgevuld."));
         } else {
             return getRandomElement(Arrays.asList(
                     "Alle systemen functioneren volgens specificaties.",
                     "Filters vervangen en systeem gereinigd.",
                     "Software geüpdatet naar nieuwste versie.",
                     "Kalibratie uitgevoerd met optimale resultaten.",
-                    "Preventief onderhoud volledig afgerond."
-            ));
+                    "Preventief onderhoud volledig afgerond."));
         }
+    }
+
+    private void createNotificaties() {
+        Gebruiker janJanssens = this.gebruikers.stream()
+                .filter(g -> "jan.janssens@bedrijf.be".equals(g.getEmail()))
+                .findFirst().orElse(null);
+
+        Gebruiker pieterDeSmet = this.gebruikers.stream()
+                .filter(g -> "pieter.desmet@bedrijf.be".equals(g.getEmail()))
+                .findFirst().orElse(null);
+
+        Gebruiker saskiaWillems = this.gebruikers.stream()
+                .filter(g -> "saskia.willems@bedrijf.be".equals(g.getEmail()))
+                .findFirst().orElse(null);
+
+        Gebruiker evaJacobs = this.gebruikers.stream()
+                .filter(g -> "eva.jacobs@bedrijf.be".equals(g.getEmail()))
+                .findFirst().orElse(null);
+
+        List<Notificatie> notificatiesLijst = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+
+        Machine m1_n1 = this.machines.get(0);
+        Notificatie n1 = new NotificatieBuilder()
+                .titel(String.format("Machine %s gestopt", m1_n1.getNaam()))
+                .message(String.format("Machine %s (%s) is onverwacht gestopt.", m1_n1.getNaam(),
+                        m1_n1.getProductInfo()))
+                .ontvanger(janJanssens)
+                .itemType("Machine")
+                .itemId(m1_n1.getMachineID())
+                .timestamp(now.minusHours(2))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n1);
+
+        Machine m2_n2 = this.machines.get(1);
+        Notificatie n2 = new NotificatieBuilder()
+                .titel(String.format("Onderhoud nodig: %s", m2_n2.getNaam()))
+                .message(String.format("Machine %s (%s) heeft dringend onderhoud nodig.", m2_n2.getNaam(),
+                        m2_n2.getProductInfo()))
+                .ontvanger(pieterDeSmet)
+                .itemType("Machine")
+                .itemId(m2_n2.getMachineID())
+                .timestamp(now.minusHours(5))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n2);
+
+        Machine m3_n3 = this.machines.get(2);
+        Notificatie n3 = new NotificatieBuilder()
+                .titel(String.format("Onderhoud gepland %s", m3_n3.getNaam()))
+                .message(String.format("Onderhoud gepland voor machine %s op %s.", m3_n3.getNaam(),
+                        LocalDate.now().plusDays(3).toString()))
+                .ontvanger(saskiaWillems)
+                .itemType("Onderhoud")
+                .itemId(m3_n3.getMachineID())
+                .timestamp(now.minusDays(1))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n3);
+
+        Machine m4_n4 = this.machines.get(3);
+        Notificatie n4 = new NotificatieBuilder()
+                .titel(String.format("Onderhoud voltooid %s", m4_n4.getNaam()))
+                .message(String.format("Onderhoud aan machine %s is voltooid.", m4_n4.getNaam()))
+                .ontvanger(janJanssens)
+                .itemType("Onderhoud")
+                .itemId(m4_n4.getMachineID())
+                .timestamp(now.minusDays(1).plusHours(2))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n4);
+
+        Machine m5_n5 = this.machines.get(4);
+        Notificatie n5 = new NotificatieBuilder()
+                .titel(String.format("Onderhoud achterstallig %s", m5_n5.getNaam()))
+                .message(String.format("Gepland onderhoud voor machine %s was op %s en is achterstallig.",
+                        m5_n5.getNaam(),
+                        LocalDate.now().minusDays(5).toString()))
+                .ontvanger(evaJacobs)
+                .itemType("Onderhoud")
+                .itemId(m5_n5.getMachineID())
+                .timestamp(now.minusHours(3))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n5);
+
+        if (this.machines.size() > 5) {
+            Machine m6_n6 = this.machines.get(5);
+            Notificatie n6 = new NotificatieBuilder()
+                    .titel(String.format("Nieuwe machine %s", m6_n6.getNaam()))
+                    .message(String.format("Nieuwe machine %s (%s) is geïnstalleerd op site %s.", m6_n6.getNaam(),
+                            m6_n6.getProductInfo(), m6_n6.getSite().getNaam()))
+                    .ontvanger(janJanssens)
+                    .itemType("Machine")
+                    .itemId(m6_n6.getMachineID())
+                    .timestamp(now.minusDays(2))
+                    .status(NotificatieStatus.ONGELEZEN)
+                    .build();
+            notificatiesLijst.add(n6);
+        }
+
+        Machine m7_n7 = this.machines.get(6);
+        Notificatie n7 = new NotificatieBuilder()
+                .titel(String.format("Prestatie probleem %s", m7_n7.getNaam()))
+                .message(String.format("Machine %s (%s) presteert ondermaats. Controleer logs.", m7_n7.getNaam(),
+                        m7_n7.getProductInfo()))
+                .ontvanger(pieterDeSmet)
+                .itemType("Machine")
+                .itemId(m7_n7.getMachineID())
+                .timestamp(now.minusHours(8))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n7);
+
+        Machine m8_n8 = this.machines.get(7);
+        Notificatie n8 = new NotificatieBuilder()
+                .titel(String.format("Software update %s", m8_n8.getNaam()))
+                .message(String.format("Software update beschikbaar voor machine %s.", m8_n8.getNaam()))
+                .ontvanger(saskiaWillems)
+                .itemType("Machine")
+                .itemId(m8_n8.getMachineID())
+                .timestamp(now.minusDays(3))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n8);
+
+        Machine m9_n9 = this.machines.get(8);
+        Notificatie n9 = new NotificatieBuilder()
+                .titel(String.format("Componentvervanging %s", m9_n9.getNaam()))
+                .message(String.format("Component 'Sensor XA-100' van machine %s moet vervangen worden.",
+                        m9_n9.getNaam()))
+                .ontvanger(janJanssens)
+                .itemType("Machine")
+                .itemId(m9_n9.getMachineID())
+                .timestamp(now.minusHours(12))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n9);
+
+        Machine m10_n10 = this.machines.get(9);
+        Notificatie n10 = new NotificatieBuilder()
+                .titel(String.format("Veiligheidswaarschuwing %s", m10_n10.getNaam()))
+                .message(String.format("Veiligheidswaarschuwing: Noodstop geactiveerd op machine %s.",
+                        m10_n10.getNaam()))
+                .ontvanger(evaJacobs)
+                .itemType("Machine")
+                .itemId(m10_n10.getMachineID())
+                .timestamp(now.minusMinutes(30))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n10);
+
+        Notificatie n11 = new NotificatieBuilder()
+                .titel(String.format("Machine %s online", m1_n1.getNaam()))
+                .message(String.format("Machine %s (%s) is weer operationeel na storing.", m1_n1.getNaam(),
+                        m1_n1.getProductInfo()))
+                .ontvanger(janJanssens)
+                .itemType("Machine")
+                .itemId(m1_n1.getMachineID())
+                .timestamp(now.minusHours(1))
+                .status(NotificatieStatus.GELEZEN)
+                .build();
+        notificatiesLijst.add(n11);
+
+        Machine m11_n12 = this.machines.get(10);
+        Notificatie n12 = new NotificatieBuilder()
+                .titel(String.format("Preventief onderhoud %s", m11_n12.getNaam()))
+                .message(String.format("Preventief onderhoud aanbevolen voor machine %s gebaseerd op draaiuren.",
+                        m11_n12.getNaam()))
+                .ontvanger(pieterDeSmet)
+                .itemType("Machine")
+                .itemId(m11_n12.getMachineID())
+                .timestamp(now.minusDays(4))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n12);
+
+        Notificatie n13 = new NotificatieBuilder()
+                .titel(String.format("Software update voltooid %s", m1_n1.getNaam()))
+                .message(String.format("Software update voor machine %s is voltooid.", m1_n1.getNaam()))
+                .ontvanger(saskiaWillems)
+                .itemType("Machine")
+                .itemId(m1_n1.getMachineID())
+                .timestamp(now.minusDays(1))
+                .status(NotificatieStatus.GELEZEN)
+                .build();
+        notificatiesLijst.add(n13);
+
+        Notificatie n14 = new NotificatieBuilder()
+                .titel(String.format("Veiligheidsinstructie %s", m2_n2.getNaam()))
+                .message(String.format("Nieuwe veiligheidsinstructie voor machine %s beschikbaar.", m2_n2.getNaam()))
+                .ontvanger(evaJacobs)
+                .itemType("Machine")
+                .itemId(m2_n2.getMachineID())
+                .timestamp(now.minusDays(3))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n14);
+
+        Machine m12_n15 = this.machines.get(11);
+        Notificatie n15 = new NotificatieBuilder()
+                .titel(String.format("Kritieke temperatuur %s", m12_n15.getNaam()))
+                .message(
+                        String.format("Machine %s heeft een kritieke temperatuur bereikt. Onmiddellijke actie vereist.",
+                                m12_n15.getNaam()))
+                .ontvanger(janJanssens)
+                .itemType("Machine")
+                .itemId(m12_n15.getMachineID())
+                .timestamp(now.minusMinutes(15))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n15);
+
+        Machine m13_n16 = this.machines.get(12);
+        Notificatie n16 = new NotificatieBuilder()
+                .titel(String.format("Lage verbruiksartikelen %s", m13_n16.getNaam()))
+                .message(String.format("Verbruiksartikelen voor machine %s zijn bijna op. Bestel nieuwe.",
+                        m13_n16.getNaam()))
+                .ontvanger(pieterDeSmet)
+                .itemType("Machine")
+                .itemId(m13_n16.getMachineID())
+                .timestamp(now.minusDays(1))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n16);
+
+        Notificatie n17 = new NotificatieBuilder()
+                .titel(String.format("Toegangscontrole %s", m3_n3.getNaam()))
+                .message(String.format("Toegangsrechten voor machine %s vereisen verificatie na accountprobleem.",
+                        m3_n3.getNaam()))
+                .ontvanger(saskiaWillems)
+                .itemType("Machine")
+                .itemId(m3_n3.getMachineID())
+                .timestamp(now.minusHours(1))
+                .status(NotificatieStatus.ONGELEZEN)
+                .build();
+        notificatiesLijst.add(n17);
+
+        if (janJanssens != null) {
+            if (this.machines.size() > 13) {
+                Machine m14_n18 = this.machines.get(13);
+                Notificatie n18 = new NotificatieBuilder()
+                        .titel(String.format("Sensor offline %s", m14_n18.getNaam()))
+                        .message(String.format("Sensor 'Temperatuur Zolder' op machine %s is offline.",
+                                m14_n18.getNaam()))
+                        .ontvanger(janJanssens)
+                        .itemType("Machine")
+                        .itemId(m14_n18.getMachineID())
+                        .timestamp(now.minusHours(4))
+                        .status(NotificatieStatus.ONGELEZEN)
+                        .build();
+                notificatiesLijst.add(n18);
+            }
+
+            if (this.machines.size() > 0) {
+                Machine m1_n19 = this.machines.get(0);
+                Notificatie n19 = new NotificatieBuilder()
+                        .titel(String.format("Herinnering onderhoud %s", m1_n19.getNaam()))
+                        .message(String.format("Gepland onderhoud voor machine %s is morgen.", m1_n19.getNaam()))
+                        .ontvanger(janJanssens)
+                        .itemType("Onderhoud")
+                        .itemId(m1_n19.getMachineID())
+                        .timestamp(now.minusDays(1).plusHours(6))
+                        .status(NotificatieStatus.ONGELEZEN)
+                        .build();
+                notificatiesLijst.add(n19);
+            }
+
+            if (this.machines.size() > 1) {
+                Machine m2_n20 = this.machines.get(1);
+                Notificatie n20 = new NotificatieBuilder()
+                        .titel(String.format("Hoge CPU %s", m2_n20.getNaam()))
+                        .message(String.format("CPU gebruik op machine %s overschrijdt 90%%.", m2_n20.getNaam()))
+                        .ontvanger(janJanssens)
+                        .itemType("Machine")
+                        .itemId(m2_n20.getMachineID())
+                        .timestamp(now.minusMinutes(45))
+                        .status(NotificatieStatus.ONGELEZEN)
+                        .build();
+                notificatiesLijst.add(n20);
+            }
+
+            Notificatie n21 = new NotificatieBuilder()
+                    .titel(String.format("Introductie training %s", m4_n4.getNaam()))
+                    .message(String.format("Nieuwe technieker Karel De Grote ingepland voor introductie op machine %s.",
+                            m4_n4.getNaam()))
+                    .ontvanger(janJanssens)
+                    .itemType("Onderhoud")
+                    .itemId(m4_n4.getMachineID())
+                    .timestamp(now.minusDays(2))
+                    .status(NotificatieStatus.GELEZEN)
+                    .build();
+            notificatiesLijst.add(n21);
+
+            Notificatie n22 = new NotificatieBuilder()
+                    .titel(String.format("Machine log backup %s", m5_n5.getNaam()))
+                    .message(String.format("Controleer de logs en backup status voor machine %s.", m5_n5.getNaam()))
+                    .ontvanger(janJanssens)
+                    .itemType("Machine")
+                    .itemId(m5_n5.getMachineID())
+                    .timestamp(now.minusHours(6))
+                    .status(NotificatieStatus.ONGELEZEN)
+                    .build();
+            notificatiesLijst.add(n22);
+
+            if (this.machines.size() > 2) {
+                Machine m3_n23 = this.machines.get(2);
+                Notificatie n23 = new NotificatieBuilder()
+                        .titel(String.format("Onderdeel besteld %s", m3_n23.getNaam()))
+                        .message(String.format(
+                                "Vervangend onderdeel 'Hydraulische Pomp X2000' voor machine %s is besteld.",
+                                m3_n23.getNaam()))
+                        .ontvanger(janJanssens)
+                        .itemType("Onderhoud")
+                        .itemId(m3_n23.getMachineID())
+                        .timestamp(now.minusDays(1))
+                        .status(NotificatieStatus.ONGELEZEN)
+                        .build();
+                notificatiesLijst.add(n23);
+            }
+
+            if (this.machines.size() > 3) {
+                Machine m4_n24 = this.machines.get(3);
+                Notificatie n24 = new NotificatieBuilder()
+                        .titel(String.format("Ongebruikelijke activiteit %s", m4_n24.getNaam()))
+                        .message(String.format(
+                                "Ongebruikelijke trillingen gedetecteerd op machine %s. Inspectie aanbevolen.",
+                                m4_n24.getNaam()))
+                        .ontvanger(janJanssens)
+                        .itemType("Machine")
+                        .itemId(m4_n24.getMachineID())
+                        .timestamp(now.minusHours(3))
+                        .status(NotificatieStatus.ONGELEZEN)
+                        .build();
+                notificatiesLijst.add(n24);
+            }
+
+            if (this.machines.size() > 4) {
+                Machine m5_n25 = this.machines.get(4);
+                Notificatie n25 = new NotificatieBuilder()
+                        .titel(String.format("Onderhoudsrapport %s", m5_n25.getNaam()))
+                        .message(String.format(
+                                "Het onderhoudsrapport voor de recente service aan machine %s is beschikbaar.",
+                                m5_n25.getNaam()))
+                        .ontvanger(janJanssens)
+                        .itemType("Onderhoud")
+                        .itemId(m5_n25.getMachineID())
+                        .timestamp(now.minusHours(10))
+                        .status(NotificatieStatus.GELEZEN)
+                        .build();
+                notificatiesLijst.add(n25);
+            }
+
+            if (this.machines.size() > 5) {
+                Machine m6_n26 = this.machines.get(5);
+                Notificatie n26 = new NotificatieBuilder()
+                        .titel(String.format("Firmware update %s", m6_n26.getNaam()))
+                        .message(String.format("Een firmware update is beschikbaar en gepland voor machine %s.",
+                                m6_n26.getNaam()))
+                        .ontvanger(janJanssens)
+                        .itemType("Machine")
+                        .itemId(m6_n26.getMachineID())
+                        .timestamp(now.minusDays(4))
+                        .status(NotificatieStatus.ONGELEZEN)
+                        .build();
+                notificatiesLijst.add(n26);
+            }
+
+            if (this.machines.size() > 6) {
+                Machine m7_n27 = this.machines.get(6);
+                Notificatie n27 = new NotificatieBuilder()
+                        .titel(String.format("Energieverbruik piek %s", m7_n27.getNaam()))
+                        .message(String.format("Machine %s vertoont een onverwachte piek in energieverbruik.",
+                                m7_n27.getNaam()))
+                        .ontvanger(janJanssens)
+                        .itemType("Machine")
+                        .itemId(m7_n27.getMachineID())
+                        .timestamp(now.minusHours(1))
+                        .status(NotificatieStatus.ONGELEZEN)
+                        .build();
+                notificatiesLijst.add(n27);
+            }
+        }
+
+        notificatieDao.startTransaction();
+        for (Notificatie notificatie : notificatiesLijst) {
+            notificatieDao.insert(notificatie);
+        }
+        notificatieDao.commitTransaction();
+        System.out.println("Alle notificaties aangemaakt: " + notificatiesLijst.size() + " notificaties in totaal.");
     }
 
     public static void main(String[] args) {

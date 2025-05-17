@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import domain.builders.OnderhoudBuilder;
+import domain.builders.NotificatieBuilder; // Added import
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
@@ -22,9 +23,13 @@ import repository.OnderhoudDao;
 import repository.OnderhoudDaoJpa;
 
 public class OnderhoudController {
-	
-	private List<Onderhoud> data;
+
+    private List<Onderhoud> data;
     private OnderhoudDao onderhoudDao;
+    private NotificatiesController notificatiesController;
+    private GebruikerController gebruikerController;
+    private MachineController machineController;
+
     private ObservableList<OnderhoudDTO> onderhoudList;
     private FilteredList<OnderhoudDTO> filteredOnderhoudList;
     private SortedList<OnderhoudDTO> sortedOnderhoudList;
@@ -34,19 +39,32 @@ public class OnderhoudController {
     private final Comparator<OnderhoudDTO> sortOrder = byDate.thenComparing(byStatus);
 
     public OnderhoudController() {
-    	onderhoudDao = new OnderhoudDaoJpa();
+        this(new OnderhoudDaoJpa(), new NotificatiesController(), new GebruikerController(), new MachineController());
+    }
+
+    public OnderhoudController(OnderhoudDao onderhoudDao, NotificatiesController notificatiesController,
+            GebruikerController gebruikerController, MachineController machineController) {
+        this.onderhoudDao = onderhoudDao;
+        this.notificatiesController = notificatiesController;
+        this.gebruikerController = gebruikerController;
+        this.machineController = machineController;
+        initData();
+    }
+
+    private void initData() {
         try {
             data = onderhoudDao.findAll();
+            onderhoudList = FXCollections.observableArrayList(
+                    data.stream().map(OnderhoudDTO::fromEntity).collect(Collectors.toList()));
+            filteredOnderhoudList = new FilteredList<>(onderhoudList, p -> true);
+            sortedOnderhoudList = new SortedList<>(filteredOnderhoudList, sortOrder);
         } catch (Exception e) {
-            e.printStackTrace();
-            onderhoudList = FXCollections.observableArrayList(); // Fallback
+            System.err.println("Failed to initialize Onderhoud data: " + e.getMessage());
+            data = new java.util.ArrayList<>();
+            onderhoudList = FXCollections.observableArrayList();
+            filteredOnderhoudList = new FilteredList<>(onderhoudList, p -> true);
+            sortedOnderhoudList = new SortedList<>(filteredOnderhoudList, sortOrder);
         }
-
-        onderhoudList = FXCollections.observableArrayList(data.stream()
-				.map(OnderhoudDTO::fromEntity)
-				.collect(Collectors.toList()));
-        filteredOnderhoudList = new FilteredList<>(onderhoudList, p -> true);
-        sortedOnderhoudList = new SortedList<>(filteredOnderhoudList, sortOrder);
     }
 
     public ObservableList<OnderhoudDTO> getAllOnderhoud() {
@@ -54,154 +72,238 @@ public class OnderhoudController {
     }
 
     public OnderhoudDTO getOnderhoudById(int id) {
-        return OnderhoudDTO.fromEntity(onderhoudDao.get(id));
+        Onderhoud onderhoud = onderhoudDao.get(id);
+        return onderhoud != null ? OnderhoudDTO.fromEntity(onderhoud) : null;
     }
-    
+
     public Onderhoud getRealOnderhoudById(int id) {
-		return onderhoudDao.get(id);
-	}
+        return onderhoudDao.get(id);
+    }
 
     public void addOnderhoud(LocalDate datum, LocalTime startTijd, LocalTime eindTijd,
             int techniekerId, String reden, String rapport, String opmerkingen,
             OnderhoudStatus status, int machineId) {
-        try {
-        	
-            Gebruiker technieker = new GebruikerController().getRealGebruiker(techniekerId); // Assuming this method exists
-            Onderhoud onderhoud = new OnderhoudBuilder()
-                    .datum(datum)
-                    .startTijd(startTijd)
-                    .eindTijd(eindTijd)
-                    .technieker(technieker)
-                    .reden(reden)
-                    .rapport(rapport)
-                    .opmerkingen(opmerkingen)
-                    .status(status)
-                    .machineId(machineId)
-                    .build();
 
+        Gebruiker technieker = gebruikerController.getRealGebruiker(techniekerId);
+        if (technieker == null) {
+            throw new IllegalArgumentException("Technieker met ID " + techniekerId + " niet gevonden.");
+        }
+
+        Machine machine = machineController.getRealMachine(machineId);
+        if (machine == null) {
+            throw new IllegalArgumentException("Machine met ID " + machineId + " niet gevonden.");
+        }
+
+        Onderhoud onderhoud = new OnderhoudBuilder()
+                .datum(datum)
+                .startTijd(startTijd)
+                .eindTijd(eindTijd)
+                .technieker(technieker)
+                .reden(reden)
+                .rapport(rapport)
+                .opmerkingen(opmerkingen)
+                .status(status)
+                .machine(machine)
+                .build();
+        try {
             onderhoudDao.startTransaction();
             onderhoudDao.insert(onderhoud);
             onderhoudDao.commitTransaction();
-            
-            onderhoudList.add(OnderhoudDTO.fromEntity(onderhoud));
-            data.add(onderhoud);
+
+            OnderhoudDTO newDto = OnderhoudDTO.fromEntity(onderhoud);
+            if (onderhoudList != null) {
+                onderhoudList.add(newDto);
+            }
+            if (data != null) {
+                data.add(onderhoud);
+            }
+
+            if (status == OnderhoudStatus.INGEPLAND || status == OnderhoudStatus.IN_UITVOERING) {
+                createOnderhoudNotification(onderhoud, "Nieuw Onderhoud: " + status.toString(),
+                        machine.getSite() != null ? machine.getSite().getVerantwoordelijke() : null);
+            }
+
         } catch (Exception e) {
-//            onderhoudDao.rollbackTransaction();
+            onderhoudDao.rollbackTransaction();
+            System.err.println("Fout bij toevoegen onderhoud: " + e.getMessage());
             e.printStackTrace();
-            throw new IllegalArgumentException(e.getMessage());
+            throw new IllegalArgumentException("Onderhoud kon niet worden toegevoegd: " + e.getMessage(), e);
         }
     }
 
-
     public void updateOnderhoud(OnderhoudDTO onderhouddto) {
-        
+        Onderhoud onderhoud = data.stream()
+                .filter(o -> o.getOnderhoudId() == onderhouddto.id())
+                .findFirst()
+                .orElseGet(() -> onderhoudDao.get(onderhouddto.id()));
+
+        if (onderhoud == null) {
+            throw new IllegalArgumentException("Onderhoud met ID " + onderhouddto.id() + " niet gevonden voor update.");
+        }
+
+        OnderhoudStatus oldStatus = onderhoud.getStatus();
+        Machine machine = onderhoud.getMachine();
+
+        onderhoud.setDatum(onderhouddto.datum());
+        onderhoud.setStartTijd(onderhouddto.startTijd());
+        onderhoud.setEindTijd(onderhouddto.eindTijd());
+        onderhoud.setReden(onderhouddto.reden());
+        onderhoud.setRapport(onderhouddto.rapport());
+        onderhoud.setOpmerkingen(onderhouddto.opmerkingen());
+        onderhoud.setStatus(onderhouddto.status());
+
         try {
-        	Onderhoud onderhoud = getRealOnderhoudById(onderhouddto.id());
-        	
-        	int indexData = data.indexOf(onderhoud);
-        	int indexList = onderhoudList.indexOf(
-        		    onderhoudList.stream()
-        		        .filter(o -> o.id() == onderhouddto.id())
-        		        .findFirst()
-        		        .orElse(null)
-        		);
-        	
-        	onderhoud.setDatum(onderhouddto.datum());
-        	onderhoud.setStartTijd(onderhouddto.startTijd());
-        	onderhoud.setEindTijd(onderhouddto.eindTijd());
-        	onderhoud.setReden(onderhouddto.reden());
-        	onderhoud.setRapport(onderhouddto.rapport());
-        	onderhoud.setOpmerkingen(onderhouddto.opmerkingen());
-        	onderhoud.setStatus(onderhouddto.status());
-        	
-        	onderhoudDao.startTransaction();
-        	onderhoudDao.update(onderhoud);
-        	onderhoudDao.commitTransaction();
-        	
-        	data.set(indexData, onderhoud);
-            onderhoudList.set(indexList, onderhouddto);
-	    } catch (Exception e) {
-//	    	onderhoudDao.rollbackTransaction();
-	    	e.printStackTrace();
-	    }
+            onderhoudDao.startTransaction();
+            onderhoudDao.update(onderhoud);
+            onderhoudDao.commitTransaction();
+
+            int dataIndex = -1;
+            for (int i = 0; i < data.size(); i++) {
+                if (data.get(i).getOnderhoudId() == onderhoud.getOnderhoudId()) {
+                    dataIndex = i;
+                    break;
+                }
+            }
+            if (dataIndex != -1) {
+                data.set(dataIndex, onderhoud);
+            }
+
+            OnderhoudDTO updatedDTO = OnderhoudDTO.fromEntity(onderhoud);
+
+            int listIndex = -1;
+            for (int i = 0; i < onderhoudList.size(); i++) {
+                if (onderhoudList.get(i).id() == updatedDTO.id()) {
+                    listIndex = i;
+                    break;
+                }
+            }
+            if (listIndex != -1) {
+                onderhoudList.set(listIndex, updatedDTO);
+            } else {
+                onderhoudList.add(updatedDTO);
+            }
+
+            OnderhoudStatus newStatus = onderhouddto.status();
+            if (newStatus == OnderhoudStatus.VOLTOOID && oldStatus != OnderhoudStatus.VOLTOOID) {
+                createOnderhoudNotification(onderhoud, "Onderhoud Voltooid",
+                        machine.getSite() != null ? machine.getSite().getVerantwoordelijke() : null);
+            } else if (newStatus == OnderhoudStatus.GEANNULEERD && oldStatus != OnderhoudStatus.GEANNULEERD) {
+                createOnderhoudNotification(onderhoud, "Onderhoud Geannuleerd",
+                        machine.getSite() != null ? machine.getSite().getVerantwoordelijke() : null);
+            } else if ((newStatus == OnderhoudStatus.INGEPLAND || newStatus == OnderhoudStatus.IN_UITVOERING) &&
+                    (oldStatus != OnderhoudStatus.INGEPLAND && oldStatus != OnderhoudStatus.IN_UITVOERING
+                            && oldStatus != OnderhoudStatus.VOLTOOID && oldStatus != OnderhoudStatus.GEANNULEERD)) {
+                createOnderhoudNotification(onderhoud, "Onderhoud Status Gewijzigd: " + newStatus.toString(),
+                        machine.getSite() != null ? machine.getSite().getVerantwoordelijke() : null);
+            }
+
+        } catch (Exception e) {
+            onderhoudDao.rollbackTransaction();
+            System.err.println("Fout bij bijwerken onderhoud: " + e.getMessage());
+            e.printStackTrace();
+            throw new IllegalArgumentException("Onderhoud kon niet worden aangepast: " + e.getMessage(), e);
+        }
     }
 
-    public void deleteOnderhoud(OnderhoudDTO onderhoud) {
-    	        
+    public void deleteOnderhoud(OnderhoudDTO onderhoudDto) {
+        Onderhoud onderhoudToDelete = onderhoudDao.get(onderhoudDto.id());
+
+        if (onderhoudToDelete == null) {
+            boolean removedFromList = onderhoudList.removeIf(dto -> dto.id() == onderhoudDto.id());
+            boolean removedFromData = data.removeIf(entity -> entity.getOnderhoudId() == onderhoudDto.id());
+            if (removedFromList || removedFromData) {
+                System.out.println(
+                        "Onderhoud (ID: " + onderhoudDto.id() + ") was niet in DB, verwijderd uit lokale lijst.");
+                return;
+            }
+            throw new IllegalArgumentException(
+                    "Te verwijderen onderhoud met ID " + onderhoudDto.id() + " niet gevonden.");
+        }
+
+        Machine machine = onderhoudToDelete.getMachine();
+        OnderhoudStatus oldStatus = onderhoudToDelete.getStatus();
+
         try {
-        	Onderhoud onderhoudToDelete = data.stream().filter(o -> o.getOnderhoudId() == onderhoud.id()).findFirst().orElse(null);
-        	onderhoudDao.startTransaction();
-        	onderhoudDao.delete(onderhoudToDelete);
-        	onderhoudDao.commitTransaction();
-        	
-            onderhoudList.remove(OnderhoudDTO.fromEntity(onderhoudToDelete));
-        	data.remove(onderhoud);
-	    } catch (Exception e) {
-//	    	onderhoudDao.rollbackTransaction();
-	    	throw new IllegalArgumentException(e.getMessage());
-	    }
+            onderhoudDao.startTransaction();
+            onderhoudDao.delete(onderhoudToDelete);
+            onderhoudDao.commitTransaction();
+
+            onderhoudList.removeIf(dto -> dto.id() == onderhoudDto.id());
+            data.removeIf(entity -> entity.getOnderhoudId() == onderhoudDto.id());
+
+            if (oldStatus != OnderhoudStatus.VOLTOOID && oldStatus != OnderhoudStatus.GEANNULEERD) {
+                createOnderhoudNotification(onderhoudToDelete, "Onderhoud Verwijderd/Geannuleerd",
+                        machine.getSite() != null ? machine.getSite().getVerantwoordelijke() : null);
+            }
+
+        } catch (Exception e) {
+            onderhoudDao.rollbackTransaction();
+            System.err.println("Fout bij verwijderen onderhoud: " + e.getMessage());
+            e.printStackTrace();
+            throw new IllegalArgumentException("Onderhoud kon niet worden verwijderd: " + e.getMessage(), e);
+        }
     }
-    
-    public ObservableList<OnderhoudDTO> filterOnderhoud(boolean laatste, boolean minderDanDrieMaanden, OnderhoudStatus statusFilter, GebruikerDTO ingelogdeGebruiker, int siteId) {
+
+    public ObservableList<OnderhoudDTO> filterOnderhoud(boolean laatste, boolean minderDanDrieMaanden,
+            OnderhoudStatus statusFilter, GebruikerDTO ingelogdeGebruiker, int siteId) {
         filteredOnderhoudList.setPredicate(onderhoud -> {
             boolean matchesStatus = true;
             boolean matchesDrieMaanden = true;
             boolean matchesUserAndSite = true;
 
-            // Filter by status
             if (statusFilter != null) {
                 matchesStatus = onderhoud.status() == statusFilter;
             }
 
-            // Filter for "Minder dan 3 Maanden"
             if (minderDanDrieMaanden) {
                 matchesDrieMaanden = onderhoud.datum().isAfter(LocalDate.now().minusMonths(3));
             }
 
-            // Filter by user role and site
-            if (ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE) {
-                matchesUserAndSite = onderhoud.machine().site().id() == siteId;
-            } else if (ingelogdeGebruiker.rol() == Rol.TECHNIEKER) {
-                matchesUserAndSite = onderhoud.technieker().id() == ingelogdeGebruiker.id();
+            if (siteId != -1) {
+                if (ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE) {
+                    matchesUserAndSite = onderhoud.machine().site().id() == siteId;
+                } else if (ingelogdeGebruiker.rol() == Rol.TECHNIEKER) {
+                    matchesUserAndSite = onderhoud.technieker().id() == ingelogdeGebruiker.id() &&
+                            onderhoud.machine().site().id() == siteId;
+                } else if (ingelogdeGebruiker.rol() == Rol.MANAGER || ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
+                    matchesUserAndSite = onderhoud.machine().site().id() == siteId;
+                }
+            } else {
+                if (ingelogdeGebruiker.rol() == Rol.TECHNIEKER) {
+                    matchesUserAndSite = onderhoud.technieker().id() == ingelogdeGebruiker.id();
+                }
             }
 
             return matchesStatus && matchesDrieMaanden && matchesUserAndSite;
         });
 
-        // If "Laatste" is selected, show only the latest maintenance per machine
         if (laatste) {
             return FXCollections.observableArrayList(
-                filteredOnderhoudList.stream()
-                    .collect(Collectors.groupingBy(o -> o.machine().id()))
-                    .values().stream()
-                    .map(list -> list.stream().max(Comparator.comparing(OnderhoudDTO::datum)).orElse(null))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList())
-            );
+                    filteredOnderhoudList.stream()
+                            .collect(Collectors.groupingBy(o -> o.machine().id()))
+                            .values().stream()
+                            .map(list -> list.stream().max(Comparator.comparing(OnderhoudDTO::datum)).orElse(null))
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList()));
         }
 
         return filteredOnderhoudList;
     }
 
-
-
-
     public ObservableList<OnderhoudDTO> changeFilter(String filterValue) {
         return FXCollections.observableArrayList(
-            onderhoudList.stream()
-                .filter(onderhoud -> {
-                    if (filterValue == null || filterValue.isBlank()) {
-                        return true;
-                    }
-                    String lowerCaseValue = filterValue.toLowerCase();
-                    return onderhoud.reden().toLowerCase().contains(lowerCaseValue) ||
-                           onderhoud.rapport().toLowerCase().contains(lowerCaseValue);
-                })
-                .collect(Collectors.toList())
-        );
+                onderhoudList.stream()
+                        .filter(onderhoud -> {
+                            if (filterValue == null || filterValue.isBlank()) {
+                                return true;
+                            }
+                            String lowerCaseValue = filterValue.toLowerCase();
+                            return onderhoud.reden().toLowerCase().contains(lowerCaseValue) ||
+                                    onderhoud.rapport().toLowerCase().contains(lowerCaseValue);
+                        })
+                        .collect(Collectors.toList()));
     }
 
-    
     public ObservableList<OnderhoudDTO> filterByUser(GebruikerDTO ingelogdeGebruiker) {
         int userId = ingelogdeGebruiker.id();
 
@@ -216,7 +318,7 @@ public class OnderhoudController {
 
             filteredOnderhoudList.setPredicate(onderhoud -> machineIds.contains(onderhoud.machine().id()));
         } else if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
-            filteredOnderhoudList.setPredicate(p -> true); // No filtering for administrators
+            filteredOnderhoudList.setPredicate(p -> true);
         } else {
             filteredOnderhoudList.setPredicate(onderhoud -> onderhoud.technieker().id() == userId);
         }
@@ -224,8 +326,6 @@ public class OnderhoudController {
         return filteredOnderhoudList;
     }
 
-
-    
     public ObservableList<OnderhoudDTO> filterBySite(SiteDTO site) {
         int siteId = site.id();
 
@@ -237,48 +337,40 @@ public class OnderhoudController {
         return FXCollections.observableArrayList(
                 onderhoudList.stream()
                         .filter(onderhoud -> machineIds.contains(onderhoud.machine().id()))
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
     }
 
     public ObservableList<OnderhoudDTO> getVoltooideOnderhoudLaatste3Maanden() {
         return FXCollections.observableArrayList(
                 onderhoudDao.findVoltooideLaatste3Maanden().stream()
                         .map(OnderhoudDTO::fromEntity)
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
     }
 
     public ObservableList<OnderhoudDTO> getLaatsteVoltooideOnderhoudPerMachine() {
         return FXCollections.observableArrayList(
                 onderhoudDao.findLaatsteVoltooidePerMachine().stream()
                         .map(OnderhoudDTO::fromEntity)
-                        .collect(Collectors.toList())
-        );
+                        .collect(Collectors.toList()));
     }
-    
+
     public OnderhoudDTO getLaatsteVoltooideOnderhoudVanMachine(int machineId) {
         return getLaatsteVoltooideOnderhoudPerMachine().stream()
-            .filter(onderhoud -> onderhoud.machine().id() == machineId)
-            .findFirst()
-            .orElse(null);
+                .filter(onderhoud -> onderhoud.machine().id() == machineId)
+                .findFirst()
+                .orElse(null);
     }
-    
+
     public ObservableList<OnderhoudDTO> getFilteredOnderhoudByUserAndSite(GebruikerDTO ingelogdeGebruiker, int siteId) {
-        // Stel eerst user predicate in
         filterByUser(ingelogdeGebruiker);
         var userPredicate = filteredOnderhoudList.getPredicate();
 
-        // Combineer beide predicaten
-        filteredOnderhoudList.setPredicate(onderhoud ->
-            userPredicate.test(onderhoud) &&
-            onderhoud.machine().site().id() == siteId
-        );
+        filteredOnderhoudList.setPredicate(onderhoud -> userPredicate.test(onderhoud) &&
+                onderhoud.machine().site().id() == siteId);
 
         return filteredOnderhoudList;
     }
 
-    
     public void validateOnderhoudDetails(Onderhoud onderhoud) {
         if (onderhoud.getDatum() == null || onderhoud.getStartTijd() == null || onderhoud.getEindTijd() == null) {
             throw new IllegalArgumentException("Datum, starttijd en eindtijd mogen niet leeg zijn.");
@@ -294,5 +386,63 @@ public class OnderhoudController {
         }
     }
 
+    private void createOnderhoudNotification(Onderhoud onderhoud, String titel, Gebruiker siteVerantwoordelijke) {
+        Machine machine = onderhoud.getMachine();
+        String machineNaam = machine != null ? machine.getNaam() : "Onbekende machine";
+        int machineId = machine != null ? machine.getMachineID() : 0;
+        String siteNaam = (machine != null && machine.getSite() != null) ? machine.getSite().getNaam()
+                : "Onbekende site";
 
+        String message = String.format(
+                "Onderhoud (ID: %d) voor machine '%s' (ID: %d) op site '%s' is %s. Gepland op %s.",
+                onderhoud.getOnderhoudId(),
+                machineNaam,
+                machineId,
+                siteNaam,
+                onderhoud.getStatus().toString().toLowerCase(),
+                onderhoud.getDatum().toString());
+
+        List<Gebruiker> gebruikersToNotify = new java.util.ArrayList<>();
+
+        Gebruiker assignedTechniekerOnderhoud = onderhoud.getTechnieker();
+        if (assignedTechniekerOnderhoud != null) {
+            gebruikersToNotify.add(assignedTechniekerOnderhoud);
+        }
+
+        if (machine != null && machine.getTechnieker() != null) {
+            Gebruiker machineTechnieker = machine.getTechnieker();
+            if (gebruikersToNotify.stream().noneMatch(g -> g.getGebruikerID() == machineTechnieker.getGebruikerID())) {
+                gebruikersToNotify.add(machineTechnieker);
+            }
+        }
+
+        if (siteVerantwoordelijke != null) {
+            if (gebruikersToNotify.stream()
+                    .noneMatch(g -> g.getGebruikerID() == siteVerantwoordelijke.getGebruikerID())) {
+                gebruikersToNotify.add(siteVerantwoordelijke);
+            }
+        }
+
+        List<GebruikerDTO> allUsersDTO = gebruikerController.findAll();
+        for (GebruikerDTO userDTO : allUsersDTO) {
+            if (userDTO.rol() == Rol.MANAGER) {
+                Gebruiker manager = gebruikerController.getRealGebruiker(userDTO.id());
+                if (manager != null
+                        && gebruikersToNotify.stream().noneMatch(g -> g.getGebruikerID() == manager.getGebruikerID())) {
+                    gebruikersToNotify.add(manager);
+                }
+            }
+        }
+
+        for (Gebruiker ontvanger : gebruikersToNotify) {
+            Notificatie notificatie = new NotificatieBuilder()
+                    .titel(titel)
+                    .message(message)
+                    .ontvanger(ontvanger)
+                    .itemType("ONDERHOUD")
+                    .itemId(onderhoud.getOnderhoudId())
+                    .build();
+            notificatiesController.addNotificatie(notificatie);
+        }
+    }
 }

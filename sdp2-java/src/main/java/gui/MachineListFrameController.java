@@ -20,7 +20,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -182,6 +181,23 @@ public class MachineListFrameController extends VBox {
         } catch (Exception e) {
             AlertHelper.showError("Kon machine details niet openen.", e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public void showMachineDetailsById(int machineId) {
+        MachineDTO machineToSelect = machineController.getMachine(machineId);
+        if (machineToSelect != null) {
+
+            if (machineTable.getItems().stream().anyMatch(m -> m.id() == machineId)) {
+                machineTable.getSelectionModel().select(machineToSelect);
+                machineTable.scrollTo(machineToSelect);
+                openMachineDetailPopup(machineToSelect); 
+            } else {
+                openMachineDetailPopup(machineToSelect);
+            }
+        } else {
+            AlertHelper.showWarning("Machine niet gevonden",
+                    "Machine met ID " + machineId + " kon niet worden gevonden.");
         }
     }
 

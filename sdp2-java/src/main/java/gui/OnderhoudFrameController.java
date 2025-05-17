@@ -1,10 +1,8 @@
 package gui;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import domain.GebruikerController;
 import domain.LogController;
 import domain.MachineController;
 import domain.OnderhoudController;
@@ -14,7 +12,6 @@ import dto.OnderhoudDTO;
 import dto.SiteDTO;
 import enums.OnderhoudStatus;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -33,37 +30,50 @@ import javafx.util.StringConverter;
 import utils.AlertHelper;
 
 public class OnderhoudFrameController extends VBox {
-	
-	private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final Logger logger = Logger.getLogger(OnderhoudFrameController.class.getName());
 
-    @FXML private TableView<OnderhoudDTO> onderhoudTable;
-    @FXML private TableColumn<OnderhoudDTO, String> datumCol;
-    @FXML private TableColumn<OnderhoudDTO, String> statusCol;
-    @FXML private TableColumn<OnderhoudDTO, String> techniekerCol;
-    @FXML private TableColumn<OnderhoudDTO, String> machineCol;
+    @FXML
+    private TableView<OnderhoudDTO> onderhoudTable;
+    @FXML
+    private TableColumn<OnderhoudDTO, String> datumCol;
+    @FXML
+    private TableColumn<OnderhoudDTO, String> statusCol;
+    @FXML
+    private TableColumn<OnderhoudDTO, String> techniekerCol;
+    @FXML
+    private TableColumn<OnderhoudDTO, String> machineCol;
 
-    @FXML private TextField txtReden;
-    @FXML private TextField txtRapport;
-    @FXML private TextArea txtOpmerkingen;
-    @FXML private ComboBox<OnderhoudStatus> statusBox;
-    @FXML private Button btnAdd;
-    @FXML private Button btnEdit;
-    @FXML private Button btnDelete;
-    @FXML private Button btnTerug;
-    @FXML private CheckBox laatsteCB;
-    @FXML private CheckBox minderDanDrieMaandenCB;
-    @FXML private ComboBox<OnderhoudStatus> statusFilterBox;
+    @FXML
+    private TextField txtReden;
+    @FXML
+    private TextField txtRapport;
+    @FXML
+    private TextArea txtOpmerkingen;
+    @FXML
+    private ComboBox<OnderhoudStatus> statusBox;
+    @FXML
+    private Button btnAdd;
+    @FXML
+    private Button btnEdit;
+    @FXML
+    private Button btnDelete;
+    @FXML
+    private Button btnTerug;
+    @FXML
+    private CheckBox laatsteCB;
+    @FXML
+    private CheckBox minderDanDrieMaandenCB;
+    @FXML
+    private ComboBox<OnderhoudStatus> statusFilterBox;
 
     private OnderhoudController onderhoudController;
     private GebruikerDTO ingelogdeGebruiker;
     private MachineController machineController;
     private LogController logController;
-	private SiteDTO selectedSite;
-	
-    
-    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker, SiteDTO selectedSite, LogController logcontroller) {
-    	this.onderhoudController = onderhoudController;
+    private SiteDTO selectedSite; // Can be null for a general overview
+
+    public OnderhoudFrameController(OnderhoudController onderhoudController, GebruikerDTO ingelogdeGebruiker,
+            SiteDTO selectedSite, LogController logcontroller) {
+        this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
         this.machineController = new MachineController();
         this.logController = logcontroller;
@@ -80,25 +90,30 @@ public class OnderhoudFrameController extends VBox {
 
         initializeTable();
         initializeEventListeners();
-	}
+    }
 
     private void initializeTable() {
         datumCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().datum().toString()));
         statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().status().name()));
         techniekerCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().technieker() != null
-                        ? cellData.getValue().technieker().voornaam() + " " + cellData.getValue().technieker().achternaam()
+                        ? cellData.getValue().technieker().voornaam() + " "
+                                + cellData.getValue().technieker().achternaam()
                         : "Onbekend"));
         machineCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().machine().naam()));
-        
-        onderhoudTable.setItems(onderhoudController.getAllOnderhoud());
+
+        if (selectedSite == null) {
+            onderhoudTable.setItems(onderhoudController.getAllOnderhoud());
+        } else {
+            applyFilters();
+        }
     }
-    
+
     private void initializeEventListeners() {
         btnTerug.setOnAction(event -> handleBackButton());
         btnEdit.setOnAction(event -> editOnderhoud());
         btnDelete.setOnAction(event -> deleteOnderhoud());
-        
+
         onderhoudTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) { // Double-click
                 OnderhoudDTO selectedOnderhoud = onderhoudTable.getSelectionModel().getSelectedItem();
@@ -134,24 +149,28 @@ public class OnderhoudFrameController extends VBox {
     }
 
     private void handleBackButton() {
-    	try {
+        try {
             // Retrieve the MainFrameController from the current scene
             MainFrameController mainFrame = (MainFrameController) this.getScene().getRoot();
 
             // Navigate back to the SiteDetailFrameController
-            SiteDetailFrameController siteDetailFrame = new SiteDetailFrameController(
-                new SiteController(), 
-                selectedSite, 
-                ingelogdeGebruiker, 
-                logController
-            );
-            mainFrame.getMainView().getChildren().setAll(siteDetailFrame);
+            if (selectedSite != null) {
+                SiteDetailFrameController siteDetailFrame = new SiteDetailFrameController(
+                        new SiteController(),
+                        selectedSite,
+                        ingelogdeGebruiker,
+                        logController);
+                mainFrame.getMainView().getChildren().setAll(siteDetailFrame);
+            } else {
+                mainFrame.getMainView().getChildren().setAll(new SiteOverzichtFrameController(new SiteController(),
+                        ingelogdeGebruiker, new GebruikerController(), logController));
+            }
         } catch (Exception e) {
             AlertHelper.showError("Could not navigate back.", e.getMessage());
             e.printStackTrace();
         }
-	}
-    
+    }
+
     private void openOnderhoudDetail(OnderhoudDTO onderhoud) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/OnderhoudDetailFrame.fxml"));
@@ -173,7 +192,6 @@ public class OnderhoudFrameController extends VBox {
         }
     }
 
-
     @FXML
     private void editOnderhoud() {
         OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
@@ -187,7 +205,8 @@ public class OnderhoudFrameController extends VBox {
             Parent root = loader.load();
 
             AddOrEditOnderhoudFrameController controller = loader.getController();
-            controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd, machineController, logController);
+            controller.initData(onderhoudController, ingelogdeGebruiker, geselecteerd, machineController,
+                    logController);
 
             Stage dialog = new Stage();
             dialog.setTitle("Onderhoud Bewerken");
@@ -205,27 +224,44 @@ public class OnderhoudFrameController extends VBox {
         }
     }
 
-
     private void deleteOnderhoud() {
         OnderhoudDTO geselecteerd = onderhoudTable.getSelectionModel().getSelectedItem();
         if (geselecteerd != null) {
             onderhoudController.deleteOnderhoud(geselecteerd);
             onderhoudTable.refresh();
-            logController.addLog(ingelogdeGebruiker, String.format("Onderhoud met id %d verwijderd", geselecteerd.id()),"");
+            logController.addLog(ingelogdeGebruiker, String.format("Onderhoud met id %d verwijderd", geselecteerd.id()),
+                    "");
             applyFilters();
         } else {
-        	AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te verwijderen.");
+            AlertHelper.showWarning("Onderhoud niet geselecteerd", "Selecteer een onderhoud om te verwijderen.");
         }
     }
-    
+
     private void applyFilters() {
         boolean laatste = laatsteCB.isSelected();
         boolean minderDanDrieMaanden = minderDanDrieMaandenCB.isSelected();
         OnderhoudStatus selectedStatus = statusFilterBox.getValue();
 
+        // Pass null for siteId if selectedSite is null, or selectedSite.id() otherwise
+        int siteIdToFilter = (selectedSite != null) ? selectedSite.id() : -1; 
+
         onderhoudTable.setItems(onderhoudController.filterOnderhoud(
-            laatste, minderDanDrieMaanden, selectedStatus, ingelogdeGebruiker, selectedSite.id()
-        ));
+                laatste, minderDanDrieMaanden, selectedStatus, ingelogdeGebruiker, siteIdToFilter));
     }
 
+    public void showOnderhoudDetailsById(int onderhoudId) {
+        OnderhoudDTO onderhoudToSelect = onderhoudController.getOnderhoudById(onderhoudId);
+        if (onderhoudToSelect != null) {
+            if (!onderhoudTable.getItems().contains(onderhoudToSelect)) {
+                openOnderhoudDetail(onderhoudToSelect);
+            } else {
+                onderhoudTable.getSelectionModel().select(onderhoudToSelect);
+                onderhoudTable.scrollTo(onderhoudToSelect);
+                openOnderhoudDetail(onderhoudToSelect);
+            }
+        } else {
+            AlertHelper.showWarning("Onderhoud niet gevonden",
+                    "Onderhoud met ID " + onderhoudId + " kon niet worden gevonden.");
+        }
+    }
 }

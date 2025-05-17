@@ -113,29 +113,52 @@ public class MachineDetailFrameController extends HBox { // Adjust layout type i
     }
 
     private void initializeOnderhoudTable() {
-        onderhoudDatumCol.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().datum().format(DateTimeFormatter.ISO_LOCAL_DATE)));
-        onderhoudStatusCol
-                .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().status().name()));
-        onderhoudTechniekerCol.setCellValueFactory(cellData -> {
-            GebruikerDTO technieker = cellData.getValue().technieker();
-            return new SimpleStringProperty(
-                    technieker != null ? technieker.voornaam() + " " + technieker.achternaam() : "N/B");
-        });
-        onderhoudRedenCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().reden()));
+        if (onderhoudDatumCol != null) {
+            onderhoudDatumCol.setCellValueFactory(cellData -> new SimpleStringProperty(
+                    cellData.getValue().datum().format(DateTimeFormatter.ISO_LOCAL_DATE)));
+        } else {
+            System.err.println("MachineDetailFrameController: onderhoudDatumCol is null. FXML injection might have failed.");
+        }
+
+        if (onderhoudStatusCol != null) {
+            onderhoudStatusCol
+                    .setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().status().name()));
+        } else {
+            System.err.println("MachineDetailFrameController: onderhoudStatusCol is null. FXML injection might have failed.");
+        }
+
+        if (onderhoudTechniekerCol != null) {
+            onderhoudTechniekerCol.setCellValueFactory(cellData -> {
+                GebruikerDTO technieker = cellData.getValue().technieker();
+                return new SimpleStringProperty(
+                        technieker != null ? technieker.voornaam() + " " + technieker.achternaam() : "N/B");
+            });
+        } else {
+            System.err.println("MachineDetailFrameController: onderhoudTechniekerCol is null. FXML injection might have failed.");
+        }
+
+        if (onderhoudRedenCol != null) {
+            onderhoudRedenCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().reden()));
+        } else {
+            System.err.println("MachineDetailFrameController: onderhoudRedenCol is null. FXML injection might have failed.");
+        }
 
         if (selectedMachine != null) {
-            // Assuming OnderhoudController has a method to get all maintenance,
-            // or you fetch all and filter.
-            // For a more optimized approach, add a method in OnderhoudController:
-            // getOnderhoudByMachineId(int machineId)
-            ObservableList<OnderhoudDTO> alleOnderhoud = onderhoudController.getAllOnderhoud(); // Placeholder
+            ObservableList<OnderhoudDTO> alleOnderhoud = onderhoudController.getAllOnderhoud();
             ObservableList<OnderhoudDTO> machineOnderhoud = alleOnderhoud.stream()
                     .filter(o -> o.machine() != null && o.machine().id() == selectedMachine.id())
                     .collect(Collectors.toCollection(FXCollections::observableArrayList));
-            onderhoudTable.setItems(machineOnderhoud);
+            if (onderhoudTable != null) {
+                onderhoudTable.setItems(machineOnderhoud);
+            } else {
+                 System.err.println("MachineDetailFrameController: onderhoudTable is null. FXML injection might have failed.");
+            }
         } else {
-            onderhoudTable.setItems(FXCollections.emptyObservableList());
+            if (onderhoudTable != null) {
+                onderhoudTable.setItems(FXCollections.emptyObservableList());
+            } else {
+                System.err.println("MachineDetailFrameController: onderhoudTable is null (and selectedMachine is also null). FXML injection might have failed.");
+            }
         }
     }
 
