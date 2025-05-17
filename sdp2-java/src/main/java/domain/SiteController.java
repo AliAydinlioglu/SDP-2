@@ -3,7 +3,6 @@ package domain;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import domain.builders.SiteBuilder;
 import dto.GebruikerDTO;
 import dto.SiteDTO;
 import javafx.collections.FXCollections;
@@ -12,7 +11,7 @@ import repository.SiteDao;
 import repository.SiteDaoJpa;
 
 public class SiteController {
-
+    private static boolean warningShown = false;
     private SiteDao siteDao;
     private ObservableList<SiteDTO> siteList;
     private GebruikerController gebruikerController;
@@ -28,7 +27,7 @@ public class SiteController {
 
     public SiteController() {
         this(new GebruikerController(), new LogController());
-        // System.err.println("Waarschuwing: SiteController aangeroepen zonder GebruikerController/LogController. Nieuwe instances aangemaakt.");
+        System.err.println("Waarschuwing: SiteController aangeroepen zonder GebruikerController/LogController. Nieuwe instances aangemaakt.");
     }
     private void loadSitesFromDatabase() {
         List<Site> sitesFromDb = siteDao.findAll();
@@ -84,7 +83,7 @@ public class SiteController {
             throw new IllegalArgumentException("Verantwoordelijke gebruiker met id " + verantwoordelijkeDto.id() + " niet gevonden.");
         }
 
-        Site nieuweSiteEntity = new SiteBuilder()
+        Site nieuweSiteEntity = Site.builder()
                 .naam(naam)
                 .verantwoordelijke(verantwoordelijkeEntity)
                 .build();

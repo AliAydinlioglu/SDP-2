@@ -95,12 +95,11 @@ public class LoginFrameController extends AnchorPane {
 
     private void openMainView(GebruikerDTO gebruiker) {
         Scene scene = new Scene(new MainFrameController(gebruiker, stage));
-        scene.getStylesheets().add(getClass().getResource("/styles/index.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/general.css").toExternalForm()); // Use general.css
         stage.setScene(scene);
-        stage.setMaximized(true);
+        stage.setMaximized(true); // Keep setMaximized from HEAD
         stage.setTitle("Delaware");
         stage.show();
-
     }
 
 }

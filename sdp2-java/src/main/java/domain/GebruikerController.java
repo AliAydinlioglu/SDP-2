@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import domain.builders.AdresBuilder;
-import domain.builders.GebruikerBuilder;
 import dto.GebruikerDTO;
 import enums.Rol;
 import javafx.collections.FXCollections;
@@ -16,6 +14,7 @@ import javafx.collections.transformation.SortedList;
 import repository.GebruikerDaoJpa;
 import repository.GebruikerDao;
 import utils.AlertHelper;
+import domain.Adres;
 
 public class GebruikerController {
 
@@ -37,8 +36,14 @@ public class GebruikerController {
     private final Comparator<GebruikerDTO> sortOrder = byFirstName.thenComparing(byLastName).thenComparing(byEmail);
 
     public GebruikerController() {
-        // new PopulateDB().run();
-        gebruikerRepo = new GebruikerDaoJpa();
+        try { // Keep try-catch from origin/main
+            this.gebruikerRepo = new GebruikerDaoJpa();
+            initData();
+        } catch (Exception e) {
+            AlertHelper.showError("Fout bij initialisatie GebruikerController", e.getMessage());
+            // Optionally rethrow or handle more gracefully
+            throw new RuntimeException("Initialisatie GebruikerController mislukt", e);
+        }
     }
 
     public GebruikerController(GebruikerDao gebruikerRepo) { // voor mockito
@@ -99,49 +104,60 @@ public class GebruikerController {
             String postcode, String stad, String land, String email, String gsm, Rol rol, boolean actief) {
 
         try {
-            Gebruiker g = new GebruikerBuilder()
-                    .voornaam(voornaam).achternaam(naam).geboorteDatum(geboortedatum).adres(new AdresBuilder()
-                            .straat(straat).huis_nr(huisNr).stad(stad).land(land).postcode(postcode).build())
-                    .email(email).rol(rol).gsm(gsm).actief(actief).build();
+            Adres adres = new Adres.Builder()
+                    .straat(straat)
+                    .huis_nr(huisNr)
+                    .postcode(postcode)
+                    .stad(stad)
+                    .land(land)
+                    .build();
+
+            Gebruiker nieuweGebruiker = new Gebruiker.Builder()
+                    .achternaam(naam)
+                    .voornaam(voornaam)
+                    .geboorteDatum(geboortedatum)
+                    .adres(adres)
+                    .email(email)
+                    .gsm(gsm)
+                    .rol(rol)
+                    .actief(actief)
+                    .build();
+            // Assuming wachtwoord needs to be set, e.g. a default or generated one
+            // nieuweGebruiker.setWachtwoord("DefaultPassword123!"); // Example
 
             gebruikerRepo.startTransaction();
-            gebruikerRepo.insert(g);
+            gebruikerRepo.insert(nieuweGebruiker);
             gebruikerRepo.commitTransaction();
-            gebruikerList.add(GebruikerDTO.fromEntity(g));
-            data.add(g);
+
+            data.add(nieuweGebruiker);
+            gebruikerList.add(GebruikerDTO.fromEntity(nieuweGebruiker));
+
         } catch (Exception e) {
             gebruikerRepo.rollbackTransaction();
-            throw new IllegalArgumentException(e.getMessage());
+            AlertHelper.showError("Fout bij toevoegen gebruiker", e.getMessage());
+            e.printStackTrace(); // For debugging
         }
     }
 
     public void changeFilter(String filterValue, Rol rol, Boolean actiefChecked, Boolean nonActiefChecked) {
         filteredGebruikerList.setPredicate(person -> {
-            boolean matchesText = true;
-            boolean matchesRole = true;
-            boolean matchesActief = true;
+            boolean keywordMatch = filterValue == null || filterValue.isEmpty() ||
+                    person.voornaam().toLowerCase().contains(filterValue.toLowerCase()) ||
+                    person.achternaam().toLowerCase().contains(filterValue.toLowerCase()) ||
+                    person.email().toLowerCase().contains(filterValue.toLowerCase());
 
-            // Filter de string
-            if (filterValue != null && !filterValue.isBlank()) {
-                String lowerCaseValue = filterValue.toLowerCase();
-                matchesText = person.voornaam().toLowerCase().contains(lowerCaseValue)
-                        || person.achternaam().toLowerCase().contains(lowerCaseValue)
-                        || person.email().toLowerCase().contains(lowerCaseValue);
+            boolean rolMatch = rol == null || person.rol() == rol;
+
+            boolean actiefMatch = (actiefChecked && person.actief()) || (nonActiefChecked && !person.actief())
+                    || (!actiefChecked && !nonActiefChecked);
+
+            // Als beide checkboxes niet zijn aangevinkt, toon alle gebruikers ongeacht
+            // status
+            if (!actiefChecked && !nonActiefChecked) {
+                actiefMatch = true;
             }
 
-            // Filter de rol
-            if (rol != null) {
-                matchesRole = person.rol() == rol;
-            }
-
-            // Filter actief status
-            if (actiefChecked) {
-                matchesActief = person.actief(); // Only show actief=true
-            } else if (nonActiefChecked) {
-                matchesActief = !person.actief(); // Only show actief=false
-            }
-
-            return matchesText && matchesRole && matchesActief;
+            return keywordMatch && rolMatch && actiefMatch;
         });
     }
 
@@ -187,7 +203,7 @@ public class GebruikerController {
         g.setVoornaam(bewerkteDTO.voornaam());
         g.setAchternaam(bewerkteDTO.achternaam());
         g.setGeboorteDatum(bewerkteDTO.geboortedatum());
-        g.setAdres(new AdresBuilder()
+        g.setAdres(new Adres.Builder()
                 .straat(bewerkteDTO.adres().straat())
                 .huis_nr(bewerkteDTO.adres().huis_nr())
                 .postcode(bewerkteDTO.adres().postcode())

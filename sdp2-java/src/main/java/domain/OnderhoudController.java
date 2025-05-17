@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import domain.builders.OnderhoudBuilder;
-import domain.builders.NotificatieBuilder; // Added import
+import domain.builders.NotificatieBuilder;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
@@ -83,51 +82,52 @@ public class OnderhoudController {
     public void addOnderhoud(LocalDate datum, LocalTime startTijd, LocalTime eindTijd,
             int techniekerId, String reden, String rapport, String opmerkingen,
             OnderhoudStatus status, int machineId) {
-
-        Gebruiker technieker = gebruikerController.getRealGebruiker(techniekerId);
-        if (technieker == null) {
-            throw new IllegalArgumentException("Technieker met ID " + techniekerId + " niet gevonden.");
-        }
-
-        Machine machine = machineController.getRealMachine(machineId);
-        if (machine == null) {
-            throw new IllegalArgumentException("Machine met ID " + machineId + " niet gevonden.");
-        }
-
-        Onderhoud onderhoud = new OnderhoudBuilder()
-                .datum(datum)
-                .startTijd(startTijd)
-                .eindTijd(eindTijd)
-                .technieker(technieker)
-                .reden(reden)
-                .rapport(rapport)
-                .opmerkingen(opmerkingen)
-                .status(status)
-                .machine(machine)
-                .build();
         try {
+            Gebruiker technieker = gebruikerController.getRealGebruiker(techniekerId);
+            Machine machine = machineController.getRealMachine(machineId);
+
+            if (technieker == null) {
+                throw new IllegalArgumentException("Technieker niet gevonden met ID: " + techniekerId);
+            }
+            if (machine == null) {
+                throw new IllegalArgumentException("Machine niet gevonden met ID: " + machineId);
+            }
+
+            Onderhoud nieuwOnderhoud = new Onderhoud.Builder()
+                    .datum(datum)
+                    .startTijd(startTijd)
+                    .eindTijd(eindTijd)
+                    .technieker(technieker)
+                    .reden(reden)
+                    .rapport(rapport)
+                    .opmerkingen(opmerkingen)
+                    .status(status)
+                    .machineId(machine.getMachineID()) // Changed from .machine(machine)
+                    .build();
+
             onderhoudDao.startTransaction();
-            onderhoudDao.insert(onderhoud);
+            onderhoudDao.insert(nieuwOnderhoud);
             onderhoudDao.commitTransaction();
 
-            OnderhoudDTO newDto = OnderhoudDTO.fromEntity(onderhoud);
-            if (onderhoudList != null) {
-                onderhoudList.add(newDto);
-            }
-            if (data != null) {
-                data.add(onderhoud);
+            onderhoudList.add(OnderhoudDTO.fromEntity(nieuwOnderhoud));
+
+            Gebruiker siteVerantwoordelijke = machine.getSite().getVerantwoordelijke();
+            if (siteVerantwoordelijke != null) {
+                String titel = String.format("Nieuw onderhoud gepland voor machine %s", machine.getNaam());
+                createOnderhoudNotification(nieuwOnderhoud, titel, siteVerantwoordelijke);
             }
 
-            if (status == OnderhoudStatus.INGEPLAND || status == OnderhoudStatus.IN_UITVOERING) {
-                createOnderhoudNotification(onderhoud, "Nieuw Onderhoud: " + status.toString(),
-                        machine.getSite() != null ? machine.getSite().getVerantwoordelijke() : null);
+            if (technieker != null && technieker
+                    .getGebruikerID() != (siteVerantwoordelijke != null ? siteVerantwoordelijke.getGebruikerID()
+                            : -1)) {
+                String titelTechnieker = String.format("U bent toegewezen aan een nieuw onderhoud voor machine %s",
+                        machine.getNaam());
+                createOnderhoudNotification(nieuwOnderhoud, titelTechnieker, technieker);
             }
 
         } catch (Exception e) {
             onderhoudDao.rollbackTransaction();
-            System.err.println("Fout bij toevoegen onderhoud: " + e.getMessage());
-            e.printStackTrace();
-            throw new IllegalArgumentException("Onderhoud kon niet worden toegevoegd: " + e.getMessage(), e);
+            throw new RuntimeException("Fout bij het toevoegen van onderhoud: " + e.getMessage(), e);
         }
     }
 

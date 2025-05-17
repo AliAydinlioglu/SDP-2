@@ -20,11 +20,7 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @NamedQueries({
@@ -50,7 +46,7 @@ public class Machine implements Serializable {
     @Column(name = "info")
     private String naam;
 
-    @Transient
+    @Column(name = "product_info")
     private String productInfo;
 
     @Column(name = "locatie")
@@ -82,21 +78,26 @@ public class Machine implements Serializable {
     private Site site;
 
     public Machine(String naam, String productInfo, String locatie, MachineStatus status,
-                   ProductionStatus productieStatus, int uptime, Gebruiker technieker,
-                   int dagenSindsOnderhoud, LocalDate volgendOnderhoud, Site site) {
+                    ProductionStatus productieStatus, int uptime, Gebruiker technieker,
+                    int dagenSindsOnderhoud, LocalDate volgendOnderhoud, Site site) {
 
-        if (naam == null || naam.isBlank() || locatie == null || locatie.isBlank()) {
-            throw new IllegalArgumentException("Naam en locatie moeten ingevuld zijn.");
+        if (naam == null || naam.isBlank()) {
+            throw new IllegalArgumentException("Naam mag niet leeg zijn.");
         }
-
-        if (technieker == null) {
-            throw new IllegalArgumentException("Technieker moet opgegeven zijn.");
+        if (locatie == null || locatie.isBlank()) {
+            throw new IllegalArgumentException("Locatie mag niet leeg zijn.");
         }
-        if (site == null) {
-            throw new IllegalArgumentException("Site moet opgegeven zijn.");
+        if (status == null) {
+            throw new IllegalArgumentException("Status mag niet leeg zijn.");
+        }
+        if (productieStatus == null) {
+            throw new IllegalArgumentException("Productiestatus mag niet leeg zijn.");
         }
         if (uptime < 0) {
             throw new IllegalArgumentException("Uptime mag niet negatief zijn.");
+        }
+        if (technieker == null) {
+            throw new IllegalArgumentException("Technieker moet opgegeven zijn.");
         }
         if (dagenSindsOnderhoud < 0) {
             throw new IllegalArgumentException("Aantal dagen sinds het laatste onderhoud mag niet negatief zijn.");
@@ -104,17 +105,19 @@ public class Machine implements Serializable {
         if (volgendOnderhoud == null) {
             throw new IllegalArgumentException("De datum voor het volgende onderhoud mag niet leeg zijn.");
         }
-
-        setNaam(naam);
-        setProductInfo(productInfo);
-        setLocatie(locatie);
-        setStatus(status);
-        setProductieStatus(productieStatus);
-        setUptime(uptime);
-        setTechnieker(technieker);
-        setDagenSindsOnderhoud(dagenSindsOnderhoud);
-        setVolgendOnderhoud(volgendOnderhoud);
-        setSite(site);
+        if (site == null) {
+            throw new IllegalArgumentException("Site moet opgegeven zijn.");
+        }
+        this.naam = naam;
+        this.productInfo = productInfo;
+        this.locatie = locatie;
+        this.status = status;
+        this.productieStatus = productieStatus;
+        this.uptime = uptime;
+        this.technieker = technieker;
+        this.dagenSindsOnderhoud = dagenSindsOnderhoud;
+        this.volgendOnderhoud = volgendOnderhoud;
+        this.site = site;
     }
 
 
@@ -128,5 +131,107 @@ public class Machine implements Serializable {
                 uptime,
                 (technieker != null ? technieker.getEmail() : "null"),
                 (site != null ? site.getNaam() : "null"));
+    }
+
+    public static class Builder {
+        private String naam;
+        private String productInfo;
+        private String locatie;
+        private MachineStatus status;
+        private ProductionStatus productieStatus;
+        private int uptime;
+        private int dagenSindsOnderhoud;
+        private LocalDate volgendOnderhoud;
+        private Gebruiker technieker;
+        private Site site;
+
+        public Builder naam(String naam) {
+            if (naam == null || naam.isBlank()) {
+                throw new IllegalArgumentException("Naam mag niet leeg zijn");
+            }
+            this.naam = naam;
+            return this;
+        }
+
+        public Builder productInfo(String productInfo) {
+            if (productInfo == null || productInfo.isBlank()) {
+                throw new IllegalArgumentException("Productinformatie mag niet leeg zijn");
+            }
+            this.productInfo = productInfo;
+            return this;
+        }
+
+        public Builder locatie(String locatie) {
+            if (locatie == null || locatie.isBlank()) {
+                throw new IllegalArgumentException("Locatie mag niet leeg zijn");
+            }
+            this.locatie = locatie;
+            return this;
+        }
+
+        public Builder status(MachineStatus status) {
+            if (status == null) {
+                throw new IllegalArgumentException("Status mag niet leeg zijn");
+            }
+            this.status = status;
+            return this;
+        }
+
+        public Builder productieStatus(ProductionStatus productieStatus) {
+            if (productieStatus == null) {
+                throw new IllegalArgumentException("Productiestatus mag niet leeg zijn");
+            }
+            this.productieStatus = productieStatus;
+            return this;
+        }
+
+        public Builder uptime(int uptime) {
+            if (uptime < 0) {
+                throw new IllegalArgumentException("Uptime mag niet negatief zijn");
+            }
+            this.uptime = uptime;
+            return this;
+        }
+
+        public Builder dagenSindsOnderhoud(int dagenSindsOnderhoud) {
+            if (dagenSindsOnderhoud < 0) {
+                throw new IllegalArgumentException("Dagen sinds onderhoud mag niet negatief zijn");
+            }
+            this.dagenSindsOnderhoud = dagenSindsOnderhoud;
+            return this;
+        }
+
+        public Builder volgendOnderhoud(LocalDate volgendOnderhoud) {
+            if (volgendOnderhoud == null) {
+                throw new IllegalArgumentException("Volgend onderhoud mag niet leeg zijn");
+            }
+            this.volgendOnderhoud = volgendOnderhoud;
+            return this;
+        }
+
+        public Builder technieker(Gebruiker technieker) {
+            if (technieker == null) {
+                throw new IllegalArgumentException("Technieker mag niet leeg zijn");
+            }
+            this.technieker = technieker;
+            return this;
+        }
+
+        public Builder site(Site site) {
+            if (site == null) {
+                throw new IllegalArgumentException("Site mag niet leeg zijn");
+            }
+            this.site = site;
+            return this;
+        }
+
+        public Machine build() {
+            return new Machine(naam, productInfo, locatie, status, productieStatus, uptime,
+                    technieker, dagenSindsOnderhoud, volgendOnderhoud, site);
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 }

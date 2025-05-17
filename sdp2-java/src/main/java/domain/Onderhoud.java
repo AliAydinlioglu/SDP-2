@@ -154,4 +154,92 @@ public class Onderhoud implements Serializable {
                 datum, startTijd, eindTijd,
                 technieker != null ? technieker.getVoornaam() + " " + technieker.getAchternaam() : "Onbekend", status);
     }
+
+    public static class Builder {
+        private LocalDate datum;
+        private LocalTime startTijd;
+        private LocalTime eindTijd;
+        private Gebruiker technieker;
+        private String reden;
+        private String rapport;
+        private String opmerkingen;
+        private OnderhoudStatus status;
+        private int machineId;
+
+        public Builder datum(LocalDate datum) {
+            if (datum == null)
+                throw new IllegalArgumentException("Datum mag niet null zijn.");
+            this.datum = datum;
+            return this;
+        }
+
+        public Builder startTijd(LocalTime startTijd) {
+            if (startTijd == null)
+                throw new IllegalArgumentException("Starttijd mag niet null zijn.");
+            this.startTijd = startTijd;
+            return this;
+        }
+
+        public Builder eindTijd(LocalTime eindTijd) {
+            if (eindTijd == null)
+                throw new IllegalArgumentException("Eindtijd mag niet null zijn.");
+            this.eindTijd = eindTijd;
+            return this;
+        }
+
+        public Builder technieker(Gebruiker technieker) {
+            if (technieker == null)
+                throw new IllegalArgumentException("Technieker mag niet null zijn.");
+            if (technieker.getRol() != Rol.TECHNIEKER)
+                throw new IllegalArgumentException("Gebruiker is geen technieker.");
+            this.technieker = technieker;
+            return this;
+        }
+
+        public Builder reden(String reden) {
+            if (reden == null || reden.isBlank())
+                throw new IllegalArgumentException("Reden mag niet leeg zijn.");
+            this.reden = reden;
+            return this;
+        }
+
+        public Builder rapport(String rapport) {
+            if (rapport == null || rapport.isBlank())
+                throw new IllegalArgumentException("Rapport mag niet leeg zijn.");
+            this.rapport = rapport;
+            return this;
+        }
+
+        public Builder opmerkingen(String opmerkingen) {
+            this.opmerkingen = opmerkingen;
+            return this;
+        }
+
+        public Builder status(OnderhoudStatus status) {
+            if (status == null)
+                throw new IllegalArgumentException("Status mag niet null zijn.");
+            if (status == OnderhoudStatus.INGEPLAND)
+                throw new IllegalArgumentException("Techniekers mogen geen 'ingepland' als status instellen.");
+            this.status = status;
+            return this;
+        }
+
+        public Builder machineId(int machineId) {
+            if(new MachineController().getMachine(machineId) == null) {
+                throw new IllegalArgumentException("Machine ID mag niet negatief zijn");
+            }
+            this.machineId = machineId;
+            return this;
+        }
+
+        public Onderhoud build() {
+            return new Onderhoud(datum, startTijd, eindTijd, technieker.getGebruikerID(), reden, rapport, opmerkingen, status, machineId);
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+
 }

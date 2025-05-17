@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import lombok.*;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
 import enums.Rol;
@@ -23,11 +24,6 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @NamedQueries({
@@ -150,7 +146,7 @@ public class Gebruiker implements Serializable {
         return Collections.unmodifiableSet(sites);
     }
 
-    public boolean isActief() { 
+    public boolean isActief() {
         return actief;
     }
 
@@ -158,6 +154,92 @@ public class Gebruiker implements Serializable {
     public String toString() {
         return String.format("%s %s (%s) - %s | Status: %s", voornaam, achternaam, rol, email,
                 actief ? "Actief" : "Inactief");
+    }
+
+    public static class Builder {
+        private String voornaam;
+        private String achternaam;
+        private LocalDate geboorteDatum;
+        private Adres adres;
+        private String email;
+        private String gsm;
+        private Rol rol;
+        private boolean actief = true;
+
+        public Builder voornaam(String voornaam) {
+            if (voornaam == null || voornaam.isBlank()) {
+                throw new IllegalArgumentException("Voornaam mag niet leeg zijn");
+            }
+            this.voornaam = voornaam;
+            return this;
+        }
+
+        public Builder achternaam(String achternaam) {
+            if (achternaam == null || achternaam.isBlank()) {
+                throw new IllegalArgumentException("Achternaam mag niet leeg zijn");
+            }
+            this.achternaam = achternaam;
+            return this;
+        }
+
+        public Builder geboorteDatum(LocalDate geboorteDatum) {
+            if (geboorteDatum == null) {
+                throw new IllegalArgumentException("Geboortedatum mag niet leeg zijn");
+            }
+            if (LocalDate.now().getYear() - geboorteDatum.getYear() < 18) {
+                throw new IllegalArgumentException("Gebruiker moet minstens 18 jaar zijn");
+            }
+            if (geboorteDatum.isAfter(LocalDate.now())) {
+                throw new IllegalArgumentException("Geboortedatum mag niet in de toekomst liggen");
+            }
+            this.geboorteDatum = geboorteDatum;
+            return this;
+        }
+
+        public Builder adres(Adres adres) {
+            if (adres == null) {
+                throw new IllegalArgumentException("Adres mag niet leeg zijn");
+            }
+            this.adres = adres;
+            return this;
+        }
+
+        public Builder email(String email) {
+            if (email == null || email.isBlank()) {
+                throw new IllegalArgumentException("Email mag niet leeg zijn");
+            }
+            this.email = email;
+            return this;
+        }
+
+        public Builder gsm(String gsm) {
+            this.gsm = gsm;
+            return this;
+        }
+
+        public Builder rol(Rol rol) {
+            if (rol == null) {
+                throw new IllegalArgumentException("Rol mag niet leeg zijn");
+            }
+            this.rol = rol;
+            return this;
+        }
+
+        public Builder actief(boolean actief) {
+            this.actief = actief;
+            return this;
+        }
+
+        public Gebruiker build() {
+            if (rol == Rol.TECHNIEKER && (gsm == null || gsm.isBlank())) {
+                throw new IllegalArgumentException("Technieker moet een gsm-nummer hebben");
+            }
+            return new Gebruiker(voornaam, achternaam, geboorteDatum, adres, email, gsm, rol, actief);
+        }
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
 }

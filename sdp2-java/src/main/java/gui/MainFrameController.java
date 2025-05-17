@@ -16,12 +16,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -78,11 +80,13 @@ public class MainFrameController extends BorderPane {
         this.logController = new LogController();
         this.machineController = new MachineController();
         this.onderhoudController = new OnderhoudController();
-        this.siteController = new SiteController();
+        this.siteController = new SiteController(this.gebruikerController, this.logController);
 
         this.currentGebruikerEntity = this.gebruikerController.getRealGebruiker(this.gebruikerDTO.id());
         if (this.currentGebruikerEntity == null) {
-            AlertHelper.showError("Gebruikersfout", "Kan huidige gebruiker niet laden.");
+            AlertHelper.showError("Fout", "Ingelogde gebruiker niet gevonden.");
+            Platform.exit();
+            return;
         }
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainFrame.fxml"));
@@ -97,13 +101,18 @@ public class MainFrameController extends BorderPane {
         init();
         updateNotificationBadge();
         if (currentGebruikerEntity != null) {
-            notificatiesController.handleNieuwStatusVoorSessie(currentGebruikerEntity);
-            updateNotificationBadge();
+            loggedInGebruiker
+                    .setText(currentGebruikerEntity.getVoornaam() + " " + currentGebruikerEntity.getAchternaam());
         }
     }
 
     private void init() {
-        loggedInGebruiker.setText(gebruikerDTO.voornaam() + " " + gebruikerDTO.achternaam());
+        if (loggedInGebruiker == null) {
+            System.err.println("loggedInGebruiker is null in init()");
+        } else {
+            loggedInGebruiker
+                    .setText(currentGebruikerEntity.getVoornaam() + " " + currentGebruikerEntity.getAchternaam());
+        }
 
         machineListController = new MachineListFrameController(machineController, onderhoudController, gebruikerDTO,
                 logController);
@@ -116,18 +125,22 @@ public class MainFrameController extends BorderPane {
         Button machinesButton = new Button("Machines");
         Button sitesButton = new Button("Sites");
 
-        sidebar.getChildren().addAll(sitesButton, machinesButton);
-
         machinesButton.getStyleClass().add("sidebar-button");
         sitesButton.getStyleClass().add("sidebar-button");
 
         sidebar.setPadding(new Insets(20));
         root.setLeft(sidebar);
 
+        if (currentGebruikerEntity.getRol().equals(Rol.MANAGER)
+                || currentGebruikerEntity.getRol().equals(Rol.VERANTWOORDELIJKE)) {
+            sidebar.getChildren().add(sitesButton);
+        }
+        sidebar.getChildren().add(machinesButton);
+
         machinesButton.setOnAction(e -> onButtonClick(machinesButton));
         sitesButton.setOnAction(e -> onButtonClick(sitesButton));
 
-        if (gebruikerDTO.rol().equals(Rol.ADMINISTRATOR)) {
+        if (currentGebruikerEntity.getRol().equals(Rol.ADMINISTRATOR)) {
             gebruikersListController = new GebruikersListFrameController(gebruikerController, gebruikerDTO,
                     logController);
             Button gebruikersButton = new Button("Gebruikers");
@@ -148,82 +161,101 @@ public class MainFrameController extends BorderPane {
             selectedButton = gebruikersButton;
 
         } else {
-            mainView.getChildren().setAll(siteOverzichtController);
-            sitesButton.setStyle("-fx-underline: true;");
-            selectedButton = sitesButton;
+            if (sidebar.getChildren().contains(sitesButton) && (currentGebruikerEntity.getRol().equals(Rol.MANAGER)
+                    || currentGebruikerEntity.getRol().equals(Rol.VERANTWOORDELIJKE))) {
+                mainView.getChildren().setAll(siteOverzichtController);
+                sitesButton.setStyle("-fx-underline: true;");
+                selectedButton = sitesButton;
+            } else if (sidebar.getChildren().contains(machinesButton)) {
+                mainView.getChildren().setAll(machineListController);
+                machinesButton.setStyle("-fx-underline: true;");
+                selectedButton = machinesButton;
+            } else {
+                mainView.getChildren().setAll(new Label("U heeft geen toegang tot de beschikbare modules."));
+            }
         }
 
-        ImageView logoView = new ImageView(
-                new Image(getClass().getResource("/images/delaware-logo-opengraph.png").toExternalForm()));
-        logoView.setFitWidth(75);
+        ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("/images/Delawarelogo.png")));
+        logoView.setFitHeight(100);
+        logoView.setFitWidth(150);
         logoView.setPreserveRatio(true);
-        logoView.setSmooth(true);
-        logoView.setCache(true);
 
         VBox spacer = new VBox();
         VBox.setVgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-        sidebar.getChildren().addAll(spacer, logoView);
 
-        ImageView bellIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/bell.png")));
-        bellIcon.setFitHeight(20);
-        bellIcon.setFitWidth(20);
-        notificationsBtn.setGraphic(bellIcon);
-        notificationsBtn.setText("");
+        HBox logoContainer = new HBox(logoView);
+        logoContainer.setAlignment(Pos.CENTER);
+
+        sidebar.getChildren().addAll(spacer, logoContainer);
+
+        if (notificationsBtn != null) {
+            ImageView bellIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/bell.png")));
+            bellIcon.setFitHeight(20);
+            bellIcon.setFitWidth(20);
+            notificationsBtn.setGraphic(bellIcon);
+            notificationsBtn.setText("");
+        } else {
+            System.err.println("notificationsBtn is null in init(). Check FXML and @FXML annotation.");
+        }
     }
 
     private void onButtonClick(Button clickedButton) {
         if (selectedButton != null) {
-            selectedButton.setStyle("-fx-underline: false;");
+            selectedButton.setStyle("");
         }
         clickedButton.setStyle("-fx-underline: true;");
         selectedButton = clickedButton;
 
         if (clickedButton.getText().equals("Machines")) {
             mainView.getChildren().setAll(machineListController);
-        } else if (clickedButton.getText().equals("Onderhoud")) {
-            if (onderhoudFrameController == null) {
-                onderhoudFrameController = new OnderhoudFrameController(onderhoudController, gebruikerDTO, null,
-                        logController);
-            }
-            mainView.getChildren().setAll(onderhoudFrameController);
         } else if (clickedButton.getText().equals("Sites")) {
             mainView.getChildren().setAll(siteOverzichtController);
-        } else if (clickedButton.getText().equals("Gebruikers")) {
+        } else if (clickedButton.getText().equals("Gebruikers") && gebruikersListController != null) {
             mainView.getChildren().setAll(gebruikersListController);
-        } else if (clickedButton.getText().equals("Logs")) {
+        } else if (clickedButton.getText().equals("Logs") && logListFrameController != null) {
             mainView.getChildren().setAll(logListFrameController);
         }
     }
 
     @FXML
     void LogOut(ActionEvent event) {
-        boolean confirmed = AlertHelper.showConfirmationAndWait("Bevestiging", "Weet je zeker dat je wilt uitloggen?");
-        if (!confirmed)
-            return;
+        try {
+            if (logController != null && currentGebruikerEntity != null) {
+                logController.addLog(gebruikerDTO, "Gebruiker uitgelogd",
+                        "Gebruiker " + currentGebruikerEntity.getEmail() + " is uitgelogd.");
+            }
 
-        Scene scene = new Scene(new LoginFrameController(gebruikerController, stage));
-        stage.setScene(scene);
-        stage.setFullScreen(false);
-        stage.setTitle("Login");
+            Stage currentStage = (Stage) root.getScene().getWindow();
+            LoginFrameController loginScreen = new LoginFrameController(new GebruikerController(), currentStage);
+            Scene scene = new Scene(loginScreen);
+            scene.getStylesheets().add(getClass().getResource("/styles/general.css").toExternalForm());
+            currentStage.setScene(scene);
+            currentStage.setMaximized(false);
+            currentStage.setWidth(600);
+            currentStage.setHeight(400);
+            currentStage.centerOnScreen();
+            currentStage.setTitle("Login");
+        } catch (Exception e) {
+            AlertHelper.showError("Uitloggen mislukt", "Er is een fout opgetreden bij het uitloggen.");
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void showNotifications(ActionEvent event) {
-        if (currentGebruikerEntity == null) {
-            AlertHelper.showError("Fout", "Kan gebruiker niet laden voor notificaties.");
-            return;
+        if (notificatiesOverzichtFrameController == null) {
+            notificatiesOverzichtFrameController = new NotificatiesOverzichtFrameController(notificatiesController,
+                    gebruikerController, machineController, onderhoudController, siteController, currentGebruikerEntity,
+                    this);
         }
-        notificatiesOverzichtFrameController.refreshNotifications();
         mainView.getChildren().setAll(notificatiesOverzichtFrameController);
-
         if (selectedButton != null) {
-            selectedButton.setStyle("-fx-underline: false;");
-            selectedButton = null;
+            selectedButton.setStyle("");
         }
     }
 
     public void updateNotificationBadge() {
-        if (currentGebruikerEntity == null)
+        if (notificationsBtn == null || notificatiesController == null || currentGebruikerEntity == null)
             return;
 
         long unreadCount = notificatiesController.getUnreadNotificatieCountForGebruiker(currentGebruikerEntity);
@@ -233,7 +265,11 @@ public class MainFrameController extends BorderPane {
                 notificationsBtn.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
             } else {
                 notificationsBtn.setText("");
-                notificationsBtn.setStyle(null);
+                notificationsBtn.setStyle("");
+                ImageView bellIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/bell.png")));
+                bellIcon.setFitHeight(20);
+                bellIcon.setFitWidth(20);
+                notificationsBtn.setGraphic(bellIcon);
             }
         });
     }
