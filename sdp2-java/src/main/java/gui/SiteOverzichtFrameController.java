@@ -89,7 +89,7 @@ public class SiteOverzichtFrameController extends VBox {
 
         if (gebruiker.rol() == Rol.MANAGER || gebruiker.rol() == Rol.ADMINISTRATOR) {
             filteredSiteList.setPredicate(site -> true);
-        } else if (gebruiker.rol() == Rol.VERANTWOORDELIJKE || gebruiker.rol() == Rol.GEBRUIKER ) {
+        } else if (gebruiker.rol() == Rol.VERANTWOORDELIJKE  ) {
             final int gebruikerId = gebruiker.id();
             filteredSiteList.setPredicate(site ->
                     site.verantwoordelijke() != null && site.verantwoordelijke().id() == gebruikerId
@@ -101,7 +101,7 @@ public class SiteOverzichtFrameController extends VBox {
 
     private void updateStatusLabel() {
         if (filteredSiteList == null || filteredSiteList.isEmpty()) {
-            if (gebruiker != null && (gebruiker.rol() == Rol.VERANTWOORDELIJKE || gebruiker.rol() == Rol.GEBRUIKER)) {
+            if (gebruiker != null && (gebruiker.rol() == Rol.VERANTWOORDELIJKE)) {
                 lblStatus.setText("U bent niet verantwoordelijk voor sites of er zijn geen sites toegewezen.");
             } else {
                 lblStatus.setText("Geen sites gevonden voor de huidige weergave.");

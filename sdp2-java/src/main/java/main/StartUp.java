@@ -13,8 +13,8 @@ public class StartUp {
         //
         // System.out.println(dc.getGebruiker("geralt@gmail.com"));
 
-        // PopulateDB populator = new PopulateDB();
-        // populator.run();
+//        PopulateDB populator = new PopulateDB();
+//        populator.run();
 
         StartUpGui.start(args);
 

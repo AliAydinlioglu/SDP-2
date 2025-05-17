@@ -77,13 +77,13 @@
         </GridPane>
       <FlowPane alignment="CENTER">
          <children>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#Cancel" prefWidth="150.0" text="Cancel">
+            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#Cancel" prefWidth="150.0" text="Cancel" styleClass="gebruiker-add-cancel">
                <FlowPane.margin>
                   <Insets right="20.0" />
                </FlowPane.margin>
             </Button>
       
-              <Button fx:id="submitBtn" onAction="#addGebruiker" prefWidth="150" text="Toevoegen" />
+              <Button fx:id="submitBtn" onAction="#addGebruiker" prefWidth="150" text="Toevoegen" styleClass="gebruiker-add-btn"/>
          </children>
          <VBox.margin>
             <Insets />

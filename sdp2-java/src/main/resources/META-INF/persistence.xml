@@ -10,14 +10,14 @@
     <class>domain.Site</class>
     <class>domain.Onderhoud</class>
     <class>domain.Log</class>
-    <class>domain.Notificatie</class>
+    
     <properties>
-            <property name="jakarta.persistence.jdbc.url" value="${jdbc.url}&amp;createDatabaseIfNotExist=true"/>
-            <property name="jakarta.persistence.jdbc.user" value="${jdbc.user}"/>
-            <property name="jakarta.persistence.jdbc.password" value="${jdbc.password}"/>
-            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
-<!-- Schema generation - this enables automatic table creation -->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/SDP2?serverTimezone=UTC"/>
+      <property name="jakarta.persistence.jdbc.user" value="root"/>
+      <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="jakarta.persistence.jdbc.password" value="Seppe_007"/>
+      <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            <!-- Schema generation - this enables automatic table creation -->
 
         </properties>
     </persistence-unit>

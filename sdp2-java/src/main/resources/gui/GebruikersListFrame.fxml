@@ -23,8 +23,8 @@
          </VBox.margin>
          <children>
             <TextField fx:id="txtFilter" onKeyReleased="#filter" prefHeight="26.0" prefWidth="224.0" promptText="Filter" />
-            <Button fx:id="addBtn" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="3.0" mnemonicParsing="false" onAction="#addGebruiker" text="Gebruiker Toevoegen" textAlignment="CENTER" styleClass="add" AnchorPane.rightAnchor="0.0" />
-            <HBox alignment="BASELINE_CENTER" layoutX="349.0" layoutY="1.0" prefHeight="26.0" prefWidth="399.0" AnchorPane.leftAnchor="250" AnchorPane.rightAnchor="330">
+            <Button fx:id="addBtn" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="3.0" layoutX="1038.0" mnemonicParsing="false" onAction="#addGebruiker" prefHeight="26.0" prefWidth="138.0" text="Gebruiker Toevoegen" textAlignment="CENTER" AnchorPane.rightAnchor="4.0"  styleClass="gebruiker-add-btn" />
+            <HBox alignment="BASELINE_CENTER" layoutX="349.0" layoutY="1.0" prefHeight="26.0" prefWidth="399.0" AnchorPane.leftAnchor="349.0" AnchorPane.rightAnchor="432.0">
                <children>
                   <Label text="Rol: " />
                   <ChoiceBox fx:id="rolBox" prefHeight="26.0" prefWidth="145.0">
@@ -32,11 +32,6 @@
                         <Insets left="10.0" right="10.0" />
                      </HBox.margin>
                   </ChoiceBox>
-                  <CheckBox fx:id="actiefCB" mnemonicParsing="false" text="Actief">
-                     <HBox.margin>
-                        <Insets left="10.0" right="10.0" />
-                     </HBox.margin>
-                  </CheckBox>
                   <CheckBox fx:id="nonActiefCB" mnemonicParsing="false" text="Non-Actief">
                      <HBox.margin>
                         <Insets left="10.0" right="10.0" />

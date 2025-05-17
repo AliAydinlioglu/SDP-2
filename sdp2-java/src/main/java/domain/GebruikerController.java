@@ -47,7 +47,7 @@ public class GebruikerController {
     }
 
     public GebruikerController(GebruikerDao gebruikerRepo) { // voor mockito
-        // new PopulateDB().run();
+         
         this.gebruikerRepo = gebruikerRepo;
     }
 
@@ -139,7 +139,7 @@ public class GebruikerController {
         }
     }
 
-    public void changeFilter(String filterValue, Rol rol, Boolean actiefChecked, Boolean nonActiefChecked) {
+    public void changeFilter(String filterValue, Rol rol, Boolean nonActiefChecked) {
         filteredGebruikerList.setPredicate(person -> {
             boolean keywordMatch = filterValue == null || filterValue.isEmpty() ||
                     person.voornaam().toLowerCase().contains(filterValue.toLowerCase()) ||
@@ -148,14 +148,7 @@ public class GebruikerController {
 
             boolean rolMatch = rol == null || person.rol() == rol;
 
-            boolean actiefMatch = (actiefChecked && person.actief()) || (nonActiefChecked && !person.actief())
-                    || (!actiefChecked && !nonActiefChecked);
-
-            // Als beide checkboxes niet zijn aangevinkt, toon alle gebruikers ongeacht
-            // status
-            if (!actiefChecked && !nonActiefChecked) {
-                actiefMatch = true;
-            }
+            boolean actiefMatch = nonActiefChecked && !person.actief();
 
             return keywordMatch && rolMatch && actiefMatch;
         });
