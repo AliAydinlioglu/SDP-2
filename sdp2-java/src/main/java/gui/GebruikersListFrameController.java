@@ -67,9 +67,6 @@ public class GebruikersListFrameController extends VBox {
     private ChoiceBox<Rol> rolBox;
 	
 	@FXML
-	private CheckBox actiefCB;
-	
-	@FXML
 	private CheckBox nonActiefCB;
 	
 	private GebruikerDTO ingelogdeGebruiker;
@@ -101,6 +98,7 @@ public class GebruikersListFrameController extends VBox {
         SortedList<GebruikerDTO> sortedList = (SortedList<GebruikerDTO>) dc.findAll(); // or wrap it in a new SortedList if it's not
         sortedList.comparatorProperty().bind(gebruikersTable.comparatorProperty());
         gebruikersTable.setItems(sortedList);
+        dc.changeFilter(null, null, false);
         
 
         
@@ -165,23 +163,12 @@ public class GebruikersListFrameController extends VBox {
 			}
 		});
         
-        actiefCB.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
-            if (isNowSelected) {
-                nonActiefCB.setSelected(false);
-            }
-            filter(null);
-        });
-
         nonActiefCB.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
-            if (isNowSelected) {
-                actiefCB.setSelected(false);
-            }
             filter(null);
         });
         
         gebruikersTable.setPlaceholder(new Label("Geen gebruikers gevonden voor de opgegeven filters."));
 
-        
 		
 	}	
 	
@@ -190,7 +177,7 @@ public class GebruikersListFrameController extends VBox {
 		gebruikersTable.getSelectionModel().clearSelection();
         String newValue = txtFilter.getText();
         Rol rol = rolBox.getValue();
-        dc.changeFilter(newValue, rol, actiefCB.isSelected(), nonActiefCB.isSelected());
+        dc.changeFilter(newValue, rol, nonActiefCB.isSelected());
     }
 	
 	@FXML

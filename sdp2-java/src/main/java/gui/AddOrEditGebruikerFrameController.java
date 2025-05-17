@@ -83,13 +83,11 @@ public class AddOrEditGebruikerFrameController {
 
         rolBox.getItems().addAll(Rol.values());
         rolBox.setConverter(new StringConverter<Rol>() {
-
+			
             @Override
             public String toString(Rol rol) {
-                if (rol == null) {
-                    return ""; // Or any other default string for null
-                }
-                return rol.toString().toLowerCase();
+                return rol == null ? "selecteer rol" : rol.toString().toLowerCase();
+
 
             }
 
@@ -117,6 +115,8 @@ public class AddOrEditGebruikerFrameController {
             emailField.setDisable(true); // Optional: disable editing email
 
             hoofdLabel.setText("Gebruiker Aanpassen");
+        } else {
+        	actiefBox.setVisible(false);
         }
     }
 
@@ -131,21 +131,22 @@ public class AddOrEditGebruikerFrameController {
         String postcode = postcodeField.getText();
         String stad = stadField.getText();
         String land = landField.getText();
-        boolean actief = actiefBox.isSelected();
+        boolean actief = true;
         Rol rol = rolBox.getValue();
 
         try {
             if (bewerkteGebruiker != null) {
                 GebruikerDTO bewerkteDTO = new GebruikerDTO(
-                        bewerkteGebruiker.id(),
-                        voornaam,
-                        naam,
-                        geboorteDatumPicker.getValue(),
-                        new AdresDTO(straat, huisNr, postcode, stad, land),
-                        email,
-                        gsm,
-                        rol,
-                        actief);
+                		bewerkteGebruiker.id(),
+                		voornaam,
+                		naam,
+                		geboorteDatumPicker.getValue(),
+                		new AdresDTO(straat, huisNr, postcode, stad, land),
+                		email,
+                		gsm,
+                		rol,
+                		actiefBox.isSelected()
+                		);
                 dc.updateGebruiker(bewerkteDTO);
                 if (!bewerkteDTO.actief()) {
                     logController.addLog(ingelogdeGebruiker,
@@ -157,8 +158,8 @@ public class AddOrEditGebruikerFrameController {
                 // CREATE
                 dc.addGebruiker(naam, voornaam, geboorteDatumPicker.getValue(),
                         straat, huisNr, postcode, stad, land, email, gsm, rol, actief);
-
-                logController.addLog(ingelogdeGebruiker, "gebruiker aangemaakt met email: %s", email);
+                
+                logController.addLog(ingelogdeGebruiker, String.format("gebruiker aangemaakt met email: %s", email), "");
             }
             ((Stage) submitBtn.getScene().getWindow()).close();
 

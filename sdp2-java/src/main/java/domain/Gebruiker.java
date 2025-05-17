@@ -101,7 +101,7 @@ public class Gebruiker implements Serializable {
     }
 
     public void setEmail(String email) {
-        if (email.isBlank()) {
+        if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email mag niet leeg zijn.");
         }
         this.email = email;
