@@ -16,7 +16,6 @@ import repository.MachineDaoJpa;
 import enums.MachineStatus;
 import enums.Rol;
 import utils.AlertHelper;
-import domain.builders.NotificatieBuilder;
 
 public class MachineController {
 
@@ -361,7 +360,7 @@ public class MachineController {
         }
 
         for (Gebruiker ontvanger : gebruikersToNotify) {
-            Notificatie notificatie = new NotificatieBuilder()
+            Notificatie notificatie = Notificatie.builder()
                     .titel(titel)
                     .message(message)
                     .ontvanger(ontvanger)

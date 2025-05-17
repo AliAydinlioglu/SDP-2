@@ -31,7 +31,6 @@ import repository.MachineDaoJpa;
 import repository.OnderhoudDaoJpa;
 import repository.SiteDaoJpa;
 import repository.NotificatieDaoJpa;
-import domain.builders.NotificatieBuilder;
 
 public class PopulateDB {
     private GebruikerDaoJpa gebruikerdao;
@@ -1308,7 +1307,7 @@ public class PopulateDB {
         LocalDateTime now = LocalDateTime.now();
 
         Machine m1_n1 = this.machines.get(0);
-        Notificatie n1 = new NotificatieBuilder()
+        Notificatie n1 = Notificatie.builder()
                 .titel(String.format("Machine %s gestopt", m1_n1.getNaam()))
                 .message(String.format("Machine %s (%s) is onverwacht gestopt.", m1_n1.getNaam(),
                         m1_n1.getProductInfo()))
@@ -1321,7 +1320,7 @@ public class PopulateDB {
         notificatiesLijst.add(n1);
 
         Machine m2_n2 = this.machines.get(1);
-        Notificatie n2 = new NotificatieBuilder()
+        Notificatie n2 = Notificatie.builder()
                 .titel(String.format("Onderhoud nodig: %s", m2_n2.getNaam()))
                 .message(String.format("Machine %s (%s) heeft dringend onderhoud nodig.", m2_n2.getNaam(),
                         m2_n2.getProductInfo()))
@@ -1334,7 +1333,7 @@ public class PopulateDB {
         notificatiesLijst.add(n2);
 
         Machine m3_n3 = this.machines.get(2);
-        Notificatie n3 = new NotificatieBuilder()
+        Notificatie n3 = Notificatie.builder()
                 .titel(String.format("Onderhoud gepland %s", m3_n3.getNaam()))
                 .message(String.format("Onderhoud gepland voor machine %s op %s.", m3_n3.getNaam(),
                         LocalDate.now().plusDays(3).toString()))
@@ -1347,7 +1346,7 @@ public class PopulateDB {
         notificatiesLijst.add(n3);
 
         Machine m4_n4 = this.machines.get(3);
-        Notificatie n4 = new NotificatieBuilder()
+        Notificatie n4 = Notificatie.builder()
                 .titel(String.format("Onderhoud voltooid %s", m4_n4.getNaam()))
                 .message(String.format("Onderhoud aan machine %s is voltooid.", m4_n4.getNaam()))
                 .ontvanger(janJanssens)
@@ -1359,7 +1358,7 @@ public class PopulateDB {
         notificatiesLijst.add(n4);
 
         Machine m5_n5 = this.machines.get(4);
-        Notificatie n5 = new NotificatieBuilder()
+        Notificatie n5 = Notificatie.builder()
                 .titel(String.format("Onderhoud achterstallig %s", m5_n5.getNaam()))
                 .message(String.format("Gepland onderhoud voor machine %s was op %s en is achterstallig.",
                         m5_n5.getNaam(),
@@ -1374,7 +1373,7 @@ public class PopulateDB {
 
         if (this.machines.size() > 5) {
             Machine m6_n6 = this.machines.get(5);
-            Notificatie n6 = new NotificatieBuilder()
+            Notificatie n6 = Notificatie.builder()
                     .titel(String.format("Nieuwe machine %s", m6_n6.getNaam()))
                     .message(String.format("Nieuwe machine %s (%s) is geïnstalleerd op site %s.", m6_n6.getNaam(),
                             m6_n6.getProductInfo(), m6_n6.getSite().getNaam()))
@@ -1388,7 +1387,7 @@ public class PopulateDB {
         }
 
         Machine m7_n7 = this.machines.get(6);
-        Notificatie n7 = new NotificatieBuilder()
+        Notificatie n7 = Notificatie.builder()
                 .titel(String.format("Prestatie probleem %s", m7_n7.getNaam()))
                 .message(String.format("Machine %s (%s) presteert ondermaats. Controleer logs.", m7_n7.getNaam(),
                         m7_n7.getProductInfo()))
@@ -1401,7 +1400,7 @@ public class PopulateDB {
         notificatiesLijst.add(n7);
 
         Machine m8_n8 = this.machines.get(7);
-        Notificatie n8 = new NotificatieBuilder()
+        Notificatie n8 = Notificatie.builder()
                 .titel(String.format("Software update %s", m8_n8.getNaam()))
                 .message(String.format("Software update beschikbaar voor machine %s.", m8_n8.getNaam()))
                 .ontvanger(saskiaWillems)
@@ -1413,7 +1412,7 @@ public class PopulateDB {
         notificatiesLijst.add(n8);
 
         Machine m9_n9 = this.machines.get(8);
-        Notificatie n9 = new NotificatieBuilder()
+        Notificatie n9 = Notificatie.builder()
                 .titel(String.format("Componentvervanging %s", m9_n9.getNaam()))
                 .message(String.format("Component 'Sensor XA-100' van machine %s moet vervangen worden.",
                         m9_n9.getNaam()))
@@ -1426,7 +1425,7 @@ public class PopulateDB {
         notificatiesLijst.add(n9);
 
         Machine m10_n10 = this.machines.get(9);
-        Notificatie n10 = new NotificatieBuilder()
+        Notificatie n10 = Notificatie.builder()
                 .titel(String.format("Veiligheidswaarschuwing %s", m10_n10.getNaam()))
                 .message(String.format("Veiligheidswaarschuwing: Noodstop geactiveerd op machine %s.",
                         m10_n10.getNaam()))
@@ -1438,7 +1437,7 @@ public class PopulateDB {
                 .build();
         notificatiesLijst.add(n10);
 
-        Notificatie n11 = new NotificatieBuilder()
+        Notificatie n11 = Notificatie.builder()
                 .titel(String.format("Machine %s online", m1_n1.getNaam()))
                 .message(String.format("Machine %s (%s) is weer operationeel na storing.", m1_n1.getNaam(),
                         m1_n1.getProductInfo()))
@@ -1451,7 +1450,7 @@ public class PopulateDB {
         notificatiesLijst.add(n11);
 
         Machine m11_n12 = this.machines.get(10);
-        Notificatie n12 = new NotificatieBuilder()
+        Notificatie n12 = Notificatie.builder()
                 .titel(String.format("Preventief onderhoud %s", m11_n12.getNaam()))
                 .message(String.format("Preventief onderhoud aanbevolen voor machine %s gebaseerd op draaiuren.",
                         m11_n12.getNaam()))
@@ -1463,7 +1462,7 @@ public class PopulateDB {
                 .build();
         notificatiesLijst.add(n12);
 
-        Notificatie n13 = new NotificatieBuilder()
+        Notificatie n13 = Notificatie.builder()
                 .titel(String.format("Software update voltooid %s", m1_n1.getNaam()))
                 .message(String.format("Software update voor machine %s is voltooid.", m1_n1.getNaam()))
                 .ontvanger(saskiaWillems)
@@ -1474,7 +1473,7 @@ public class PopulateDB {
                 .build();
         notificatiesLijst.add(n13);
 
-        Notificatie n14 = new NotificatieBuilder()
+        Notificatie n14 = Notificatie.builder()
                 .titel(String.format("Veiligheidsinstructie %s", m2_n2.getNaam()))
                 .message(String.format("Nieuwe veiligheidsinstructie voor machine %s beschikbaar.", m2_n2.getNaam()))
                 .ontvanger(evaJacobs)
@@ -1486,7 +1485,7 @@ public class PopulateDB {
         notificatiesLijst.add(n14);
 
         Machine m12_n15 = this.machines.get(11);
-        Notificatie n15 = new NotificatieBuilder()
+        Notificatie n15 = Notificatie.builder()
                 .titel(String.format("Kritieke temperatuur %s", m12_n15.getNaam()))
                 .message(
                         String.format("Machine %s heeft een kritieke temperatuur bereikt. Onmiddellijke actie vereist.",
@@ -1500,7 +1499,7 @@ public class PopulateDB {
         notificatiesLijst.add(n15);
 
         Machine m13_n16 = this.machines.get(12);
-        Notificatie n16 = new NotificatieBuilder()
+        Notificatie n16 = Notificatie.builder()
                 .titel(String.format("Lage verbruiksartikelen %s", m13_n16.getNaam()))
                 .message(String.format("Verbruiksartikelen voor machine %s zijn bijna op. Bestel nieuwe.",
                         m13_n16.getNaam()))
@@ -1512,7 +1511,7 @@ public class PopulateDB {
                 .build();
         notificatiesLijst.add(n16);
 
-        Notificatie n17 = new NotificatieBuilder()
+        Notificatie n17 = Notificatie.builder()
                 .titel(String.format("Toegangscontrole %s", m3_n3.getNaam()))
                 .message(String.format("Toegangsrechten voor machine %s vereisen verificatie na accountprobleem.",
                         m3_n3.getNaam()))
@@ -1527,7 +1526,7 @@ public class PopulateDB {
         if (janJanssens != null) {
             if (this.machines.size() > 13) {
                 Machine m14_n18 = this.machines.get(13);
-                Notificatie n18 = new NotificatieBuilder()
+                Notificatie n18 = Notificatie.builder()
                         .titel(String.format("Sensor offline %s", m14_n18.getNaam()))
                         .message(String.format("Sensor 'Temperatuur Zolder' op machine %s is offline.",
                                 m14_n18.getNaam()))
@@ -1542,7 +1541,7 @@ public class PopulateDB {
 
             if (this.machines.size() > 0) {
                 Machine m1_n19 = this.machines.get(0);
-                Notificatie n19 = new NotificatieBuilder()
+                Notificatie n19 = Notificatie.builder()
                         .titel(String.format("Herinnering onderhoud %s", m1_n19.getNaam()))
                         .message(String.format("Gepland onderhoud voor machine %s is morgen.", m1_n19.getNaam()))
                         .ontvanger(janJanssens)
@@ -1556,7 +1555,7 @@ public class PopulateDB {
 
             if (this.machines.size() > 1) {
                 Machine m2_n20 = this.machines.get(1);
-                Notificatie n20 = new NotificatieBuilder()
+                Notificatie n20 = Notificatie.builder()
                         .titel(String.format("Hoge CPU %s", m2_n20.getNaam()))
                         .message(String.format("CPU gebruik op machine %s overschrijdt 90%%.", m2_n20.getNaam()))
                         .ontvanger(janJanssens)
@@ -1568,7 +1567,7 @@ public class PopulateDB {
                 notificatiesLijst.add(n20);
             }
 
-            Notificatie n21 = new NotificatieBuilder()
+            Notificatie n21 = Notificatie.builder()
                     .titel(String.format("Introductie training %s", m4_n4.getNaam()))
                     .message(String.format("Nieuwe technieker Karel De Grote ingepland voor introductie op machine %s.",
                             m4_n4.getNaam()))
@@ -1580,7 +1579,7 @@ public class PopulateDB {
                     .build();
             notificatiesLijst.add(n21);
 
-            Notificatie n22 = new NotificatieBuilder()
+            Notificatie n22 = Notificatie.builder()
                     .titel(String.format("Machine log backup %s", m5_n5.getNaam()))
                     .message(String.format("Controleer de logs en backup status voor machine %s.", m5_n5.getNaam()))
                     .ontvanger(janJanssens)
@@ -1593,7 +1592,7 @@ public class PopulateDB {
 
             if (this.machines.size() > 2) {
                 Machine m3_n23 = this.machines.get(2);
-                Notificatie n23 = new NotificatieBuilder()
+                Notificatie n23 = Notificatie.builder()
                         .titel(String.format("Onderdeel besteld %s", m3_n23.getNaam()))
                         .message(String.format(
                                 "Vervangend onderdeel 'Hydraulische Pomp X2000' voor machine %s is besteld.",
@@ -1609,7 +1608,7 @@ public class PopulateDB {
 
             if (this.machines.size() > 3) {
                 Machine m4_n24 = this.machines.get(3);
-                Notificatie n24 = new NotificatieBuilder()
+                Notificatie n24 = Notificatie.builder()
                         .titel(String.format("Ongebruikelijke activiteit %s", m4_n24.getNaam()))
                         .message(String.format(
                                 "Ongebruikelijke trillingen gedetecteerd op machine %s. Inspectie aanbevolen.",
@@ -1625,7 +1624,7 @@ public class PopulateDB {
 
             if (this.machines.size() > 4) {
                 Machine m5_n25 = this.machines.get(4);
-                Notificatie n25 = new NotificatieBuilder()
+                Notificatie n25 = Notificatie.builder()
                         .titel(String.format("Onderhoudsrapport %s", m5_n25.getNaam()))
                         .message(String.format(
                                 "Het onderhoudsrapport voor de recente service aan machine %s is beschikbaar.",
@@ -1641,7 +1640,7 @@ public class PopulateDB {
 
             if (this.machines.size() > 5) {
                 Machine m6_n26 = this.machines.get(5);
-                Notificatie n26 = new NotificatieBuilder()
+                Notificatie n26 = Notificatie.builder()
                         .titel(String.format("Firmware update %s", m6_n26.getNaam()))
                         .message(String.format("Een firmware update is beschikbaar en gepland voor machine %s.",
                                 m6_n26.getNaam()))
@@ -1656,7 +1655,7 @@ public class PopulateDB {
 
             if (this.machines.size() > 6) {
                 Machine m7_n27 = this.machines.get(6);
-                Notificatie n27 = new NotificatieBuilder()
+                Notificatie n27 = Notificatie.builder()
                         .titel(String.format("Energieverbruik piek %s", m7_n27.getNaam()))
                         .message(String.format("Machine %s vertoont een onverwachte piek in energieverbruik.",
                                 m7_n27.getNaam()))
