@@ -1,6 +1,7 @@
 package domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +15,6 @@ import javafx.collections.transformation.SortedList;
 import repository.GebruikerDaoJpa;
 import repository.GebruikerDao;
 import utils.AlertHelper;
-import domain.Adres;
 
 public class GebruikerController {
 
@@ -53,10 +53,10 @@ public class GebruikerController {
 
     private void initData() {
         try {
-
             data = gebruikerRepo.findAll();
         } catch (Exception e) {
             AlertHelper.showError("Connectie met databank mislukt", e.getMessage());
+            data = new ArrayList<>(); // Initialize to empty list on error
         }
 
         gebruikerList = FXCollections.observableArrayList(data.stream()

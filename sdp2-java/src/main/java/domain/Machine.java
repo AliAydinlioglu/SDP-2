@@ -25,13 +25,18 @@ import lombok.*;
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Machine.findAll", query = "SELECT m FROM Machine m"),
-        @NamedQuery(name = "Machine.findById", query = "SELECT m FROM Machine m WHERE m.machineID = :machineID")
+        @NamedQuery(name = "Machine.findById", query = "SELECT m FROM Machine m WHERE m.machineID = :machineID"),
+        @NamedQuery(name = "machines", query = "SELECT m FROM Machine m WHERE m.technieker.gebruikerID = :techniekerId") // Added
+                                                                                                                         // for
+                                                                                                                         // the
+                                                                                                                         // SQL
+                                                                                                                         // error
 })
 @Getter
 @Setter
 @Table(name = "machines")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(exclude = {"machineID", "site", "technieker"})
+@EqualsAndHashCode(exclude = { "machineID", "site", "technieker" })
 public class Machine implements Serializable {
 
     @Serial
@@ -46,7 +51,7 @@ public class Machine implements Serializable {
     @Column(name = "info")
     private String naam;
 
-    @Column(name = "product_info")
+    @Transient // Tell JPA to ignore this field for database operations
     private String productInfo;
 
     @Column(name = "locatie")
@@ -78,8 +83,8 @@ public class Machine implements Serializable {
     private Site site;
 
     public Machine(String naam, String productInfo, String locatie, MachineStatus status,
-                    ProductionStatus productieStatus, int uptime, Gebruiker technieker,
-                    int dagenSindsOnderhoud, LocalDate volgendOnderhoud, Site site) {
+            ProductionStatus productieStatus, int uptime, Gebruiker technieker,
+            int dagenSindsOnderhoud, LocalDate volgendOnderhoud, Site site) {
 
         if (naam == null || naam.isBlank()) {
             throw new IllegalArgumentException("Naam mag niet leeg zijn.");
@@ -119,7 +124,6 @@ public class Machine implements Serializable {
         this.volgendOnderhoud = volgendOnderhoud;
         this.site = site;
     }
-
 
     @Override
     public String toString() {
