@@ -28,7 +28,7 @@ public class SiteController {
 
     public SiteController() {
         this(new GebruikerController(), new LogController());
-        System.err.println("Waarschuwing: SiteController aangeroepen zonder GebruikerController/LogController. Nieuwe instances aangemaakt.");
+        // System.err.println("Waarschuwing: SiteController aangeroepen zonder GebruikerController/LogController. Nieuwe instances aangemaakt.");
     }
     private void loadSitesFromDatabase() {
         List<Site> sitesFromDb = siteDao.findAll();
