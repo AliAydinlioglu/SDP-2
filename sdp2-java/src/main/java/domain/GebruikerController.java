@@ -148,11 +148,12 @@ public class GebruikerController {
 
             boolean rolMatch = rol == null || person.rol() == rol;
 
-            boolean actiefMatch = nonActiefChecked && !person.actief();
+            boolean actiefMatch = nonActiefChecked ? !person.actief() : person.actief();
 
             return keywordMatch && rolMatch && actiefMatch;
         });
     }
+
 
     public void removeGebruiker(GebruikerDTO gebruiker) {
         for (int i = 0; i < gebruikerList.size(); i++) {

@@ -102,31 +102,31 @@ public class GebruikersListFrameController extends VBox {
         
 
         
-        gebruikersTable.setRowFactory(new Callback<>() {
-            @Override
-            public TableRow<GebruikerDTO> call(TableView<GebruikerDTO> tableView) {
-                return new TableRow<>() {
-                    @Override
-                    protected void updateItem(GebruikerDTO gebruiker, boolean empty) {
-                        super.updateItem(gebruiker, empty);
-                        
-
-                        if (gebruiker == null || empty) {
-                            setStyle("");
-                        } else if (!gebruiker.actief()) {
-                            // Only apply grey background if not selected
-                            if (!isSelected()) {
-                                setStyle("-fx-background-color: grey;");
-                            } else {
-                                setStyle(""); // clear style so selection color shows
-                            }
-                        } else {
-                            setStyle(""); // default style for active users
-                        }
-                    }
-                };
-            }
-        });
+//        gebruikersTable.setRowFactory(new Callback<>() {
+//            @Override
+//            public TableRow<GebruikerDTO> call(TableView<GebruikerDTO> tableView) {
+//                return new TableRow<>() {
+//                    @Override
+//                    protected void updateItem(GebruikerDTO gebruiker, boolean empty) {
+//                        super.updateItem(gebruiker, empty);
+//                        
+//
+//                        if (gebruiker == null || empty) {
+//                            setStyle("");
+//                        } else if (!gebruiker.actief()) {
+//                            // Only apply grey background if not selected
+//                            if (!isSelected()) {
+//                                setStyle("-fx-background-color: grey;");
+//                            } else {
+//                                setStyle(""); // clear style so selection color shows
+//                            }
+//                        } else {
+//                            setStyle(""); // default style for active users
+//                        }
+//                    }
+//                };
+//            }
+//        });
         gebruikersTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 GebruikerDTO selected = gebruikersTable.getSelectionModel().getSelectedItem();
