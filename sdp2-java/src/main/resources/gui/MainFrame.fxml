@@ -21,7 +21,7 @@
             <Region>
             	<HBox.hgrow>ALWAYS</HBox.hgrow>
             </Region>
-            <Button fx:id="notificationsBtn" mnemonicParsing="false" onAction="#showNotifications">
+            <Button fx:id="notificationsBtn" mnemonicParsing="false" onAction="#showNotifications" styleClass="notification">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>

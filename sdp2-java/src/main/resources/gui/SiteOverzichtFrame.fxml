@@ -39,6 +39,6 @@
               <Insets top="10.0"/>
           </VBox.margin>
       </HBox>
-      <Label fx:id="lblStatus" text="" styleClass="label-status"/>
+      <Label fx:id="lblStatus" text="Geen site geselecteerd." styleClass="label-status"/>
    </children>
 </fx:root>

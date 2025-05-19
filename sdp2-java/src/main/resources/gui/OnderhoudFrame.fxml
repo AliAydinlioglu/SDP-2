@@ -19,8 +19,9 @@
 		<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 	</padding>
 	<children>
-		<Button fx:id="btnTerug" text="Terug" />
-		<Label text="Onderhoud Overzicht">
+		<Button fx:id="btnTerug" text="Terug" styleClass="back" />
+		<Label text="Onderhoud Overzicht"
+		styleClass="label-header-main">
 			<font>
 				<Font name="System Bold" size="18.0" />
 			</font>
@@ -35,7 +36,7 @@
 		</HBox>
 
 		<TableView fx:id="onderhoudTable" prefHeight="300.0"
-			VBox.vgrow="ALWAYS">
+			VBox.vgrow="ALWAYS" styleClass="table-view-general">
 			<columns>
 				<TableColumn fx:id="datumCol" prefWidth="150.0"
 					text="Datum" />
@@ -50,11 +51,9 @@
 				<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
 			</columnResizePolicy>
 		</TableView>
-		<HBox spacing="10.0">
-			<VBox spacing="10.0" alignment="CENTER">
-				<Button fx:id="btnEdit" text="Bewerken" />
-				<Button fx:id="btnDelete" text="Verwijderen" />
-			</VBox>
+		<HBox  fx:id="buttonContainer" spacing="10.0"  VBox.vgrow="NEVER">
+				<Button fx:id="btnEdit" text="Bewerken" styleClass="edit" />
+				<Button fx:id="btnDelete" text="Verwijderen" styleClass="delete" />
 		</HBox>
 	</children>
 </fx:root>

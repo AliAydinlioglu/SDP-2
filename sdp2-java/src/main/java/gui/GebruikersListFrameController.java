@@ -1,6 +1,7 @@
 package gui;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import domain.GebruikerController;
 import domain.LogController;
@@ -143,7 +144,11 @@ public class GebruikersListFrameController extends VBox {
 //        });
         
         rolBox.getItems().add(null);
-        rolBox.getItems().addAll(Rol.values());
+		rolBox.getItems().addAll(
+				Arrays.stream(Rol.values())
+						.filter(rol -> rol != Rol.GOD)
+						.toList()
+		);
         
         rolBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             filter(null);

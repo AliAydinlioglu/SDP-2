@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import utils.AlertHelper;
 
+import java.util.Arrays;
+
 public class AddOrEditGebruikerFrameController {
 
     @FXML
@@ -81,7 +83,11 @@ public class AddOrEditGebruikerFrameController {
         this.logController = logController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
 
-        rolBox.getItems().addAll(Rol.values());
+        rolBox.getItems().addAll(
+                Arrays.stream(Rol.values())
+                        .filter(rol -> rol != Rol.GOD)
+                        .toList()
+        );
         rolBox.setConverter(new StringConverter<Rol>() {
 			
             @Override

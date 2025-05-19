@@ -42,6 +42,8 @@ public class MachineListFrameController extends VBox {
     @FXML
     private Button addOnderhoudBtn;
     @FXML
+    private Button updateOnderhoudBtn;
+    @FXML
     private Button addMachineBtn;
     @FXML
     private Button updateMachineBtn;
@@ -56,9 +58,9 @@ public class MachineListFrameController extends VBox {
     private ObservableList<MachineDTO> machineList;
 
     public MachineListFrameController(MachineController machineController,
-            OnderhoudController onderhoudController,
-            GebruikerDTO ingelogdeGebruiker,
-            LogController logController) {
+                                      OnderhoudController onderhoudController,
+                                      GebruikerDTO ingelogdeGebruiker,
+                                      LogController logController) {
         this.machineController = machineController;
         this.onderhoudController = onderhoudController;
         this.ingelogdeGebruiker = ingelogdeGebruiker;
@@ -119,8 +121,7 @@ public class MachineListFrameController extends VBox {
     }
 
     private void initializeForm() {
-        boolean canManageMachines = ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR
-                || ingelogdeGebruiker.rol() == Rol.MANAGER;
+        boolean canManageMachines = ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE || ingelogdeGebruiker.rol() == Rol.GOD;
         boolean canAddOnderhoud = ingelogdeGebruiker.rol() == Rol.TECHNIEKER || canManageMachines;
 
         addMachineBtn.setVisible(canManageMachines);
@@ -135,7 +136,12 @@ public class MachineListFrameController extends VBox {
         addOnderhoudBtn.setVisible(canAddOnderhoud);
         addOnderhoudBtn.setManaged(canAddOnderhoud);
 
+        updateOnderhoudBtn.setVisible(canAddOnderhoud);
+        updateOnderhoudBtn.setManaged(canAddOnderhoud);
+
+
         addOnderhoudBtn.setOnAction(e -> addOnderhoud());
+        updateOnderhoudBtn.setOnAction(e -> updateOnderhoud());
         addMachineBtn.setOnAction(e -> addMachine());
         updateMachineBtn.setOnAction(e -> updateMachine());
         removeMachineBtn.setOnAction(e -> removeMachine());
@@ -143,10 +149,11 @@ public class MachineListFrameController extends VBox {
         updateMachineBtn.disableProperty().bind(machineTable.getSelectionModel().selectedItemProperty().isNull());
         removeMachineBtn.disableProperty().bind(machineTable.getSelectionModel().selectedItemProperty().isNull());
         addOnderhoudBtn.disableProperty().bind(machineTable.getSelectionModel().selectedItemProperty().isNull());
+        updateOnderhoudBtn.disableProperty().bind(machineTable.getSelectionModel().selectedItemProperty().isNull());
     }
 
     private void refreshMachineList() {
-        if (ingelogdeGebruiker.rol() == Rol.ADMINISTRATOR) {
+        if (ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE || ingelogdeGebruiker.rol() == Rol.GOD) {
             machineList = machineController.getAll();
         } else {
             machineList = machineController.getMachinesForTechnieker(ingelogdeGebruiker.id());
@@ -155,7 +162,7 @@ public class MachineListFrameController extends VBox {
 
         machineTable.getSelectionModel().clearSelection();
         selectedMachine = null;
-        lblStatus.setText("");
+        lblStatus.setText("Geen machine geselecteerd");
 
         if (machineList.isEmpty()) {
             lblStatus.setText("Geen machines gevonden.");
@@ -191,7 +198,7 @@ public class MachineListFrameController extends VBox {
             if (machineTable.getItems().stream().anyMatch(m -> m.id() == machineId)) {
                 machineTable.getSelectionModel().select(machineToSelect);
                 machineTable.scrollTo(machineToSelect);
-                openMachineDetailPopup(machineToSelect); 
+                openMachineDetailPopup(machineToSelect);
             } else {
                 openMachineDetailPopup(machineToSelect);
             }
@@ -210,6 +217,7 @@ public class MachineListFrameController extends VBox {
         } else if (selectedMachine.status() == MachineStatus.DRAAIT) {
             AlertHelper.showWarning("Machine draait",
                     "Onderhoud kan niet worden toegevoegd terwijl de machine draait.");
+
         } else {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
@@ -237,11 +245,52 @@ public class MachineListFrameController extends VBox {
     }
 
     @FXML
+    private void updateOnderhoud() {
+        selectedMachine = machineTable.getSelectionModel().getSelectedItem();
+        if (selectedMachine == null) {
+            AlertHelper.showWarning("Geen machine geselecteerd",
+                    "Selecteer een machine om onderhoud te bewerken.");
+            return;
+        } else if (selectedMachine.status() == MachineStatus.DRAAIT) {
+            AlertHelper.showWarning("Machine draait",
+                    "Onderhoud kan niet worden bewerkt terwijl de machine draait.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/AddOrEditOnderhoudFrame.fxml"));
+            Parent root = loader.load();
+            AddOrEditOnderhoudFrameController controller = loader.getController();
+
+            controller.initData(onderhoudController,
+                    ingelogdeGebruiker,
+                    selectedMachine,
+                    machineController,
+                    logController);
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Onderhoud Bewerken");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(this.getScene().getWindow());
+            dialog.setScene(new Scene(root));
+            dialog.setResizable(false);
+            dialog.showAndWait();
+        } catch (IOException e) {
+            AlertHelper.showError("Fout", "Kan onderhoud niet bewerken: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void updateMachine() {
         selectedMachine = machineTable.getSelectionModel().getSelectedItem();
         if (selectedMachine == null) {
             AlertHelper.showWarning("Geen machine geselecteerd",
                     "Selecteer een machine om te bewerken.");
+            return;
+        } else if (selectedMachine.status() == MachineStatus.DRAAIT) {
+            AlertHelper.showWarning("Machine draait",
+                    "Machine kan niet bewerkt worden terwijl de machine draait.");
             return;
         }
 
@@ -294,6 +343,15 @@ public class MachineListFrameController extends VBox {
         if (selectedMachine == null) {
             AlertHelper.showWarning("Geen selectie", "Selecteer eerst een machine om te verwijderen.");
             return;
+        } else if (selectedMachine.status() == MachineStatus.DRAAIT) {
+            AlertHelper.showWarning("Machine draait",
+                    "Machine kan niet verwijderd worden terwijl de machine draait.");
+            return;
+        } else if (selectedMachine.status() == MachineStatus.IN_ONDERHOUD) {
+            AlertHelper.showWarning("Machine in onderhoud",
+                    "Machine kan niet verwijderd worden terwijl de machine in onderhoud is.");
+            return;
+
         }
         boolean bevestigd = AlertHelper.showConfirmationAndWait("Machine Verwijderen",
                 "Zeker dat u machine '" + selectedMachine.naam() + "' wilt verwijderen?");

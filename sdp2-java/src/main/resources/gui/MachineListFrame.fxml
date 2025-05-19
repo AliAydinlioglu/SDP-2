@@ -70,6 +70,11 @@
                     text="Onderhoud Toevoegen"
                     styleClass="add"
                     />
+                <Button
+                    fx:id="updateOnderhoudBtn"
+                    text="Onderhoud bewerken"
+                    styleClass="edit"
+                    />
             </children>
             <VBox.margin>
                 <Insets top="10.0"/>

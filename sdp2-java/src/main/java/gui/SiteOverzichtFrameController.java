@@ -87,7 +87,7 @@ public class SiteOverzichtFrameController extends VBox {
             return;
         }
 
-        if (gebruiker.rol() == Rol.MANAGER || gebruiker.rol() == Rol.ADMINISTRATOR) {
+        if (gebruiker.rol() == Rol.MANAGER || gebruiker.rol() == Rol.GOD) {
             filteredSiteList.setPredicate(site -> true);
         } else if (gebruiker.rol() == Rol.VERANTWOORDELIJKE  ) {
             final int gebruikerId = gebruiker.id();
@@ -101,13 +101,13 @@ public class SiteOverzichtFrameController extends VBox {
 
     private void updateStatusLabel() {
         if (filteredSiteList == null || filteredSiteList.isEmpty()) {
-            if (gebruiker != null && (gebruiker.rol() == Rol.VERANTWOORDELIJKE)) {
+            if (gebruiker != null && (gebruiker.rol() == Rol.VERANTWOORDELIJKE || gebruiker.rol() == Rol.GOD)) {
                 lblStatus.setText("U bent niet verantwoordelijk voor sites of er zijn geen sites toegewezen.");
             } else {
                 lblStatus.setText("Geen sites gevonden voor de huidige weergave.");
             }
         } else {
-            lblStatus.setText("");
+            lblStatus.setText("Geen site geselecteerd");
         }
     }
 
@@ -118,8 +118,9 @@ public class SiteOverzichtFrameController extends VBox {
                 SiteDTO selectedSite = siteController.getSiteDetails(newSelection);
                 lblStatus.setText("Geselecteerd: " + selectedSite.naam());
             } else {
-                lblStatus.setText("");
+                lblStatus.setText("Geen site geselecteerd");
             }
+
         });
 
         siteTable.setOnMouseClicked(event -> {
@@ -144,7 +145,7 @@ public class SiteOverzichtFrameController extends VBox {
     }
     private void setupKnoppenAutorisatieEnBindings() {
         boolean magBeheren = gebruiker != null &&
-                (gebruiker.rol() == Rol.VERANTWOORDELIJKE || gebruiker.rol() == Rol.MANAGER || gebruiker.rol() == Rol.ADMINISTRATOR);
+                (gebruiker.rol() == Rol.MANAGER || gebruiker.rol() == Rol.GOD);
 
         if (btnSiteToevoegen != null) {
             btnSiteToevoegen.setVisible(magBeheren);

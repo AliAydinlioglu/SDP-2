@@ -95,6 +95,8 @@ public class NotificatiesOverzichtFrameController extends VBox {
 
                     HBox buttonBox = new HBox(10);
                     Button markAsReadButton = new Button("Markeer als gelezen");
+                    markAsReadButton.getStyleClass().add("general");
+                    markAsReadButton.setStyle("-fx-pref-width: 140px;");
                     markAsReadButton.setOnAction(e -> {
                         notificatiesController.markeerAlsGelezen(notificatie);
                         refreshNotifications();
@@ -103,9 +105,11 @@ public class NotificatiesOverzichtFrameController extends VBox {
                     markAsReadButton.setDisable(notificatie.getStatus() == NotificatieStatus.GELEZEN);
 
                     Button goToItemButton = new Button("Ga naar item");
+                    goToItemButton.getStyleClass().add("general");
                     goToItemButton.setOnAction(e -> handleGoToItem(notificatie));
 
                     Button deleteButton = new Button("Verwijder");
+                    deleteButton.getStyleClass().add("delete-notification");
                     deleteButton.setOnAction(e -> {
                         if (AlertHelper.showConfirmationAndWait("Verwijderen", "Notificatie verwijderen?")) {
                             notificatiesController.verwijderNotificatie(notificatie);

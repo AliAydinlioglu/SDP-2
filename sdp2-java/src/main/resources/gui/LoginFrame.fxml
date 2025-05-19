@@ -26,7 +26,7 @@
                             <Font name="System Bold" size="12.0"/>
                         </font>
                     </Label>
-                    <TextField fx:id="emailField" promptText="someone@example.com" text="jan.janssens@bedrijf.be" prefWidth="160" maxWidth="170" />
+                    <TextField fx:id="emailField" promptText="someone@example.com" text="god.deschepper@heaven.he" prefWidth="160" maxWidth="170" />
                 <Label fx:id="emailError" textFill="red" styleClass="error-label"/>
             </VBox>
 

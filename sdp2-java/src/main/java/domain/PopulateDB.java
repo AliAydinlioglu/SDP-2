@@ -143,6 +143,8 @@ public class PopulateDB {
         this.gebruikers.clear();
         gebruikerdao.startTransaction();
         try {
+            createAndAddGebruiker("God", "De Schepper", LocalDate.of(0, 1, 1),
+                    "Paradijslaan", "1", "0000", "Paradijs", "Heaven", "god.deschepper@heaven.he", "0470000000",Rol.GOD, false);
             createAndAddGebruiker("Jan", "Janssens", LocalDate.of(1980, 1, 15),
                     "Korenmarkt", "45", "9000", "Gent", "België", "jan.janssens@bedrijf.be", "0471234567",
                     Rol.ADMINISTRATOR, true);

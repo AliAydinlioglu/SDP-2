@@ -118,29 +118,38 @@ public class MainFrameController extends BorderPane {
                 logController);
         siteOverzichtController = new SiteOverzichtFrameController(siteController, gebruikerDTO, gebruikerController,
                 logController);
+        onderhoudFrameController = new OnderhoudFrameController(onderhoudController, gebruikerDTO, null, logController);
         notificatiesOverzichtFrameController = new NotificatiesOverzichtFrameController(notificatiesController,
                 gebruikerController, machineController, onderhoudController, siteController, currentGebruikerEntity,
                 this);
 
         Button machinesButton = new Button("Machines");
         Button sitesButton = new Button("Sites");
+        Button onderhoudButton = new Button("Onderhoud");
+
 
         machinesButton.getStyleClass().add("sidebar-button");
         sitesButton.getStyleClass().add("sidebar-button");
+        onderhoudButton.getStyleClass().add("sidebar-button");
 
         sidebar.setPadding(new Insets(20));
         root.setLeft(sidebar);
 
-        if (currentGebruikerEntity.getRol().equals(Rol.MANAGER)
-                || currentGebruikerEntity.getRol().equals(Rol.VERANTWOORDELIJKE)) {
+        if (currentGebruikerEntity.getRol().equals(Rol.MANAGER) || currentGebruikerEntity.getRol().equals(Rol.VERANTWOORDELIJKE) ||
+                currentGebruikerEntity.getRol().equals(Rol.GOD)) {
             sidebar.getChildren().add(sitesButton);
         }
         sidebar.getChildren().add(machinesButton);
+        if(currentGebruikerEntity.getRol().equals(Rol.VERANTWOORDELIJKE) || currentGebruikerEntity.getRol().equals(Rol.TECHNIEKER) ||
+                currentGebruikerEntity.getRol().equals(Rol.GOD)) {
+            sidebar.getChildren().add(onderhoudButton);
+        }
 
         machinesButton.setOnAction(e -> onButtonClick(machinesButton));
         sitesButton.setOnAction(e -> onButtonClick(sitesButton));
+        onderhoudButton.setOnAction(e -> onButtonClick(onderhoudButton));
 
-        if (currentGebruikerEntity.getRol().equals(Rol.ADMINISTRATOR)) {
+        if (currentGebruikerEntity.getRol().equals(Rol.ADMINISTRATOR) || currentGebruikerEntity.getRol().equals(Rol.GOD)) {
             gebruikersListController = new GebruikersListFrameController(gebruikerController, gebruikerDTO,
                     logController);
             Button gebruikersButton = new Button("Gebruikers");
@@ -162,7 +171,7 @@ public class MainFrameController extends BorderPane {
 
         } else {
             if (sidebar.getChildren().contains(sitesButton) && (currentGebruikerEntity.getRol().equals(Rol.MANAGER)
-                    || currentGebruikerEntity.getRol().equals(Rol.VERANTWOORDELIJKE))) {
+                    || currentGebruikerEntity.getRol().equals(Rol.VERANTWOORDELIJKE) || currentGebruikerEntity.getRol().equals(Rol.GOD))) {
                 mainView.getChildren().setAll(siteOverzichtController);
                 sitesButton.setStyle("-fx-underline: true;");
                 selectedButton = sitesButton;
@@ -213,6 +222,8 @@ public class MainFrameController extends BorderPane {
             mainView.getChildren().setAll(siteOverzichtController);
         } else if (clickedButton.getText().equals("Gebruikers") && gebruikersListController != null) {
             mainView.getChildren().setAll(gebruikersListController);
+        } else if (clickedButton.getText().equals("Onderhoud") && onderhoudFrameController != null) {
+            mainView.getChildren().setAll(onderhoudFrameController);
         } else if (clickedButton.getText().equals("Logs") && logListFrameController != null) {
             mainView.getChildren().setAll(logListFrameController);
         }

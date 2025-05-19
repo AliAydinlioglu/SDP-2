@@ -63,7 +63,7 @@ public class AddOrEditSiteFrameController {
         // Filter op rollen die verantwoordelijk mogen zijn (Pas deze lijst aan indien nodig)
         ObservableList<GebruikerDTO> mogelijkeVerantwoordelijken = alleGebruikers.stream()
                 .filter(g -> g.actief() &&
-                        (g.rol() == Rol.VERANTWOORDELIJKE || g.rol() == Rol.MANAGER || g.rol() == Rol.ADMINISTRATOR))
+                        (g.rol() == Rol.VERANTWOORDELIJKE || g.rol() == Rol.MANAGER))
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         verantwoordelijkeBox.setItems(mogelijkeVerantwoordelijken);

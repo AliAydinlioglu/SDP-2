@@ -63,7 +63,7 @@
     -fx-text-fill: #B22222;
 }
 
-.label-header-log, .label-header-gebruiker{
+.label-header-log, .label-header-gebruiker {
     -fx-font-size: 34px;
     -fx-font-weight: bold;
     -fx-text-fill: #B22222;
@@ -186,18 +186,75 @@
     -fx-text-fill: black;
 }
 
-.button.delete {
+.button.general {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: #A0A0A0;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 110px;
+}
+
+.button.general:hover {
+    -fx-background-color: #F0F0F0;
+}
+
+.button.general:pressed {
+    -fx-background-color: #D0D0D0;
+}
+
+
+.button.back {
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 110px;
+
+}
+
+.button.delete, .button.back {
     -fx-background-color: #FF0000;
     -fx-text-fill: white;
     -fx-border-color: #4D0000;
     -fx-border-radius: 10px;
 }
 
-.button.delete:hover {
+
+.button.delete:hover, .button.back:hover {
     -fx-background-color: #CC0000;
 }
 
-.button.delete:pressed {
+.button.delete:pressed, .button.back:pressed {
+    -fx-background-color: #800000;
+}
+
+.button.delete-notification {
+    -fx-background-color: #FF0000;
+    -fx-text-fill: white;
+    -fx-border-color: #4D0000;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 100px;
+}
+
+.button.delete-notification:hover {
+    -fx-background-color: #CC0000;
+}
+
+.button.delete-notification:pressed {
     -fx-background-color: #800000;
 }
 
@@ -272,6 +329,29 @@
 }
 
 .button.login:pressed {
+    -fx-background-color: #D0D0D0;
+}
+
+.button.notification {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: #A0A0A0;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 60px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.button.notification:hover {
+    -fx-background-color: #F0F0F0;
+}
+
+.button.notification:pressed {
     -fx-background-color: #D0D0D0;
 }
 
