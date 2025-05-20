@@ -1,12 +1,15 @@
 package domain;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import lombok.*;
+import utils.EmailSender;
+
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 
 import enums.Rol;
@@ -77,8 +80,12 @@ public class Gebruiker implements Serializable {
     @OneToMany(mappedBy = "technieker", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @Setter(AccessLevel.NONE)
     private Set<Machine> machines = new HashSet<Machine>();
-
+    @Getter(AccessLevel.NONE)
     private static final Argon2PasswordEncoder encoder = new Argon2PasswordEncoder(16, 32, 1, 131072, 6);
+    @Getter(AccessLevel.NONE)
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    @Getter(AccessLevel.NONE)
+    private static final int LENGTH = 12;
 
     public Gebruiker(String voornaam, String achternaam, LocalDate geboortedatum, Adres adres, String email, String gsm,
             Rol rol, boolean actief) {
@@ -94,9 +101,12 @@ public class Gebruiker implements Serializable {
         setGsm(gsm);
         setActief(actief);
 
-        // wachtwoord = "012345678"; // Placeholder, wachtwoord moet nog goed worden
-        // ingesteld
-        setWachtwoord("012345678");
+        
+        setWachtwoord(voornaam + "." + achternaam);
+        // secure wachtwoord genereren 
+        //Optioneel om met email te versturen
+        //setWachtwoord(generatePassword());
+        //EmailSender.sendEmail(email, "Welkom bij ons systeem", "Je wachtwoord is: " + wachtwoord);
 
     }
 
@@ -148,6 +158,15 @@ public class Gebruiker implements Serializable {
 
     public boolean isActief() {
         return actief;
+    }
+    
+    private String generatePassword() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(LENGTH);
+        for (int i = 0; i < LENGTH; i++) {
+            sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        }
+        return sb.toString();
     }
 
     @Override
