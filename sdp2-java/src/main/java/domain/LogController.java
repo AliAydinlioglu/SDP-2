@@ -44,6 +44,12 @@ public class LogController {
         logRepo = repo;
         initData();
     }
+    
+    public LogController(LogDao repo, GebruikerController gebruikerController) {
+        this.logRepo = repo;
+        this.gebruikerController = gebruikerController;
+        initData();
+    }
 
     private void initData() {
         try {
@@ -59,7 +65,8 @@ public class LogController {
                 .collect(Collectors.toList()));
         filteredLogList = new FilteredList<>(logList, p -> true);
         sortedLogList = new SortedList<>(filteredLogList, sortOrder);
-        gebruikerController = new GebruikerController();
+        if(gebruikerController == null) 
+			gebruikerController = new GebruikerController();
     }
 
     public LogDTO getLog(int id) {
@@ -67,11 +74,15 @@ public class LogController {
     }
 
     public ObservableList<LogDTO> getAll() {
+    	if(logList == null) {
+			initData();
+		}
         return sortedLogList;
     }
 
     public void addLog(GebruikerDTO g, String actie, String opmerking) {
         Gebruiker gebruiker = gebruikerController.getRealGebruiker(g.id());
+        System.out.println("LogController: gebruiker: " + gebruiker);
         try {
             Log l = Log.builder()
                     .actie(actie)

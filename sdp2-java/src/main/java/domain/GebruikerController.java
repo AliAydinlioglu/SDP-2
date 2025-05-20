@@ -73,14 +73,11 @@ public class GebruikerController {
 
     // Made public for MainFrameController to access
     public Gebruiker getRealGebruiker(int id) {
-        // If data is already loaded, try to find it there first to avoid DB call
-        if (data != null) {
-            Gebruiker userFromData = data.stream().filter(u -> u.getGebruikerID() == id).findFirst().orElse(null);
-            if (userFromData != null) {
-                return userFromData;
-            }
-        }
-        return gebruikerRepo.get(id);
+		if (gebruikerRepo.get(id) == null) {
+			throw new IllegalArgumentException("Geen gebruiker gevonden met id: " + id);
+		}
+		// System.out.println(gebruikerRepo.get(id));
+    	return gebruikerRepo.get(id);
     }
 
     public ObservableList<GebruikerDTO> findAll() {
