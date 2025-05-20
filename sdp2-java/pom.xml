@@ -82,6 +82,19 @@
 			<version>5.13.0</version>
 		</dependency>
 
+		<!-- TestFX -->
+
+		<dependency>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-core</artifactId>
+			<version>4.0.16-alpha</version> <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-junit5</artifactId>
+			<version>4.0.16-alpha</version> <scope>test</scope>
+		</dependency>
+
 		<!--
 		https://mvnrepository.com/artifact/org.eclipse.persistence/org.eclipse.persistence.jpa -->
 		<dependency>
@@ -183,6 +196,12 @@
 				<configuration>
 					<source>21</source>
 					<target>21</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.36</version> </path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 
