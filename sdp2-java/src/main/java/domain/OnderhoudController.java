@@ -41,7 +41,7 @@ public class OnderhoudController {
     }
 
     public OnderhoudController(OnderhoudDao onderhoudDao, NotificatiesController notificatiesController,
-            GebruikerController gebruikerController, MachineController machineController) {
+                               GebruikerController gebruikerController, MachineController machineController) {
         this.onderhoudDao = onderhoudDao;
         this.notificatiesController = notificatiesController;
         this.gebruikerController = gebruikerController;
@@ -79,8 +79,8 @@ public class OnderhoudController {
     }
 
     public void addOnderhoud(LocalDate datum, LocalTime startTijd, LocalTime eindTijd,
-            int techniekerId, String reden, String rapport, String opmerkingen,
-            OnderhoudStatus status, int machineId) {
+                             int techniekerId, String reden, String rapport, String opmerkingen,
+                             OnderhoudStatus status, int machineId) {
         try {
             Gebruiker technieker = gebruikerController.getRealGebruiker(techniekerId);
             Machine machine = machineController.getRealMachine(machineId);
@@ -118,7 +118,7 @@ public class OnderhoudController {
 
             if (technieker != null && technieker
                     .getGebruikerID() != (siteVerantwoordelijke != null ? siteVerantwoordelijke.getGebruikerID()
-                            : -1)) {
+                    : -1)) {
                 String titelTechnieker = String.format("U bent toegewezen aan een nieuw onderhoud voor machine %s",
                         machine.getNaam());
                 createOnderhoudNotification(nieuwOnderhoud, titelTechnieker, technieker);
@@ -244,7 +244,7 @@ public class OnderhoudController {
     }
 
     public ObservableList<OnderhoudDTO> filterOnderhoud(boolean laatste, boolean minderDanDrieMaanden,
-            OnderhoudStatus statusFilter, GebruikerDTO ingelogdeGebruiker, int siteId) {
+                                                        OnderhoudStatus statusFilter, GebruikerDTO ingelogdeGebruiker, int siteId) {
         filteredOnderhoudList.setPredicate(onderhoud -> {
             boolean matchesStatus = true;
             boolean matchesDrieMaanden = true;
@@ -403,5 +403,13 @@ public class OnderhoudController {
                 .itemId(onderhoud.getOnderhoudId())
                 .build();
         notificatiesController.addNotificatie(notificatie);
+    }
+
+    public ObservableList<OnderhoudDTO> getOnderhoudByMachineId(int id) {
+        return FXCollections.observableArrayList(
+                onderhoudList.stream()
+                        .filter(onderhoud -> onderhoud.machine().id() == id)
+                        .collect(Collectors.toList()));
+
     }
 }

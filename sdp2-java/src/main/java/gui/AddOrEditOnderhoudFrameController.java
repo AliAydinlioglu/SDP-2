@@ -80,14 +80,14 @@ public class AddOrEditOnderhoudFrameController {
 
         statusBox.setItems(FXCollections.observableArrayList(OnderhoudStatus.values()));
 
-        if (onderhoud != null) {
+        if (bewerktOnderhoud != null) {
 
-            startTijdField.setText(onderhoud.startTijd().toString());
-            eindTijdField.setText(onderhoud.eindTijd().toString());
-            redenField.setText(onderhoud.reden());
-            rapportField.setText(onderhoud.rapport());
-            opmerkingenArea.setText(onderhoud.opmerkingen());
-            statusBox.setValue(onderhoud.status());
+            startTijdField.setText(bewerktOnderhoud.startTijd().toString());
+            eindTijdField.setText(bewerktOnderhoud.eindTijd().toString());
+            redenField.setText(bewerktOnderhoud.reden());
+            rapportField.setText(bewerktOnderhoud.rapport());
+            opmerkingenArea.setText(bewerktOnderhoud.opmerkingen());
+            statusBox.setValue(bewerktOnderhoud.status());
 
             submitBtn.setText("Opslaan");
         }

@@ -50,7 +50,7 @@
 
             <!-- Row 6 -->
             <Label styleClass="label-detail-field" text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-            <ComboBox fx:id="statusBox" prefHeight="25.0" prefWidth="87.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+            <ComboBox fx:id="statusBox" prefHeight="25.0" prefWidth="149.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
         </GridPane>
 
         <FlowPane alignment="CENTER">

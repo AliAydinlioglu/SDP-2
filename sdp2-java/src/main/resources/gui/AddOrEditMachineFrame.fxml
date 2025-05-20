@@ -29,45 +29,49 @@
             <RowConstraints />
             <RowConstraints />
             <RowConstraints />
+            <RowConstraints />
         </rowConstraints>
         <children>
-            <Label styleClass="label-detail-field" text="Naam site:" GridPane.halignment="LEFT" />
-            <ComboBox fx:id="cboSite" prefHeight="25.0" prefWidth="201.0" GridPane.columnIndex="1" />
+             <Label styleClass="label-detail-field" text="Naam machine:" GridPane.halignment="LEFT" />
+            <TextField fx:id="machineNameField" prefHeight="25.0" prefWidth="272.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-            <Label styleClass="label-detail-field" text="Code:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField fx:id="machineIdField" editable="false" prefHeight="25.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label styleClass="label-detail-field" text="Naam site:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <ComboBox fx:id="cboSite" prefHeight="25.0" prefWidth="273.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-            <Label styleClass="label-detail-field" text="Locatie:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <TextField fx:id="machineLocationField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label styleClass="label-detail-field" text="Code:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <TextField fx:id="machineIdField" editable="false" prefHeight="25.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-            <Label styleClass="label-detail-field" text="Productinfo:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <TextField fx:id="txtProductInfo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label styleClass="label-detail-field" text="Locatie:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField fx:id="machineLocationField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-            <Label styleClass="label-detail-field" text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-            <ComboBox fx:id="machineStatusComboBox" prefHeight="25.0" prefWidth="132.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label styleClass="label-detail-field" text="Productinfo:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <TextField fx:id="txtProductInfo" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-            <Label styleClass="label-detail-field" text="Productiestatus:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-            <ComboBox fx:id="productionStatusComboBox" prefHeight="25.0" prefWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label styleClass="label-detail-field" text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+            <ComboBox fx:id="machineStatusComboBox" prefHeight="25.0" prefWidth="170.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-            <Label styleClass="label-detail-field" text="Uptime (uren):" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-            <Spinner fx:id="spnUptime" prefHeight="25.0" prefWidth="62.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label styleClass="label-detail-field" text="Productiestatus:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <ComboBox fx:id="productionStatusComboBox" prefHeight="25.0" prefWidth="194.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
-            <Label styleClass="label-detail-field" text="Naam technieker:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-            <ComboBox fx:id="cboTechnician" prefHeight="25.0" prefWidth="178.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label styleClass="label-detail-field" text="Uptime (uren):" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+            <Spinner fx:id="spnUptime" prefHeight="25.0" prefWidth="73.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
-            <Label prefHeight="17.0" prefWidth="209.0" styleClass="label-detail-field" text="Laatste onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-            <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+            <Label styleClass="label-detail-field" text="Naam technieker:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+            <ComboBox fx:id="cboTechnician" prefHeight="25.0" prefWidth="178.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+
+            <Label prefHeight="17.0" prefWidth="209.0" styleClass="label-detail-field" text="Laatste onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+            <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
                 <children>
                     <Label fx:id="lblLastMaintenanceDate" />
                     <Hyperlink fx:id="hlLastMaintenanceDetails" prefHeight="23.0" prefWidth="46.0" text="details" />
                 </children>
             </HBox>
 
-            <Label prefHeight="17.0" prefWidth="325.0" styleClass="label-detail-field" text="Dagen sinds onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="9" />
-            <Label fx:id="lblDaysSinceMaintenance" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Label prefHeight="17.0" prefWidth="325.0" styleClass="label-detail-field" text="Dagen sinds onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+            <Label fx:id="lblDaysSinceMaintenance" GridPane.columnIndex="1" GridPane.rowIndex="10" />
 
-            <Label prefHeight="17.0" prefWidth="211.0" styleClass="label-detail-field" text="Volgend onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="10" />
-            <DatePicker fx:id="dpVolgendOnderhoud" prefHeight="25.0" prefWidth="106.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <Label prefHeight="17.0" prefWidth="211.0" styleClass="label-detail-field" text="Volgend onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="11" />
+            <DatePicker fx:id="dpVolgendOnderhoud" prefHeight="25.0" prefWidth="112.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
         </children>
       </GridPane>
 

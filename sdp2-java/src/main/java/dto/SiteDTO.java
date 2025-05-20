@@ -26,11 +26,15 @@ public record SiteDTO(int id, String naam, GebruikerDTO verantwoordelijke, Set<M
                 machineDtos
         );
     }
-    
     public static record SiteSummaryDTO(int id, String naam) {
         public static SiteSummaryDTO fromEntity(Site site) {
             if (site == null) return null;
             return new SiteSummaryDTO(site.getSiteId(), site.getNaam());
+        }
+
+        @Override
+        public String toString() {
+            return naam();
         }
     }
 }

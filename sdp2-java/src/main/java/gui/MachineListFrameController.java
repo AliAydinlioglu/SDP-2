@@ -12,6 +12,8 @@ import enums.Rol;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -27,6 +29,7 @@ import utils.AlertHelper;
 
 public class MachineListFrameController extends VBox {
 
+    private final FilteredList<MachineDTO> filteredMachineList;
     @FXML
     private TableView<MachineDTO> machineTable;
     @FXML
@@ -56,6 +59,7 @@ public class MachineListFrameController extends VBox {
     private GebruikerDTO ingelogdeGebruiker;
     private MachineDTO selectedMachine;
     private ObservableList<MachineDTO> machineList;
+
 
     public MachineListFrameController(MachineController machineController,
                                       OnderhoudController onderhoudController,
@@ -88,7 +92,12 @@ public class MachineListFrameController extends VBox {
         statusCol.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().status().name()));
         uptimeCol.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().uptime()));
 
-        machineTable.setItems(machineList);
+        filteredMachineList = new FilteredList<>(machineList, p -> true);
+        SortedList<MachineDTO> sortedList = new SortedList<>(filteredMachineList);
+
+        sortedList.comparatorProperty().bind(machineTable.comparatorProperty());
+
+        machineTable.setItems(sortedList);
         machineTable.getSelectionModel()
                 .selectedItemProperty()
                 .addListener((obs, oldSel, newSel) -> {

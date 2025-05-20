@@ -13,4 +13,10 @@ public record GebruikerDTO(int id, String voornaam, String achternaam, LocalDate
                 g.getGeboorteDatum(), AdresDTO.fromEntity(g.getAdres()), g.getEmail(),
                 g.getGsm(), g.getRol(), g.isActief());
     }
+
+    @Override
+    public String toString() {
+        return voornaam() + " " + achternaam();
+    }
 }
+

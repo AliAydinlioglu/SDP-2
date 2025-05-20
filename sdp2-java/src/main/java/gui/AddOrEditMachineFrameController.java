@@ -5,9 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import domain.GebruikerController;
 import domain.MachineController;
-import domain.SiteController;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.SiteDTO;
@@ -21,7 +19,8 @@ import javafx.stage.Stage;
 import utils.AlertHelper;
 
 public class AddOrEditMachineFrameController {
-
+    @FXML
+    private TextField machineNameField;
     @FXML
     private ComboBox<SiteDTO.SiteSummaryDTO> cboSite;
     @FXML
@@ -56,6 +55,7 @@ public class AddOrEditMachineFrameController {
     private GebruikerDTO ingelogdeGebruiker;
     private boolean isEditMode = false;
 
+
     public void initData(MachineController mc, MachineDTO m, GebruikerDTO user) {
         this.machineController = mc;
         this.existingMachine = m;
@@ -66,7 +66,6 @@ public class AddOrEditMachineFrameController {
     }
 
     private void initializeControls() {
-        // Load sites from MachineController
         cboSite.setItems(machineController.getAllSites());
 
         // Set up status comboboxes with Dutch tooltips
@@ -106,6 +105,7 @@ public class AddOrEditMachineFrameController {
     }
 
     private void populateFields() {
+        machineNameField.setText(existingMachine.naam());
         cboSite.setValue(existingMachine.site());
         machineIdField.setText(String.valueOf(existingMachine.id()));
         machineLocationField.setText(existingMachine.locatie());
@@ -128,7 +128,7 @@ public class AddOrEditMachineFrameController {
             // Create a DTO with the form data
             MachineDTO dto = new MachineDTO(
                     isEditMode ? existingMachine.id() : 0,
-                    machineIdField.getText(),
+                    machineNameField.getText(),
                     txtProductInfo.getText(),
                     machineLocationField.getText(),
                     machineStatusComboBox.getValue(),
