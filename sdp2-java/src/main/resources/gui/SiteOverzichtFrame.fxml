@@ -24,7 +24,7 @@
         <columns>
           <TableColumn fx:id="naamCol" prefWidth="150.0" text="Naam Site" />
           <TableColumn fx:id="verantwoordelijkeCol" prefWidth="150.0" text="Naam Verantwoordelijke" />
-          <TableColumn fx:id="aantalMachinesCol" prefWidth="150.0" text="Aantal Machines" style="-fx-alignment: CENTER-RIGHT;"/>
+          <TableColumn fx:id="aantalMachinesCol" prefWidth="150.0" text="Aantal Machines"/>
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -32,7 +32,7 @@
       </TableView>
       <HBox  fx:id="buttonContainer" spacing="10.0" alignment="CENTER" VBox.vgrow="NEVER">
           <children>
-              <Button fx:id="btnSiteToevoegen" text="Site Toevoegen" styleClass="add"/>
+              <Button fx:id="btnSiteToevoegen" text="Site Toevoegen" styleClass="add" />
               <Button fx:id="btnSiteVerwijderen" text="Site Verwijderen" styleClass="delete" />
           </children>
           <VBox.margin>

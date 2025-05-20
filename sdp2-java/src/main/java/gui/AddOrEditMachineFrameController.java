@@ -1,6 +1,9 @@
 package gui;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import domain.GebruikerController;
 import domain.MachineController;
@@ -67,8 +70,12 @@ public class AddOrEditMachineFrameController {
         cboSite.setItems(machineController.getAllSites());
 
         // Set up status comboboxes with Dutch tooltips
-        machineStatusComboBox.setItems(FXCollections.observableArrayList(MachineStatus.values()));
-        machineStatusComboBox.setTooltip(new Tooltip("Status van de machine: Draait, Gestopt (auto of manueel), etc."));
+        List<MachineStatus> statusLijst = Arrays.stream(MachineStatus.values())
+                .filter(status -> status != MachineStatus.GESTOPT_AUTO)
+                .collect(Collectors.toList());
+
+        machineStatusComboBox.setItems(FXCollections.observableArrayList(statusLijst));
+        machineStatusComboBox.setTooltip(new Tooltip("Status van de machine: Draait, Gestopt, manueel, etc."));
 
         productionStatusComboBox.setItems(FXCollections.observableArrayList(ProductionStatus.values()));
         productionStatusComboBox.setTooltip(new Tooltip("Productiestatus: Gezond, Nood aan onderhoud, Falend"));

@@ -1,81 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="450.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AddOrEditMachineFrameController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="450.0" spacing="20.0" stylesheets="@/styles/general.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AddOrEditMachineFrameController">
    <children>
-      <Label fx:id="hoofdLabel" text="Machine Toevoegen of Bewerken">
+      <Label fx:id="hoofdLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="label-header-sub" text="Machine Toevoegen of Bewerken">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
       <GridPane hgap="10.0" vgap="10.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="120.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="100.0" prefWidth="147.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="253.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
         </rowConstraints>
         <children>
-            <Label text="Naam site:" GridPane.halignment="RIGHT" />
-            <ComboBox fx:id="cboSite" GridPane.columnIndex="1" />
+            <Label styleClass="label-detail-field" text="Naam site:" GridPane.halignment="LEFT" />
+            <ComboBox fx:id="cboSite" prefHeight="25.0" prefWidth="201.0" GridPane.columnIndex="1" />
 
-            <Label text="Code:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <TextField fx:id="machineIdField" editable="false" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <Label styleClass="label-detail-field" text="Code:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="machineIdField" editable="false" prefHeight="25.0" prefWidth="75.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-            <Label text="Locatie:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <TextField fx:id="machineLocationField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            <Label styleClass="label-detail-field" text="Locatie:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <TextField fx:id="machineLocationField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-            <Label text="Productinfo:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtProductInfo" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <Label styleClass="label-detail-field" text="Productinfo:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField fx:id="txtProductInfo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-            <Label text="Status:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="machineStatusComboBox" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            <Label styleClass="label-detail-field" text="Status:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <ComboBox fx:id="machineStatusComboBox" prefHeight="25.0" prefWidth="132.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
-            <Label text="Productiestatus:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="productionStatusComboBox" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            <Label styleClass="label-detail-field" text="Productiestatus:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+            <ComboBox fx:id="productionStatusComboBox" prefHeight="25.0" prefWidth="160.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
 
-            <Label text="Uptime (uren):" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-            <Spinner fx:id="spnUptime" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+            <Label styleClass="label-detail-field" text="Uptime (uren):" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+            <Spinner fx:id="spnUptime" prefHeight="25.0" prefWidth="62.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
-            <Label text="Naam technieker:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="cboTechnician" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+            <Label styleClass="label-detail-field" text="Naam technieker:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+            <ComboBox fx:id="cboTechnician" prefHeight="25.0" prefWidth="178.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
-            <Label text="Laatste onderhoud:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
-            <HBox spacing="5.0" GridPane.rowIndex="8" GridPane.columnIndex="1">
+            <Label prefHeight="17.0" prefWidth="209.0" styleClass="label-detail-field" text="Laatste onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+            <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                 <children>
-                    <Label fx:id="lblLastMaintenanceDate"/>
-                    <Hyperlink fx:id="hlLastMaintenanceDetails" text="details"/>
+                    <Label fx:id="lblLastMaintenanceDate" />
+                    <Hyperlink fx:id="hlLastMaintenanceDetails" prefHeight="23.0" prefWidth="46.0" text="details" />
                 </children>
             </HBox>
 
-            <Label text="Dagen sinds onderhoud:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
-            <Label fx:id="lblDaysSinceMaintenance" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+            <Label prefHeight="17.0" prefWidth="325.0" styleClass="label-detail-field" text="Dagen sinds onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+            <Label fx:id="lblDaysSinceMaintenance" GridPane.columnIndex="1" GridPane.rowIndex="9" />
 
-            <Label text="Volgend onderhoud:" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
-            <DatePicker fx:id="dpVolgendOnderhoud" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
+            <Label prefHeight="17.0" prefWidth="211.0" styleClass="label-detail-field" text="Volgend onderhoud:" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+            <DatePicker fx:id="dpVolgendOnderhoud" prefHeight="25.0" prefWidth="106.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
         </children>
       </GridPane>
 
-      <HBox alignment="CENTER_RIGHT" spacing="10.0">
+      <HBox alignment="CENTER" spacing="10.0">
          <children>
-            <Button fx:id="btnAnnuleren" text="Annuleren" onAction="#handleAnnuleren"/>
-            <Button fx:id="btnOpslaan" text="Opslaan" onAction="#handleOpslaan"/>
+            <Button fx:id="btnAnnuleren" alignment="CENTER" contentDisplay="CENTER" onAction="#handleAnnuleren" style="-fx-pref-width: 120px;" styleClass="cancel" text="Annuleren" />
+            <Button fx:id="btnOpslaan" alignment="CENTER" contentDisplay="CENTER" onAction="#handleOpslaan" style="-fx-pref-width: 120px;" styleClass="add" text="Opslaan" />
          </children>
       </HBox>
    </children>

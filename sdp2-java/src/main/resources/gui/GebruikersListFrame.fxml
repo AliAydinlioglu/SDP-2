@@ -1,38 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<fx:root stylesheets="@/styles/general.css" styleClass="container-main" type="VBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root spacing="10.0" styleClass="container-main" stylesheets="@/styles/general.css" type="VBox" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-       <Label alignment="CENTER" textAlignment="CENTER" maxWidth="Infinity" text="Gebruikers" styleClass="label-header-gebruiker">
+       <Label maxWidth="Infinity" styleClass="label-header-main" text="Gebruikers">
        </Label>
-      <AnchorPane prefHeight="26.0" prefWidth="600.0">
+      <AnchorPane prefHeight="10.0" prefWidth="600.0">
          <VBox.margin>
             <Insets bottom="10.0" />
          </VBox.margin>
          <children>
-            <TextField fx:id="txtFilter" onKeyReleased="#filter" prefHeight="26.0" prefWidth="224.0" promptText="Filter" />
-            <Button fx:id="addBtn" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="3.0" mnemonicParsing="false" onAction="#addGebruiker" text="Gebruiker Toevoegen" textAlignment="CENTER" styleClass="add" AnchorPane.rightAnchor="0.0" />
-            <HBox alignment="BASELINE_CENTER" layoutX="349.0" layoutY="1.0" prefHeight="26.0" prefWidth="399.0" AnchorPane.leftAnchor="250" AnchorPane.rightAnchor="330">
+            <TextField fx:id="txtFilter" alignment="BASELINE_LEFT" layoutY="23.0" onKeyReleased="#filter" prefHeight="26.0" prefWidth="224.0" promptText="Filter" />
+            <Button fx:id="addBtn" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="3.0" mnemonicParsing="false" onAction="#addGebruiker" styleClass="add" text="Gebruiker Toevoegen" textAlignment="CENTER" AnchorPane.rightAnchor="0.0" />
+            <HBox alignment="BASELINE_CENTER" layoutX="349.0" layoutY="23.0" prefHeight="26.0" prefWidth="399.0" AnchorPane.leftAnchor="250" AnchorPane.rightAnchor="330">
                <children>
-                  <Label text="Rol: " />
-                  <ChoiceBox fx:id="rolBox" prefHeight="26.0" prefWidth="145.0">
+                  <Label text="Rol:" />
+                  <ChoiceBox fx:id="rolBox" prefHeight="89.0" prefWidth="178.0">
                      <HBox.margin>
                         <Insets left="10.0" right="10.0" />
                      </HBox.margin>
                   </ChoiceBox>
-                  <CheckBox fx:id="nonActiefCB" mnemonicParsing="false" text="Non-Actief">
+                  <Label text="Non-actief" />
+                  <CheckBox fx:id="nonActiefCB" mnemonicParsing="false">
                      <HBox.margin>
                         <Insets left="10.0" right="10.0" />
                      </HBox.margin>
@@ -41,7 +33,7 @@
             </HBox>
          </children>
       </AnchorPane>
-      <TableView fx:id="gebruikersTable" prefHeight="456.0" prefWidth="1180.0" styleClass="table-view-general" >
+      <TableView fx:id="gebruikersTable" prefHeight="456.0" prefWidth="1180.0" styleClass="table-view-general">
         <columns>
           <TableColumn fx:id="voornaamCol" prefWidth="170.0" text="Voornaam" />
           <TableColumn fx:id="achternaamCol" prefWidth="160.5" text="Achternaam" />
@@ -58,16 +50,16 @@
       <Insets bottom="10" left="10" right="10" top="10" />
    </padding>
    <children>
-      <Label fx:id="lblFullName" text="Naam:" />
-      <Label fx:id="lblEmail" text="Email:" />
-      <Label fx:id="lblRol" text="Rol:" />
-      <Label fx:id="lblGeboorteDatum" text="Geboortedatum:" />
-      <Label fx:id="lblAdres" text="Adres:" />
-      <Label fx:id="lblGsm" text="GSM:" />
+      <Label fx:id="lblFullName" style="-fx-font-weight: bold;" text="Naam:" />
+      <Label fx:id="lblEmail" style="-fx-font-weight: bold;" text="Email:" />
+      <Label fx:id="lblRol" style="-fx-font-weight: bold;" text="Rol:" />
+      <Label fx:id="lblGeboorteDatum" style="-fx-font-weight: bold;" text="Geboortedatum:" />
+      <Label fx:id="lblAdres" style="-fx-font-weight: bold;" text="Adres:" />
+      <Label fx:id="lblGsm" style="-fx-font-weight: bold;" text="GSM:" />
       <HBox spacing="10">
          <children>
-            <Button fx:id="editBtn" onAction="#editSelectedGebruiker" text="Bewerken" />
-            <Button fx:id="clearBtn" onAction="#clearSelectedGebruiker" text="Klaar" />
+            <Button fx:id="editBtn" onAction="#editSelectedGebruiker" style="-fx-pref-width: 100px;" styleClass="edit" text="Bewerken" />
+            <Button fx:id="clearBtn" onAction="#clearSelectedGebruiker" style="-fx-pref-width: 100px;" styleClass="add" text="Klaar" />
          </children>
       </HBox>
 	   </children>

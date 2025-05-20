@@ -1,23 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="450.0" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AddOrEditSiteFrameController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="450.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AddOrEditSiteFrameController">
    <children>
-      <Label fx:id="hoofdLabel" text="Nieuwe Site Toevoegen">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+      <Label fx:id="hoofdLabel" styleClass="label-header-sub" text="Nieuwe Site Toevoegen">
       </Label>
       <GridPane hgap="10.0" vgap="10.0">
         <columnConstraints>
@@ -29,21 +19,21 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Site Naam:" GridPane.halignment="RIGHT" />
-            <TextField fx:id="naamField" GridPane.columnIndex="1" />
-            <Label text="Verantwoordelijke:" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-            <ComboBox fx:id="verantwoordelijkeBox" maxWidth="1.7976931348623157E308" promptText="Selecteer een verantwoordelijke..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" styleClass="label-detail-field" text="Site Naam:" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="0" />
+            <TextField fx:id="naamField" maxWidth="241.0" prefHeight="25.0" prefWidth="241.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" styleClass="label-detail-field" text="Verantwoordelijke:" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+            <ComboBox fx:id="verantwoordelijkeBox" maxWidth="240.0" prefHeight="25.0" prefWidth="240.0" promptText="Selecteer een verantwoordelijke..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
       </GridPane>
-      <HBox alignment="CENTER_RIGHT" spacing="10.0">
+      <HBox alignment="CENTER" spacing="10.0">
          <children>
-            <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#handleAnnuleren" text="Annuleren" />
-            <Button fx:id="submitBtn" mnemonicParsing="false" onAction="#handleOpslaan" text="Opslaan" />
+            <Button fx:id="cancelBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleAnnuleren" style="-fx-pref-width: 120px;" styleClass="cancel" text="Annuleren" textAlignment="CENTER" />
+            <Button fx:id="submitBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleOpslaan" style="-fx-pref-width: 120px;" styleClass="add" text="Opslaan" textAlignment="CENTER" />
          </children>
       </HBox>
        <Label fx:id="errorLabel" style="-fx-text-fill: red;" text="" />
    </children>
    <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
 </VBox>

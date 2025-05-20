@@ -37,7 +37,7 @@
                 <TableColumn fx:id="nameCol" prefWidth="150.0" text="Naam" />
                 <TableColumn fx:id="locationCol" prefWidth="150.0" text="Locatie" />
                 <TableColumn fx:id="statusCol" prefWidth="150.0" text="Status" />
-                <TableColumn fx:id="uptimeCol" prefWidth="150.0" text="Uptime" style="-fx-alignment: CENTER-RIGHT"/>
+                <TableColumn fx:id="uptimeCol" prefWidth="150.0" text="Uptime" />
             </columns>
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
