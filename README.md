@@ -3,8 +3,9 @@
 # _teamleden_
 
 | Name             | GitHub username |
-| ---------------- | --------------- |
+|------------------|-----------------|
 | Ali Aydinlioglu  | AliAydinlioglu  |
 | Oguz Aydinlioglu | OguzAydinlioglu |
 | Kamil Urtnowski  | kamilehh        |
-| ...              | ...             |
+| Seppe Dornon     | seppedornon     |
+| Andrej Bianco    | ABianco03       |
