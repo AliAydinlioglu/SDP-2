@@ -144,7 +144,8 @@ public class PopulateDB {
         gebruikerdao.startTransaction();
         try {
             createAndAddGebruiker("God", "De Schepper", LocalDate.of(0, 1, 1),
-                    "Paradijslaan", "1", "0000", "Paradijs", "Heaven", "god.deschepper@heaven.he", "0470000000",Rol.GOD, false);
+                    "Paradijslaan", "1", "0000", "Paradijs", "Heaven", "god.deschepper@heaven.he", "0470000000",
+                    Rol.GOD, false);
             createAndAddGebruiker("Jan", "Janssens", LocalDate.of(1980, 1, 15),
                     "Korenmarkt", "45", "9000", "Gent", "België", "jan.janssens@bedrijf.be", "0471234567",
                     Rol.ADMINISTRATOR, true);
@@ -1164,21 +1165,28 @@ public class PopulateDB {
 
             for (Gebruiker admin : admins) {
                 if (Math.random() < 0.8) {
-                    Log loginLog = new Log(admin, "Login", "Admin login op " + LocalDateTime.now()
-                            .minusDays((int) (Math.random() * 14)).truncatedTo(java.time.temporal.ChronoUnit.SECONDS));
+                    Log loginLog = Log.builder().gebruiker(admin).actie("Login")
+                            .opmerking("Admin login op " + LocalDateTime.now()
+                                    .minusDays((int) (Math.random() * 14))
+                                    .truncatedTo(java.time.temporal.ChronoUnit.SECONDS))
+                            .build();
                     logdao.insert(loginLog);
                     totalLogs++;
 
                     if (Math.random() < 0.7) {
-                        Log gebruikerLog = new Log(admin, "Gebruikersbeheer",
-                                "Nieuwe gebruiker toegevoegd: " + getRandomElement(this.gebruikers).getEmail());
+                        Log gebruikerLog = Log.builder().gebruiker(admin).actie("Gebruikersbeheer")
+                                .opmerking(
+                                        "Nieuwe gebruiker toegevoegd: " + getRandomElement(this.gebruikers).getEmail())
+                                .build();
                         logdao.insert(gebruikerLog);
                         totalLogs++;
                     }
 
                     if (Math.random() < 0.6) {
-                        Log machineLog = new Log(admin, "Machineconfiguratie",
-                                "Instellingen bijgewerkt voor machine " + getRandomElement(this.machines).getNaam());
+                        Log machineLog = Log.builder().gebruiker(admin).actie("Machineconfiguratie")
+                                .opmerking("Instellingen bijgewerkt voor machine "
+                                        + getRandomElement(this.machines).getNaam())
+                                .build();
                         logdao.insert(machineLog);
                         totalLogs++;
                     }
@@ -1187,14 +1195,16 @@ public class PopulateDB {
 
             for (Gebruiker verantwoordelijke : verantwoordelijken) {
                 if (Math.random() < 0.7) {
-                    Log loginLog = new Log(verantwoordelijke, "Login", "Verantwoordelijke login op " + LocalDateTime
-                            .now().minusDays((int) (Math.random() * 10)).truncatedTo(ChronoUnit.SECONDS));
+                    Log loginLog = Log.builder().gebruiker(verantwoordelijke).actie("Login")
+                            .opmerking("Verantwoordelijke login op " + LocalDateTime
+                                    .now().minusDays((int) (Math.random() * 10)).truncatedTo(ChronoUnit.SECONDS))
+                            .build();
                     logdao.insert(loginLog);
                     totalLogs++;
 
                     if (Math.random() < 0.6) {
-                        Log rapportLog = new Log(verantwoordelijke, "Rapport bekeken",
-                                "Maandelijks onderhoudsrapport gecontroleerd");
+                        Log rapportLog = Log.builder().gebruiker(verantwoordelijke).actie("Rapport bekeken")
+                                .opmerking("Maandelijks onderhoudsrapport gecontroleerd").build();
                         logdao.insert(rapportLog);
                         totalLogs++;
                     }
@@ -1203,24 +1213,28 @@ public class PopulateDB {
 
             for (Gebruiker technieker : techniekers) {
                 if (Math.random() < 0.9) {
-                    Log loginLog = new Log(technieker, "Login", "Technieker login op " + LocalDateTime.now()
-                            .minusDays((int) (Math.random() * 10)).truncatedTo(ChronoUnit.SECONDS));
+                    Log loginLog = Log.builder().gebruiker(technieker).actie("Login")
+                            .opmerking("Technieker login op " + LocalDateTime.now()
+                                    .minusDays((int) (Math.random() * 10)).truncatedTo(ChronoUnit.SECONDS))
+                            .build();
                     logdao.insert(loginLog);
                     totalLogs++;
 
                     if (Math.random() < 0.8) {
                         Machine machine = getRandomElement(this.machines);
-                        Log onderhoudLog = new Log(technieker, "Onderhoud uitgevoerd",
-                                "Routine onderhoud op " + machine.getNaam() + " afgerond. "
-                                        + getRandomOnderhoudOpmerkingen(false));
+                        Log onderhoudLog = Log.builder().gebruiker(technieker).actie("Onderhoud uitgevoerd")
+                                .opmerking("Routine onderhoud op " + machine.getNaam() + " afgerond. "
+                                        + getRandomOnderhoudOpmerkingen(false))
+                                .build();
                         logdao.insert(onderhoudLog);
                         totalLogs++;
                     }
 
                     if (Math.random() < 0.4) {
-                        Log storingLog = new Log(technieker, "Storing verholpen",
-                                "Storing opgelost op " + getRandomElement(this.machines).getNaam() + ". "
-                                        + getRandomOnderhoudOpmerkingen(true));
+                        Log storingLog = Log.builder().gebruiker(technieker).actie("Storing verholpen")
+                                .opmerking("Storing opgelost op " + getRandomElement(this.machines).getNaam() + ". "
+                                        + getRandomOnderhoudOpmerkingen(true))
+                                .build();
                         logdao.insert(storingLog);
                         totalLogs++;
                     }
@@ -1229,14 +1243,15 @@ public class PopulateDB {
 
             for (Gebruiker manager : managers) {
                 if (Math.random() < 0.6) {
-                    Log loginLog = new Log(manager, "Login", "Manager login op "
-                            + LocalDateTime.now().minusDays((int) (Math.random() * 5)).truncatedTo(ChronoUnit.SECONDS));
+                    Log loginLog = Log.builder().gebruiker(manager).actie("Login").opmerking("Manager login op "
+                            + LocalDateTime.now().minusDays((int) (Math.random() * 5)).truncatedTo(ChronoUnit.SECONDS))
+                            .build();
                     logdao.insert(loginLog);
                     totalLogs++;
 
                     if (Math.random() < 0.5) {
-                        Log rapportLog = new Log(manager, "Rapport geëxporteerd",
-                                "Productierapport geëxporteerd voor analyse");
+                        Log rapportLog = Log.builder().gebruiker(manager).actie("Rapport geëxporteerd")
+                                .opmerking("Productierapport geëxporteerd voor analyse").build();
                         logdao.insert(rapportLog);
                         totalLogs++;
                     }
@@ -1246,16 +1261,18 @@ public class PopulateDB {
             if (!admins.isEmpty()) {
                 Gebruiker adminUser = getRandomElement(admins);
 
-                Log updateLog = new Log(adminUser, "Systeemupdate", "Software update v2.1 geïnstalleerd");
+                Log updateLog = Log.builder().gebruiker(adminUser).actie("Systeemupdate")
+                        .opmerking("Software update v2.1 geïnstalleerd").build();
                 logdao.insert(updateLog);
                 totalLogs++;
 
-                Log backupLog = new Log(adminUser, "Database backup", "Automatische backup uitgevoerd");
+                Log backupLog = Log.builder().gebruiker(adminUser).actie("Database backup")
+                        .opmerking("Automatische backup uitgevoerd").build();
                 logdao.insert(backupLog);
                 totalLogs++;
 
-                Log securityLog = new Log(adminUser, "Security alert",
-                        "Meerdere mislukte inlogpogingen gedetecteerd van IP 192.168.1.35");
+                Log securityLog = Log.builder().gebruiker(adminUser).actie("Security alert")
+                        .opmerking("Meerdere mislukte inlogpogingen gedetecteerd van IP 192.168.1.35").build();
                 logdao.insert(securityLog);
                 totalLogs++;
             }
