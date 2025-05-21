@@ -214,7 +214,9 @@
 
 }
 
-.button.delete, .button.back, .button.cancel {
+.button.delete,
+.button.back,
+.button.cancel {
     -fx-background-color: #FF0000;
     -fx-text-fill: white;
     -fx-border-color: #4D0000;
@@ -222,11 +224,15 @@
 }
 
 
-.button.delete:hover, .button.back:hover, .button.cancel:hover {
+.button.delete:hover,
+.button.back:hover,
+.button.cancel:hover {
     -fx-background-color: #CC0000;
 }
 
-.button.delete:pressed, .button.back:pressed, .button.cancel:pressed {
+.button.delete:pressed,
+.button.back:pressed,
+.button.cancel:pressed {
     -fx-background-color: #800000;
 }
 
@@ -324,6 +330,51 @@
 
 .button.login:pressed {
     -fx-background-color: #D0D0D0;
+}
+
+.button-start {
+    -fx-background-color: #28A745;
+    -fx-text-fill: white;
+    -fx-border-color: #1e7e34;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+}
+
+.button-start:hover {
+    -fx-background-color: #218838;
+}
+
+.button-start:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.button-stop {
+    -fx-background-color: #DC3545;
+    /* Red */
+    -fx-text-fill: white;
+    -fx-border-color: #c82333;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+}
+
+.button-stop:hover {
+    -fx-background-color: #c82333;
+}
+
+.button-stop:pressed {
+    -fx-background-color: #bd2130;
+}
+
+.button-disabled {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #5a6268;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.65;
 }
 
 .button.notification {

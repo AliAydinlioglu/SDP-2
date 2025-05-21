@@ -196,6 +196,59 @@ public class MachineController {
         }
     }
 
+    public void updateMachineStatus(int machineId, MachineStatus newStatus) {
+        Machine machine = data.stream()
+                .filter(m -> m.getMachineID() == machineId)
+                .findFirst()
+                .orElse(null);
+
+        if (machine == null) {
+            machine = machineDaoJpa.get(machineId);
+            if (machine == null) {
+                throw new IllegalArgumentException("Machine with ID " + machineId + " not found.");
+            }
+        }
+
+        MachineStatus oldStatus = machine.getStatus();
+        machine.setStatus(newStatus);
+
+        try {
+            machineDaoJpa.startTransaction();
+            machineDaoJpa.update(machine);
+            machineDaoJpa.commitTransaction();
+
+            int dataIndex = -1;
+            for (int i = 0; i < data.size(); i++) {
+                if (data.get(i).getMachineID() == machineId) {
+                    dataIndex = i;
+                    break;
+                }
+            }
+            if (dataIndex != -1) {
+                data.set(dataIndex, machine);
+            }
+
+            MachineDTO updatedDTO = MachineDTO.fromEntity(machine);
+            MachineDTO existingDTO = machineList.stream()
+                    .filter(m -> m.id() == machineId)
+                    .findFirst()
+                    .orElse(null);
+            if (existingDTO != null) {
+                machineList.set(machineList.indexOf(existingDTO), updatedDTO);
+            }
+
+            if (isMachineStopped(newStatus) && !isMachineStopped(oldStatus)) {
+                createMachineStatusNotification(machine, "Machine Gestopt");
+            } else if (newStatus == MachineStatus.DRAAIT && isMachineStopped(oldStatus)) {
+                createMachineStatusNotification(machine, "Machine Gestart");
+            }
+
+        } catch (Exception e) {
+            machineDaoJpa.rollbackTransaction();
+            throw new IllegalArgumentException("Machine status kon niet worden aangepast: " + e.getMessage());
+        }
+    }
+
     public void addMachine(Machine machine) {
         try {
             machineDaoJpa.startTransaction();

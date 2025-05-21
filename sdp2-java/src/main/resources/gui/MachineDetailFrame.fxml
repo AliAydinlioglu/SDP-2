@@ -77,6 +77,11 @@
                             <Label minWidth="100" text="Technieker:" styleClass="label-detail-field"/>
                             <Label fx:id="lblMachineTechnieker" styleClass="label-detail-value"/>
                         </HBox>
+                        <Button fx:id="btnStartStop" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0">
+                            <VBox.margin>
+                                <Insets top="10.0" bottom="10.0"/>
+                            </VBox.margin>
+                        </Button>
                         <Label style="-fx-font-weight: bold; -fx-padding-top: 10;" text="Onderhoudsinformatie:" styleClass="label-header-sub">
                             <VBox.margin>
                                 <Insets top="5.0"/>

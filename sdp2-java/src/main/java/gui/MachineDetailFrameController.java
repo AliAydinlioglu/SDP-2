@@ -6,6 +6,7 @@ import domain.OnderhoudController;
 import dto.GebruikerDTO;
 import dto.MachineDTO;
 import dto.OnderhoudDTO;
+import enums.MachineStatus;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -59,6 +60,9 @@ public class MachineDetailFrameController extends HBox { // Adjust layout type i
     @FXML
     private Button btnTerug;
 
+    @FXML
+    private Button btnStartStop;
+
     private MachineController machineController;
     private OnderhoudController onderhoudController;
     private MachineDTO selectedMachine;
@@ -85,6 +89,7 @@ public class MachineDetailFrameController extends HBox { // Adjust layout type i
         initializeMachineDetails();
         initializeOnderhoudTable();
         initializeEventListeners();
+        updateStartStopButtonState();
     }
 
     private void initializeMachineDetails() {
@@ -164,6 +169,7 @@ public class MachineDetailFrameController extends HBox { // Adjust layout type i
 
     private void initializeEventListeners() {
         btnTerug.setOnAction(event -> handleBackButton());
+        btnStartStop.setOnAction(event -> handleStartStopButton());
     }
 
     private void handleBackButton() {
@@ -178,6 +184,72 @@ public class MachineDetailFrameController extends HBox { // Adjust layout type i
         } catch (Exception e) {
             AlertHelper.showError("Could not return to the machine list.", e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private void handleStartStopButton() {
+        if (selectedMachine == null) return;
+
+        MachineStatus currentStatus = selectedMachine.status();
+        MachineStatus newStatus = null;
+
+        if (currentStatus == MachineStatus.DRAAIT) {
+            newStatus = MachineStatus.GESTOPT_MANUEEL;
+        } else if (currentStatus == MachineStatus.GESTOPT_AUTO || 
+                   currentStatus == MachineStatus.GESTOPT_MANUEEL || 
+                   currentStatus == MachineStatus.STARTBAAR) {
+            newStatus = MachineStatus.DRAAIT;
+        }
+
+        if (newStatus != null) {
+            try {
+                machineController.updateMachineStatus(selectedMachine.id(), newStatus);
+                selectedMachine = machineController.getMachine(selectedMachine.id()); 
+                initializeMachineDetails();
+                updateStartStopButtonState(); 
+                String logMessage = String.format("Machine %s status changed to %s by user %s", 
+                                                selectedMachine.naam(), 
+                                                newStatus, 
+                                                ingelogdeGebruiker.email());
+                logController.addLog(ingelogdeGebruiker, "Machine status change", logMessage);
+            } catch (Exception e) {
+                AlertHelper.showError("Error updating machine status", e.getMessage());
+            }
+        }
+    }
+
+    private void updateStartStopButtonState() {
+        if (selectedMachine == null) {
+            btnStartStop.setDisable(true);
+            btnStartStop.setText("N/A");
+            return;
+        }
+
+        MachineStatus status = selectedMachine.status();
+        btnStartStop.getStyleClass().removeAll("button-start", "button-stop", "button-disabled");
+
+        switch (status) {
+            case DRAAIT:
+                btnStartStop.setText("Stop");
+                btnStartStop.getStyleClass().add("button-stop");
+                btnStartStop.setDisable(false);
+                break;
+            case GESTOPT_AUTO:
+            case GESTOPT_MANUEEL:
+            case STARTBAAR:
+                btnStartStop.setText("Start");
+                btnStartStop.getStyleClass().add("button-start");
+                btnStartStop.setDisable(false);
+                break;
+            case IN_ONDERHOUD:
+                btnStartStop.setText("Start");
+                btnStartStop.getStyleClass().add("button-disabled");
+                btnStartStop.setDisable(true);
+                break;
+            default:
+                btnStartStop.setText("N/A");
+                btnStartStop.setDisable(true);
+                break;
         }
     }
 }
