@@ -45,6 +45,7 @@
                         <Insets top="10.0" />
                     </VBox.margin>
                 </Label>
+                <Button fx:id="btnAddOnderhoud" text="Onderhoud Toevoegen" styleClass="add" />
                 <TableView fx:id="machineTable" prefHeight="250.0" VBox.vgrow="ALWAYS" styleClass="table-view-general">
                     <columns>
                         <TableColumn fx:id="naamCol" prefWidth="150" text="Naam Machine" />
