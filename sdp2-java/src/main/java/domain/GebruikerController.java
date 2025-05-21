@@ -122,16 +122,21 @@ public class GebruikerController {
             // Assuming wachtwoord needs to be set, e.g. a default or generated one
             // nieuweGebruiker.setWachtwoord("DefaultPassword123!"); // Example
 
-            gebruikerRepo.startTransaction();
-            gebruikerRepo.insert(nieuweGebruiker);
-            gebruikerRepo.commitTransaction();
+            try {
+            	gebruikerRepo.startTransaction();
+                gebruikerRepo.insert(nieuweGebruiker);
+                gebruikerRepo.commitTransaction();
 
-            data.add(nieuweGebruiker);
-            gebruikerList.add(GebruikerDTO.fromEntity(nieuweGebruiker));
+                data.add(nieuweGebruiker);
+                gebruikerList.add(GebruikerDTO.fromEntity(nieuweGebruiker));
+			} catch (Exception e) {
+				gebruikerRepo.rollbackTransaction();
+				throw new IllegalArgumentException("Gebruiker kon niet worden toegevoegd: " + e.getMessage());
+			}
 
         } catch (Exception e) {
-            gebruikerRepo.rollbackTransaction();
             throw new IllegalArgumentException("Gebruiker kon niet worden toegevoegd: " + e.getMessage());
+            
         }
     }
 

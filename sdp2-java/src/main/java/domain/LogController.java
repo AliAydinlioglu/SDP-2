@@ -88,14 +88,19 @@ public class LogController {
                     .gebruiker(gebruiker)
                     .opmerking(opmerking)
                     .build();
-            logRepo.startTransaction();
-            logRepo.insert(l);
-            logRepo.commitTransaction();
-            logList.add(LogDTO.fromEntity(l));
-            data.add(l);
+            try {
+            	logRepo.startTransaction();
+                logRepo.insert(l);
+                logRepo.commitTransaction();
+                logList.add(LogDTO.fromEntity(l));
+                data.add(l);
+			} catch (Exception e) {
+				logRepo.rollbackTransaction();
+				throw new IllegalArgumentException(e.getMessage());
+			}
 
         } catch (Exception e) {
-            logRepo.rollbackTransaction();
+            
             throw new IllegalArgumentException(e.getMessage());
         }
     }
