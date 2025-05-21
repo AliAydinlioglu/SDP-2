@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @Table(name= "logs")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Log implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -37,13 +38,14 @@ public class Log implements Serializable {
 	private String actie;
 
 	private String opmerking;
-
-	public Log(Gebruiker gebruiker, String actie, String opmerking) {
-		setGebruiker(gebruiker);
-		setDate(LocalDateTime.now());
-		setActie(actie);
-		setOpmerking(opmerking);
+	
+	private Log(Gebruiker gebruiker, String actie, String opmerking, LocalDateTime date) {
+		this.gebruiker = gebruiker;
+		this.actie = actie;
+		this.opmerking = opmerking;
+		this.date = date;
 	}
+
 
 	public static class Builder {
 		private Gebruiker gebruiker;
@@ -78,7 +80,7 @@ public class Log implements Serializable {
 			if (actie == null || actie.isBlank()) {
 				throw new IllegalStateException("Actie is verplicht");
 			}
-			return new Log(gebruiker, actie, opmerking);
+			return new Log(gebruiker, actie, opmerking, LocalDateTime.now());
 		}
 	}
 

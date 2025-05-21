@@ -51,7 +51,11 @@ class LogControllerTest {
 
     @Test
     void constructor_initializesAndLoadsLogs() {
-        List<Log> dummyLogs = List.of(new Log(VALID_GEBRUIKER, "Action", "Detail"));
+        List<Log> dummyLogs = List.of(Log.builder()
+				.gebruiker(VALID_GEBRUIKER)
+				.actie("Action")
+				.opmerking("Details")
+				.build());
         when(mockLogDao.findAll()).thenReturn(dummyLogs);
 
         logController = new LogController(mockLogDao, gebruikerController);
@@ -63,7 +67,13 @@ class LogControllerTest {
 
     @Test
     void getAllLogs_returnsCorrectLogs() {
-        Log log1 = new Log(VALID_GEBRUIKER, "Ingelogd", "Login detail");
+        Log log1 = Log.builder()
+				.gebruiker(VALID_GEBRUIKER)
+				.actie("Ingelogd")
+				.opmerking("Details over de actie")
+				.build();
+
+		//when(gebruikerRepo.get(0)).thenReturn(VALID_GEBRUIKER);
         when(mockLogDao.findAll()).thenReturn(List.of(log1));
 
         logController = new LogController(mockLogDao, gebruikerController);

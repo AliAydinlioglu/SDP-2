@@ -131,8 +131,7 @@ public class GebruikerController {
 
         } catch (Exception e) {
             gebruikerRepo.rollbackTransaction();
-            AlertHelper.showError("Fout bij toevoegen gebruiker", e.getMessage());
-            e.printStackTrace(); // For debugging
+            throw new IllegalArgumentException("Gebruiker kon niet worden toegevoegd: " + e.getMessage());
         }
     }
 
