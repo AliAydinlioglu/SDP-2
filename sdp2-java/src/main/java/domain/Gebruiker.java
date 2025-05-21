@@ -102,7 +102,7 @@ public class Gebruiker implements Serializable {
         setActief(actief);
 
         
-        setWachtwoord(voornaam + "." + achternaam);
+        setWachtwoord(voornaam + "." + achternaam.replaceAll(" ", ""));
         // secure wachtwoord genereren 
         //Optioneel om met email te versturen
         //setWachtwoord(generatePassword());

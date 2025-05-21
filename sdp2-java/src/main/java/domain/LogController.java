@@ -82,7 +82,6 @@ public class LogController {
 
     public void addLog(GebruikerDTO g, String actie, String opmerking) {
         Gebruiker gebruiker = gebruikerController.getRealGebruiker(g.id());
-        System.out.println("LogController: gebruiker: " + gebruiker);
         try {
             Log l = Log.builder()
                     .actie(actie)
@@ -96,7 +95,6 @@ public class LogController {
             data.add(l);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             logRepo.rollbackTransaction();
             throw new IllegalArgumentException(e.getMessage());
         }

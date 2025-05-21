@@ -13,7 +13,11 @@ public class LogTest {
         String actie = "Ingelogd";
         String opmerking = "Gebruiker is succesvol ingelogd";
 
-        Log log = new Log(gebruiker, actie, opmerking);
+        Log log = Log.builder()
+				.gebruiker(gebruiker)
+				.actie(actie)
+				.opmerking(opmerking)
+				.build();
 
         assertEquals(gebruiker, log.getGebruiker());
         assertEquals(actie, log.getActie());
@@ -25,21 +29,33 @@ public class LogTest {
     @Test
     public void createLogGebruikerNull_Exception() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Log(null, "Actie", "Opmerking");
+        	Log.builder()
+			.gebruiker(null)
+			.actie("Test")
+			.opmerking("Test")
+			.build();;
         });
     }
 
     @Test
     public void createLogActieNull_Exception() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Log(new Gebruiker(), null, "Opmerking");
+        	Log.builder()
+			.gebruiker(new Gebruiker())
+			.actie(null)
+			.opmerking("test")
+			.build();
         });
     }
 
     @Test
     public void createLogActieBlank_Exception() {
     	assertThrows(IllegalArgumentException.class, () -> {
-            new Log(new Gebruiker(), "   ", "Opmerking");
+    		Log.builder()
+			.gebruiker(new Gebruiker())
+			.actie("    ")
+			.opmerking("test")
+			.build();
         });
     }
 }
