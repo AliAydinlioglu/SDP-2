@@ -130,8 +130,8 @@ public class MachineListFrameController extends VBox {
     }
 
     private void initializeForm() {
-        boolean canManageMachines = ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE || ingelogdeGebruiker.rol() == Rol.GOD;
-        boolean canAddOnderhoud = ingelogdeGebruiker.rol() == Rol.TECHNIEKER || canManageMachines;
+        boolean canManageMachines = ingelogdeGebruiker.rol() == Rol.VERANTWOORDELIJKE || ingelogdeGebruiker.rol() == Rol.GOD || ingelogdeGebruiker.rol() == Rol.TECHNIEKER;
+        boolean canAddOnderhoud = ingelogdeGebruiker.rol() == Rol.TECHNIEKER || ingelogdeGebruiker.rol() == Rol.GOD;
 
         addMachineBtn.setVisible(canManageMachines);
         addMachineBtn.setManaged(canManageMachines);
