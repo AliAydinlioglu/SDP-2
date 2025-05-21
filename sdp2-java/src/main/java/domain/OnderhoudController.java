@@ -103,13 +103,7 @@ public class OnderhoudController {
                     .status(status)
                     .machineId(machine.getMachineID()) // Changed from .machine(machine)
                     .build();
-
-            onderhoudDao.startTransaction();
-            onderhoudDao.insert(nieuwOnderhoud);
-            onderhoudDao.commitTransaction();
-
-            onderhoudList.add(OnderhoudDTO.fromEntity(nieuwOnderhoud));
-
+            
             Gebruiker siteVerantwoordelijke = machine.getSite().getVerantwoordelijke();
             if (siteVerantwoordelijke != null) {
                 String titel = String.format("Nieuw onderhoud gepland voor machine %s", machine.getNaam());
@@ -123,6 +117,14 @@ public class OnderhoudController {
                         machine.getNaam());
                 createOnderhoudNotification(nieuwOnderhoud, titelTechnieker, technieker);
             }
+
+            onderhoudDao.startTransaction();
+            onderhoudDao.insert(nieuwOnderhoud);
+            onderhoudDao.commitTransaction();
+
+            onderhoudList.add(OnderhoudDTO.fromEntity(nieuwOnderhoud));
+
+            
 
         } catch (Exception e) {
             onderhoudDao.rollbackTransaction();
