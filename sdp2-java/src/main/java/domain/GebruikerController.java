@@ -115,8 +115,8 @@ public class GebruikerController {
                     .geboorteDatum(geboortedatum)
                     .adres(adres)
                     .email(email)
-                    .gsm(gsm)
                     .rol(rol)
+                    .gsm(gsm)
                     .actief(actief)
                     .build();
             // Assuming wachtwoord needs to be set, e.g. a default or generated one
@@ -206,8 +206,8 @@ public class GebruikerController {
                 .land(bewerkteDTO.adres().land())
                 .build());
         g.setEmail(bewerkteDTO.email());
-        g.setGsm(bewerkteDTO.gsm());
         g.setRol(bewerkteDTO.rol());
+        g.setGsm(bewerkteDTO.gsm());
         g.setActief(bewerkteDTO.actief());
 
         try {

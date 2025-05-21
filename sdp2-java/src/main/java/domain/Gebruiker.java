@@ -232,6 +232,9 @@ public class Gebruiker implements Serializable {
         }
 
         public Builder gsm(String gsm) {
+        	if (rol.equals(Rol.TECHNIEKER) && (gsm == null || gsm.isBlank())) {
+                throw new IllegalArgumentException("Technieker moet een gsm-nummer hebben.");
+            }
             this.gsm = gsm;
             return this;
         }
