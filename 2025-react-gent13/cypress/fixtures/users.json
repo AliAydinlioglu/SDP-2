@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "voornaam": "John",
+    "achternaam": "Doe",
+    "email": "john.doe@example.com",
+    "gsm_nr": "1234567890",
+    "geboorteDatum": "1990-01-01",
+    "straat": "Main St",
+    "huis_nr": "123",
+    "stad": "City",
+    "postcode": "12345",
+    "land": "Country",
+    "rol": "TECHNIEKER",
+    "actief": true
+  },
+  {
+    "id": 2,
+    "voornaam": "Jane",
+    "achternaam": "Smith",
+    "email": "jane.smith@example.com",
+    "gsm_nr": "0987654321",
+    "geboorteDatum": "1985-05-05",
+    "straat": "Second St",
+    "huis_nr": "456",
+    "stad": "Town",
+    "postcode": "67890",
+    "land": "Country",
+    "rol": "MANAGER",
+    "actief": false
+  }
+]

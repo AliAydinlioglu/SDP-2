@@ -1,0 +1,46 @@
+{
+  "name": "2025-react-gent13",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Software Development Project 2: front-end for Delaware project",
+  "repository": "https://github.com/HoGentProjectenII/2025-react-gent13.git",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "cypress open"
+  },
+  "dependencies": {
+    "@typescript-eslint/utils": "^8.25.0",
+    "axios": "^1.8.4",
+    "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
+    "react-dom": "^19.0.0",
+    "react-grid-layout": "^1.5.0",
+    "react-hook-form": "^7.54.2",
+    "react-icons": "^5.5.0",
+    "react-resizable": "^3.0.5",
+    "react-router": "~6.26.0",
+    "react-router-dom": "~6.26.0",
+    "recharts": "^2.15.1",
+    "swr": "^2.3.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@stylistic/eslint-plugin": "^4.0.1",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "cypress": "^14.1.0",
+    "eslint": "^9.19.0",
+    "eslint-plugin-cypress": "^4.1.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "vite": "^6.1.0"
+  },
+  "packageManager": "yarn@4.6.0"
+}

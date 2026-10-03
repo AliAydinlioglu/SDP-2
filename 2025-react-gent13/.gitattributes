@@ -1,0 +1,25 @@
+# Set default behavior to automatically normalize line endings to LF
+* text=auto eol=lf
+
+# Source files
+*.js text eol=lf
+*.ts text eol=lf
+*.jsx text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+
+# Docker & Config
+Dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+.env* text eol=lf
+
+# Binaries
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary

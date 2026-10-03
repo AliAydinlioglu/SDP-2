@@ -1,0 +1,45 @@
+# 2025-react-gent13
+
+# _teamleden_
+
+| Name             | GitHub username |
+| ---------------- | --------------- |
+| Ali Aydinlioglu  | AliAydinlioglu  |
+| Oguz Aydinlioglu | OguzAydinlioglu |
+| Kamil Urtnowski  | kamilehh        |
+| Seppe Dornon     | seppedornon     |
+| Andrej Bianco    | ABianco03       |
+
+## **Projectoverzicht**
+
+Deze website biedt een platform voor het beheren van sites (grondplannen) en machines. Gebruikers moeten inloggen om toegang te krijgen.
+
+### **Belangrijke Functionaliteiten**
+
+- **Dashboard**: Aanpasbaar en afhankelijk van de rol van de gebruiker. Toegang via het *Delaware*-logo.
+- **Sites Beheer**: Overzicht van alle sites, inclusief details en machines. Managers kunnen nieuwe sites aanmaken en bestaande bewerken.
+- **Machines Beheer**: Lijst met machines, zoek- en filteropties, en de mogelijkheid om nieuwe machines toe te voegen en bestaande te bewerken.
+- **Users Beheer**: Tabel met alle gebruikers, zoek- en filtermogelijkheden, en opties om gebruikers toe te voegen, bewerken of soft-deleten.
+
+
+## Opstarten
+
+Zorg ervoor dat Corepack is ingeschakeld:
+
+```bash
+corepack enable
+```
+
+Installeer alle afhankelijkheden met het volgende commando:
+
+```bash
+yarn install
+```
+
+Voeg een .env file toe in de root folder met de url naar de API en images:
+
+```dotenv
+VITE_API_URL='http://localhost:9000/api'
+```
+
+Start de app door `yarn dev` te gebruiken. Het draait standaard op <http://localhost:5137>
