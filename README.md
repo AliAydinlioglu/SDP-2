@@ -20,7 +20,7 @@ This repository contains the full multi-tier software project developed for the 
                                                   │ Prisma ORM
                                                   ▼
 ┌────────────────────────┐            ┌──────────────────────────────┐
-│  JavaFX Desktop App    │  ──JDBC─▶ │        MySQL Database        │
+│  JavaFX Desktop App    │  ──JDBC─▶  │        MySQL Database        │
 │      (sdp2-java)       │            │   (Port 3307 internal:3306)  │
 └────────────────────────┘            └──────────────────────────────┘
 ```
@@ -72,12 +72,3 @@ The database is automatically initialized and seeded on first startup with the f
 | `geralt@gmail.com` | `12345678` | **Administrator** |
 | `triss@gmail.com` | `12345678` | **Technieker** |
 | `yennefer@gmail.com` | `12345678` | **Gebruiker** |
-
----
-
-## 💻 Cross-Platform Compatibility (Linux & Windows)
-
-- **Line Endings**: `.gitattributes` files are configured across all sub-repositories to enforce LF line endings and prevent CRLF conversion issues.
-- **Path Separators**: Paths in `.gitignore` and configuration files use standard forward slashes (`/`).
-- **Container Networking**: Vite and Koa are configured to bind to `0.0.0.0` so they are accessible from both host and Docker networks.
-- **MySQL Case Sensitivity**: Configured with `--lower_case_table_names=1` to ensure database tables behave consistently on both Linux and Windows.
