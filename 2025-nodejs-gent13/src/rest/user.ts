@@ -1,0 +1,138 @@
+import { Context } from "koa";
+import userService from "../service/user";
+import Router from "@koa/router";
+import Joi from "joi";
+import validation from "../core/validation";
+import endpoints from "../constants/endpoints";
+import { Rol } from "@prisma/client";
+import textCodes from "../constants/textCodes";
+import permissionCheck from "../core/CRUDPerms";
+
+const getSelf = async (ctx: Context) => {
+    ctx.body = await userService.find(ctx.user_id);
+    ctx.status = 200;
+};
+
+const findAnyUser = async (ctx: Context) => {
+    // Only Administrators can view details of any user
+    await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
+    ctx.body = await userService.find(Number(ctx.params.id));
+    ctx.status = 200;
+};
+
+const findAllUsers = async (ctx: Context) => {
+    // Only Administrators allowed to view all users
+    await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
+    ctx.body = await userService.findAll();
+    ctx.status = 200;
+};
+
+const updateUser = {
+    execute: async (ctx: Context) => {
+        // Only Administrators can update any user
+        await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
+        const user = ctx.request.body as {
+            voornaam: string;
+            achternaam: string;
+            email: string;
+            gsm_nr?: string;
+            geboorteDatum: Date;
+            straat: string;
+            huis_nr: string;
+            stad: string;
+            postcode: string;
+            land: string;
+            password: string;
+            actief: boolean;
+            rol: Rol;
+        };
+        await userService.updateUser(Number(ctx.params.id), user);
+        ctx.status = 200;
+    },
+    schema: {
+        body: Joi.object({
+            voornaam: Joi.string(),
+            achternaam: Joi.string(),
+            email: Joi.string().email(),
+            password: Joi.string(),
+            straat: Joi.string(),
+            huis_nr: Joi.string(),
+            geboorteDatum: Joi.date(),
+            postcode: Joi.string().pattern(/^\d{4,5}$/),
+            stad: Joi.string(),
+            land: Joi.string(),
+            gsm_nr: Joi.string().optional(),
+            actief: Joi.boolean(),
+            rol: Joi.string(),
+        }).min(1),
+    },
+};
+
+const updateSelf = {
+    execute: async (ctx: Context) => {
+        // All logged-in users can update their own profiles
+        const user = ctx.request.body as {
+            voornaam: string;
+            achternaam: string;
+            email: string;
+            gsm_nr?: string;
+            geboorteDatum: Date;
+            straat: string;
+            huis_nr: string;
+            stad: string;
+            postcode: string;
+            land: string;
+            password: string;
+            actief: boolean;
+            rol: Rol;
+        };
+        await userService.updateUser(ctx.user_id, user);
+        ctx.status = 200;
+    },
+    schema: {
+        body: Joi.object({
+            voornaam: Joi.string(),
+            achternaam: Joi.string(),
+            email: Joi.string().email(),
+            password: Joi.string(),
+            straat: Joi.string(),
+            huis_nr: Joi.string(),
+            geboorteDatum: Joi.date(),
+            postcode: Joi.string().pattern(/^\d{4,5}$/),
+            stad: Joi.string(),
+            land: Joi.string(),
+            gsm_nr: Joi.string().optional(),
+            actief: Joi.boolean(),
+            rol: Joi.string(),
+        }).min(1),
+    },
+};
+
+const deleteUser = async (ctx: Context) => {
+    // Only Administrators can delete users
+    await permissionCheck([Rol.ADMINISTRATOR], ctx.user_id);
+    await userService.deleteUser(Number(ctx.params.id));
+    ctx.status = 200;
+    ctx.body = { message: "User deleted" };
+};
+
+const installRouter = (parentRouter: Router) => {
+    const router = new Router({
+        prefix: endpoints.userPrefix,
+    });
+
+    router.use(validation.validateSchema(validation.headerAuthorizationSchema));
+
+    router.get(endpoints.userSelfEndpoint, getSelf); // /users/me
+    router.get(endpoints.userUserEndpoint + ":id", findAnyUser); // /users/:id
+    router.get(endpoints.userUserEndpoint, findAllUsers); // /users
+
+    router.put(endpoints.userSelfEndpoint, validation.validateSchema(updateSelf.schema), updateSelf.execute); // /users/me
+    router.put(endpoints.userUserEndpoint + ":id", validation.validateSchema(updateUser.schema), updateUser.execute); // /users/:id
+
+    router.delete(endpoints.userUserEndpoint + ":id", deleteUser); // /users
+
+    parentRouter.use(router.routes()).use(router.allowedMethods());
+};
+
+export default { installRouter };
