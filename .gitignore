@@ -1,15 +1,15 @@
-target
-.git
-.settings
+# Target and IDE
+**/target/
+**/.idea/
+.settings/
 .classpath
 .project
-.idea/
 .DS_Store
-.vscode
+.vscode/
 
 *.properties
 
-2025-java-gent13\sdp2-java\src\main\resources\META-INF\persistence.xml
+sdp2-java/src/main/resources/META-INF/persistence.xml
 
 
 sdp2-java/src/main/resources/config/dev.properties
