@@ -1,0 +1,10 @@
+package enums;
+
+public enum Rol {
+	GOD,
+	ADMINISTRATOR,
+	MANAGER,
+	VERANTWOORDELIJKE,
+	TECHNIEKER, 
+	GEBRUIKER,
+}

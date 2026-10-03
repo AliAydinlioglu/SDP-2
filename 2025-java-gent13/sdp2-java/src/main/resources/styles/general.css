@@ -1,0 +1,436 @@
+/* =====================
+   SIDEBAR STIJLEN
+   ===================== */
+#toolbar {
+    -fx-background-color: #00000066;
+    -fx-border-color: black;
+    -fx-padding: 20px;
+    -fx-spacing: 10px;
+    -fx-border-width: 1px;
+}
+
+#sidebar {
+    -fx-alignment: top-left;
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+    -fx-background-color: #00000066;
+    -fx-border-color: black black #00000066 black;
+    -fx-border-width: 0 1px 1px 1px
+}
+
+/* Sidebar knoppen */
+.sidebar-button {
+    -fx-font-size: 16px;
+    -fx-padding: 10px;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+    -fx-border-width: 1px;
+    -fx-alignment: center-left;
+    -fx-text-fill: black;
+    -fx-border-color: transparent;
+
+}
+
+.sidebar-button:hover {
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.sidebar-button:pressed,
+.sidebar-button:selected {
+    -fx-alignment: center-left;
+    -fx-border-color: transparent;
+}
+
+/* =====================
+   CONTAINERS & OVERZICHTEN
+   ===================== */
+
+/* Algemene container */
+.container-main {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+}
+
+/* =====================
+   HEADERS
+   ===================== */
+
+/* Hoofdheader */
+.label-header-main {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #B22222;
+}
+
+
+/* Subheader */
+.label-header-sub {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #B22222;
+}
+
+/* Overzicht header */
+.label-header-overview {
+    -fx-text-fill: #FF0000;
+}
+
+/* Detail hoofdheader */
+.label-header-detail-main {
+    -fx-text-fill: white;
+}
+
+/* =====================
+   TABEL STIJLEN
+   ===================== */
+
+/* Algemene tabel styling */
+.table-view-general {
+    -fx-background-color: #333333;
+    -fx-border-color: #550000;
+    -fx-selection-bar: #B22222;
+    -fx-selection-bar-text: white;
+}
+
+/* Kolom header achtergrond */
+.table-view-general .column-header-background {
+    -fx-background-color: #D3D3D3;
+    -fx-border-color: #444444;
+    -fx-border-width: 0 0 2px 0;
+}
+
+/* Kolom header label */
+.table-view-general .column-header .label {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 8px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Rij styling */
+.table-view-general .table-row-cell {
+    -fx-background-color: #2C2C2C;
+    -fx-border-color: #404040;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 0px;
+}
+
+/* Eerste rij geen border */
+.table-view-general .table-row-cell:first-child {
+    -fx-border-width: 0;
+}
+
+/* Cel styling */
+.table-view-general .table-cell {
+    -fx-text-fill: #F0F0F0;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 8px;
+}
+
+/* Geselecteerde rij */
+.table-view-general .table-row-cell:selected {
+    -fx-background-color: #B22222;
+}
+
+.table-view-general .table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+}
+
+/* Placeholder label in tabel */
+.table-view-general .placeholder .label {
+    -fx-text-fill: #A0A0A0;
+}
+
+/* Specifieke kolom uitlijning - rechter uitlijning */
+.table-view-general .table-column.align-right .label {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-padding: 10px 15px 10px 8px;
+}
+
+.table-view-general .table-column.align-right.table-cell {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-padding: 8px 15px 8px 8px;
+}
+
+/* Inactieve rij */
+.table-row-cell.inactive {
+    -fx-background-color: #e0e0e0;
+}
+
+/* =====================
+   BUTTONS
+   ===================== */
+
+/* Algemene buttons */
+.button.general,
+.button.add,
+.button.delete,
+.button.edit,
+.button.cancel {
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 16px;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 200px;
+    -fx-text-fill: black;
+}
+
+.button.general {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: #A0A0A0;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 110px;
+}
+
+.button.general:hover {
+    -fx-background-color: #F0F0F0;
+}
+
+.button.general:pressed {
+    -fx-background-color: #D0D0D0;
+}
+
+
+.button.back {
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 110px;
+
+}
+
+.button.delete,
+.button.back,
+.button.cancel {
+    -fx-background-color: #FF0000;
+    -fx-text-fill: white;
+    -fx-border-color: #4D0000;
+    -fx-border-radius: 10px;
+}
+
+
+.button.delete:hover,
+.button.back:hover,
+.button.cancel:hover {
+    -fx-background-color: #CC0000;
+}
+
+.button.delete:pressed,
+.button.back:pressed,
+.button.cancel:pressed {
+    -fx-background-color: #800000;
+}
+
+.button.delete-notification {
+    -fx-background-color: #FF0000;
+    -fx-text-fill: white;
+    -fx-border-color: #4D0000;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 100px;
+}
+
+.button.delete-notification:hover {
+    -fx-background-color: #CC0000;
+}
+
+.button.delete-notification:pressed {
+    -fx-background-color: #800000;
+}
+
+.button.add {
+    -fx-background-color: #28A745;
+    -fx-text-fill: white;
+    -fx-border-color: #4D0000;
+    -fx-border-radius: 10px;
+
+}
+
+.button.add:hover {
+    -fx-background-color: #218838;
+}
+
+.button.add:pressed {
+    -fx-background-color: #1b6c32;
+}
+
+.button.edit {
+    -fx-background-color: #FFA500;
+    -fx-text-fill: white;
+    -fx-border-color: #4D0000;
+    -fx-border-radius: 10px;
+}
+
+.button.edit:hover {
+    -fx-background-color: #FF8C00;
+}
+
+.button.edit:pressed {
+    -fx-background-color: #FF7F00;
+}
+
+.button.logout {
+    -fx-background-color: #FF0000;
+    -fx-text-fill: white;
+    -fx-border-color: #4D0000;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 80px;
+}
+
+.button.logout:hover {
+    -fx-background-color: #CC0000;
+}
+
+.button.logout:pressed {
+    -fx-background-color: #800000;
+}
+
+.button.login {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: #A0A0A0;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 16px;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 100px;
+}
+
+.button.login:hover {
+    -fx-background-color: #F0F0F0;
+}
+
+.button.login:pressed {
+    -fx-background-color: #D0D0D0;
+}
+
+.button-start {
+    -fx-background-color: #28A745;
+    -fx-text-fill: white;
+    -fx-border-color: #1e7e34;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+}
+
+.button-start:hover {
+    -fx-background-color: #218838;
+}
+
+.button-start:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.button-stop {
+    -fx-background-color: #DC3545;
+    /* Red */
+    -fx-text-fill: white;
+    -fx-border-color: #c82333;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+}
+
+.button-stop:hover {
+    -fx-background-color: #c82333;
+}
+
+.button-stop:pressed {
+    -fx-background-color: #bd2130;
+}
+
+.button-disabled {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #5a6268;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.65;
+}
+
+.button.notification {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: #A0A0A0;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0.5, 0, 2);
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-pref-height: 20px;
+    -fx-pref-width: 60px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.button.notification:hover {
+    -fx-background-color: #F0F0F0;
+}
+
+.button.notification:pressed {
+    -fx-background-color: #D0D0D0;
+}
+
+
+/* =====================
+   DETAIL LABELS
+   ===================== */
+
+/* Label voor veldnamen */
+.label-detail-field {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
+
+.label-important-field {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* Label voor waarden */
+.label-detail-value {
+    -fx-text-fill: black;
+    -fx-font-weight: normal;
+}
+
+/* Status label */
+.label-status {
+    -fx-text-fill: #FF0000;
+    -fx-padding: 10px 0 0 0;
+}
+
+.error-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #B22222;
+    -fx-font-weight: bold;
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<fx:root stylesheets="@/styles/general.css" styleClass="container-main" type="VBox" prefHeight="400.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" >
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+   <children>
+      <Label text="Overzicht Sites" styleClass="label-header-main">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <TableView fx:id="siteTable" prefHeight="450.0" VBox.vgrow="NEVER" styleClass="table-view-general">
+        <columns>
+          <TableColumn fx:id="naamCol" prefWidth="150.0" text="Naam Site" />
+          <TableColumn fx:id="verantwoordelijkeCol" prefWidth="150.0" text="Naam Verantwoordelijke" />
+          <TableColumn fx:id="aantalMachinesCol" prefWidth="150.0" text="Aantal Machines"/>
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <HBox  fx:id="buttonContainer" spacing="10.0" alignment="CENTER" VBox.vgrow="NEVER">
+          <children>
+              <Button fx:id="btnSiteToevoegen" text="Site Toevoegen" styleClass="add" />
+              <Button fx:id="btnSiteVerwijderen" text="Site Verwijderen" styleClass="delete" />
+          </children>
+          <VBox.margin>
+              <Insets top="10.0"/>
+          </VBox.margin>
+      </HBox>
+      <Label fx:id="lblStatus" text="Geen site geselecteerd." styleClass="label-status"/>
+   </children>
+</fx:root>

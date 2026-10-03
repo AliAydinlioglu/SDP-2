@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<fx:root type="AnchorPane" prefHeight="320.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@/styles/general.css">
+    <children>
+        <!-- Gecentreerde VBox -->
+        <VBox alignment="CENTER" spacing="10.0" prefWidth="300"
+              AnchorPane.topAnchor="30.0" AnchorPane.bottomAnchor="30.0"
+              AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+
+            <!-- Delaware logo -->
+            <ImageView fx:id="delewareImage" fitWidth="200" fitHeight="70" preserveRatio="true">
+                <image>
+                    <Image url="@../images/delaware-logo-cmyk.png"/>
+                </image>
+            </ImageView>
+
+            <!-- E-mail veld -->
+            <VBox spacing="1" alignment="CENTER">
+                    <Label text="E-mail:" textFill="black">
+                        <font>
+                            <Font name="System Bold" size="12.0"/>
+                        </font>
+                    </Label>
+                    <TextField fx:id="emailField" promptText="someone@example.com" text="god.deschepper@heaven.he" prefWidth="160" maxWidth="170" />
+                <Label fx:id="emailError" textFill="red" styleClass="error-label"/>
+            </VBox>
+
+            <!-- Wachtwoord veld -->
+            <VBox spacing="1" alignment="CENTER">
+                    <Label text="Wachtwoord:" textFill="black">
+                        <font>
+                            <Font name="System Bold" size="12.0"/>
+                        </font>
+                    </Label>
+                    <PasswordField fx:id="wachtwoordField" promptText="••••••••" text="God.DeSchepper" prefWidth="160" maxWidth="170" />
+                <Label fx:id="wachtwoordError" textFill="red" styleClass="error-label"/>
+            </VBox>
+
+            <!-- Login knop -->
+            <Button fx:id="submitBtn" text="Login" onAction="#LogIn" prefWidth="100" styleClass="login"/>
+        </VBox>
+    </children>
+</fx:root>

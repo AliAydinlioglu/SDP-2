@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="@/styles/general.css" xmlns="http://javafx.com/javafx/8.0.171" fx:controller="gui.OnderhoudDetailFrameController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <Label text="Onderhoud Details" styleClass="label-header-sub"/>
+
+    <Label text="Datum uitgevoerd:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    <Label fx:id="lblDatum" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <Label text="Starttijdstip:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+    <Label fx:id="lblStartTijd" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <Label text="Eindtijdstip:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+    <Label fx:id="lblEindTijd" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    <Label text="Naam technieker:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+    <Label fx:id="lblTechnieker" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+    <Label text="Reden:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+    <Label fx:id="lblReden" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+    <Label text="Onderhoudsrapp.:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+    <Label fx:id="lblRapport" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+    <Label text="Opmerkingen:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+    <Label fx:id="lblOpmerkingen" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+    <Label text="Status:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+    <Label fx:id="lblStatus" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+    
+    <Label text="Machine:" styleClass="label-detail-field" GridPane.columnIndex="0" GridPane.rowIndex="9"/>
+    <Label fx:id="lblMachine" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+</GridPane>

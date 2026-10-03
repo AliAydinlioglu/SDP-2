@@ -1,0 +1,19 @@
+# Target and IDE
+**/target/
+**/.idea/
+.settings/
+.classpath
+.project
+.DS_Store
+.vscode/
+
+*.properties
+
+sdp2-java/src/main/resources/META-INF/persistence.xml
+
+
+sdp2-java/src/main/resources/config/dev.properties
+
+sdp2-java/src/main/resources/config/prod.properties
+
+sdp2-java/config/database.properties

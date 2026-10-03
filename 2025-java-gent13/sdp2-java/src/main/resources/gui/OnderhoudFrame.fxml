@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.CheckBox?>
+
+<fx:root type="VBox" styleClass="container-main" stylesheets="@/styles/general.css" xmlns="http://javafx.com/javafx/21"
+	xmlns:fx="http://javafx.com/fxml/1" spacing="10.0" prefHeight="400.0" prefWidth="600.0">
+	<padding>
+		<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+	</padding>
+	<children>
+		<Button fx:id="btnTerug" text="Terug" styleClass="back" />
+		<Label text="Onderhoud Overzicht" maxWidth="Infinity"
+		styleClass="label-header-main">
+		</Label>
+		<HBox spacing="10.0" alignment="CENTER">
+			<Label text="Filter op Status:" />
+			<ComboBox fx:id="statusFilterBox"
+				promptText="Alle statussen" />
+			<Label text="Laatste" />
+			<CheckBox fx:id="laatsteCB"/>
+			<Label text="Minder dan 3 maanden" />
+			<CheckBox fx:id="minderDanDrieMaandenCB"/>
+		</HBox>
+
+		<TableView fx:id="onderhoudTable" prefHeight="450.0" VBox.vgrow="NEVER" styleClass="table-view-general">
+			<columns>
+				<TableColumn fx:id="datumCol" prefWidth="150.0"
+					text="Datum" />
+				<TableColumn fx:id="statusCol" prefWidth="150.0"
+					text="Status" />
+				<TableColumn fx:id="techniekerCol" prefWidth="150.0"
+					text="Technieker" />
+				<TableColumn fx:id="machineCol" prefWidth="150.0"
+					text="Machine" />
+			</columns>
+			<columnResizePolicy>
+				<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+			</columnResizePolicy>
+		</TableView>
+		<HBox  fx:id="buttonContainer" spacing="10.0" alignment="CENTER" VBox.vgrow="NEVER">
+				<Button fx:id="btnEdit" text="Bewerken" styleClass="edit" style="-fx-pref-width: 120px;"/>
+				<Button fx:id="btnDelete" text="Verwijderen" styleClass="delete" style="-fx-pref-width: 120px;"/>
+		</HBox>
+	</children>
+</fx:root>
