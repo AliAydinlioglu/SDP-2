@@ -7,22 +7,22 @@ This repository contains the full multi-tier software project developed for the 
 ## 🏛️ Project Architecture
 
 ```
-                       ┌────────────────────────┐
-                       │  React Web Application │
-                       │    (Port 5173)         │
-                       └───────────┬────────────┘
-                                   │ HTTP / REST
-                                   ▼
-                       ┌────────────────────────┐
-                       │  Node.js / Koa Backend │
-                       │    (Port 9000)         │
-                       └───────────┬────────────┘
-                                   │ Prisma ORM
-                                   ▼
-┌────────────────────────┐         ┌────────────────────────┐
-│  JavaFX Desktop App    │ ──JDBC─▶│   MySQL Database       │
-│  (sdp2-java)           │         │   (Port 3307 internal:3306)│
-└────────────────────────┘         └────────────────────────┘
+                                      ┌────────────────────────┐
+                                      │  React Web Application │
+                                      │      (Port 5173)       │
+                                      └───────────┬────────────┘
+                                                  │ HTTP / REST
+                                                  ▼
+                                      ┌────────────────────────┐
+                                      │  Node.js / Koa Backend │
+                                      │      (Port 9000)       │
+                                      └───────────┬────────────┘
+                                                  │ Prisma ORM
+                                                  ▼
+┌────────────────────────┐            ┌──────────────────────────────┐
+│  JavaFX Desktop App    │  ──JDBC─▶ │        MySQL Database        │
+│      (sdp2-java)       │            │   (Port 3307 internal:3306)  │
+└────────────────────────┘            └──────────────────────────────┘
 ```
 
 1. **[2025-react-gent13](./2025-react-gent13)**: Frontend web application built with React 19, Vite, React Router, Recharts, and React Bootstrap.
