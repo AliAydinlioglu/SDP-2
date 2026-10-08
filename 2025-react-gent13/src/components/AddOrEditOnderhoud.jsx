@@ -1,4 +1,4 @@
-import { useAuth } from '../context/Auth.context';
+import { useAuth } from '../context/auth';
 import useSWRMutation from 'swr/mutation';
 import { save } from '../api/index';
 import AsyncData from './AsyncData';
@@ -13,8 +13,8 @@ export default function AddOrEditOnderhoud() {
   const methods = useForm({
     defaultValues: {
       datum: new Date().toISOString().split('T')[0],
-      technieker_id: user.id,
-      machine_id: Number(machine_id),
+      technieker_id: user?.id || 1,
+      machine_id: Number(machine_id) || 1,
     },
   });
 

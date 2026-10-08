@@ -53,6 +53,8 @@ model Machine {
     dagenSindsOnderhoud Int         @db.UnsignedInt
     volgendOnderhoud    DateTime    @db.Date
 
+    @@index([site_id], map: "fk_machine_site")
+    @@index([technieker_id], map: "fk_machine_user")
     @@map("machines")
 }
 
@@ -70,6 +72,8 @@ model Onderhoud {
     machine_id    Int      @db.UnsignedInt
     Machine       Machine  @relation(fields: [machine_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_onderhoud_machine")
 
+    @@index([technieker_id], map: "fk_onderhoud_user")
+    @@index([machine_id], map: "fk_onderhoud_machine")
     @@map("onderhouden")
 }
 
@@ -80,6 +84,7 @@ model Site {
     verantw    User      @relation(fields: [verantw_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_site_user")
     machines   Machine[]
 
+    @@index([verantw_id], map: "fk_site_user")
     @@map("sites")
 }
 
@@ -92,6 +97,7 @@ model Melding {
     type         String   @db.VarChar(50)
     datum        DateTime @db.DateTime
 
+    @@index([user_id], map: "fk_melding_user")
     @@map("meldingen")
 }
 
