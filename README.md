@@ -92,7 +92,7 @@ Detailed site view showing site manager information and a listing of all machine
 
 ---
 
-## 🏛️ Project Architecture
+## Project Architecture
 
 ```
                                       ┌────────────────────────┐
@@ -120,7 +120,7 @@ Detailed site view showing site manager information and a listing of all machine
 
 ---
 
-## 🚀 Running with Docker / Podman (Zero Local Installation)
+## Running with Docker / Podman (Zero Local Installation)
 
 Run the entire application stack in isolated containers without installing Node, Yarn, Java, or MySQL on your host system:
 
@@ -151,7 +151,7 @@ podman-compose down
 
 ---
 
-## 🔑 Default Seeded Accounts
+## Default Seeded Accounts
 
 The database is automatically initialized and seeded on first startup with the following test credentials:
 
